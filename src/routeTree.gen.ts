@@ -9,38 +9,166 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as JourneysRouteImport } from './routes/journeys'
+import { Route as JournalRouteImport } from './routes/journal'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as AboutAfricaRouteImport } from './routes/about-africa'
+import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as JourneysSlugRouteImport } from './routes/journeys.$slug'
+import { Route as JournalSlugRouteImport } from './routes/journal.$slug'
 
+const JourneysRoute = JourneysRouteImport.update({
+  id: '/journeys',
+  path: '/journeys',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const JournalRoute = JournalRouteImport.update({
+  id: '/journal',
+  path: '/journal',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutAfricaRoute = AboutAfricaRouteImport.update({
+  id: '/about-africa',
+  path: '/about-africa',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const JourneysSlugRoute = JourneysSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => JourneysRoute,
+} as any)
+const JournalSlugRoute = JournalSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => JournalRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/about-africa': typeof AboutAfricaRoute
+  '/contact': typeof ContactRoute
+  '/journal': typeof JournalRouteWithChildren
+  '/journeys': typeof JourneysRouteWithChildren
+  '/journal/$slug': typeof JournalSlugRoute
+  '/journeys/$slug': typeof JourneysSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/about-africa': typeof AboutAfricaRoute
+  '/contact': typeof ContactRoute
+  '/journal': typeof JournalRouteWithChildren
+  '/journeys': typeof JourneysRouteWithChildren
+  '/journal/$slug': typeof JournalSlugRoute
+  '/journeys/$slug': typeof JourneysSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/about-africa': typeof AboutAfricaRoute
+  '/contact': typeof ContactRoute
+  '/journal': typeof JournalRouteWithChildren
+  '/journeys': typeof JourneysRouteWithChildren
+  '/journal/$slug': typeof JournalSlugRoute
+  '/journeys/$slug': typeof JourneysSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/about'
+    | '/about-africa'
+    | '/contact'
+    | '/journal'
+    | '/journeys'
+    | '/journal/$slug'
+    | '/journeys/$slug'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/about'
+    | '/about-africa'
+    | '/contact'
+    | '/journal'
+    | '/journeys'
+    | '/journal/$slug'
+    | '/journeys/$slug'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/about-africa'
+    | '/contact'
+    | '/journal'
+    | '/journeys'
+    | '/journal/$slug'
+    | '/journeys/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AboutRoute: typeof AboutRoute
+  AboutAfricaRoute: typeof AboutAfricaRoute
+  ContactRoute: typeof ContactRoute
+  JournalRoute: typeof JournalRouteWithChildren
+  JourneysRoute: typeof JourneysRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/journeys': {
+      id: '/journeys'
+      path: '/journeys'
+      fullPath: '/journeys'
+      preLoaderRoute: typeof JourneysRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/journal': {
+      id: '/journal'
+      path: '/journal'
+      fullPath: '/journal'
+      preLoaderRoute: typeof JournalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about-africa': {
+      id: '/about-africa'
+      path: '/about-africa'
+      fullPath: '/about-africa'
+      preLoaderRoute: typeof AboutAfricaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,11 +176,53 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/journeys/$slug': {
+      id: '/journeys/$slug'
+      path: '/$slug'
+      fullPath: '/journeys/$slug'
+      preLoaderRoute: typeof JourneysSlugRouteImport
+      parentRoute: typeof JourneysRoute
+    }
+    '/journal/$slug': {
+      id: '/journal/$slug'
+      path: '/$slug'
+      fullPath: '/journal/$slug'
+      preLoaderRoute: typeof JournalSlugRouteImport
+      parentRoute: typeof JournalRoute
+    }
   }
 }
 
+interface JournalRouteChildren {
+  JournalSlugRoute: typeof JournalSlugRoute
+}
+
+const JournalRouteChildren: JournalRouteChildren = {
+  JournalSlugRoute: JournalSlugRoute,
+}
+
+const JournalRouteWithChildren =
+  JournalRoute._addFileChildren(JournalRouteChildren)
+
+interface JourneysRouteChildren {
+  JourneysSlugRoute: typeof JourneysSlugRoute
+}
+
+const JourneysRouteChildren: JourneysRouteChildren = {
+  JourneysSlugRoute: JourneysSlugRoute,
+}
+
+const JourneysRouteWithChildren = JourneysRoute._addFileChildren(
+  JourneysRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AboutRoute: AboutRoute,
+  AboutAfricaRoute: AboutAfricaRoute,
+  ContactRoute: ContactRoute,
+  JournalRoute: JournalRouteWithChildren,
+  JourneysRoute: JourneysRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

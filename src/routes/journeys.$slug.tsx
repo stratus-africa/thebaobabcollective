@@ -2,7 +2,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowRight, Check } from "lucide-react";
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
-import { getJourney, journeys } from "@/lib/content";
+import { getJourney, journeys, type Itinerary } from "@/lib/content";
 
 export const Route = createFileRoute("/journeys/$slug")({
   loader: ({ params }) => {
@@ -84,7 +84,7 @@ function JourneyPage() {
               Featured Itineraries
             </h2>
             <div className="space-y-16">
-              {journey.itineraries.map((it: typeof journey.itineraries[number], idx: number) => (
+              {(journey.itineraries as Itinerary[]).map((it: Itinerary, idx: number) => (
                 <article
                   key={it.name}
                   className={`grid md:grid-cols-2 gap-10 items-center ${idx % 2 === 1 ? "md:[&>div:first-child]:order-2" : ""}`}

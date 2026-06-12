@@ -14,6 +14,157 @@ export type Database = {
   }
   public: {
     Tables: {
+      booking_notes: {
+        Row: {
+          author_id: string | null
+          booking_id: string
+          created_at: string
+          id: string
+          note: string
+        }
+        Insert: {
+          author_id?: string | null
+          booking_id: string
+          created_at?: string
+          id?: string
+          note: string
+        }
+        Update: {
+          author_id?: string | null
+          booking_id?: string
+          created_at?: string
+          id?: string
+          note?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "booking_notes_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bookings: {
+        Row: {
+          created_at: string
+          deposit_usd: number
+          guest_email: string
+          guest_name: string
+          guest_phone: string | null
+          id: string
+          itinerary_id: string | null
+          itinerary_name: string
+          party_size: number
+          payment_status: Database["public"]["Enums"]["payment_status"]
+          special_requests: string | null
+          status: Database["public"]["Enums"]["booking_status"]
+          stripe_payment_intent: string | null
+          stripe_session_id: string | null
+          total_estimate_usd: number | null
+          travel_date: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          deposit_usd?: number
+          guest_email: string
+          guest_name: string
+          guest_phone?: string | null
+          id?: string
+          itinerary_id?: string | null
+          itinerary_name: string
+          party_size?: number
+          payment_status?: Database["public"]["Enums"]["payment_status"]
+          special_requests?: string | null
+          status?: Database["public"]["Enums"]["booking_status"]
+          stripe_payment_intent?: string | null
+          stripe_session_id?: string | null
+          total_estimate_usd?: number | null
+          travel_date?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          deposit_usd?: number
+          guest_email?: string
+          guest_name?: string
+          guest_phone?: string | null
+          id?: string
+          itinerary_id?: string | null
+          itinerary_name?: string
+          party_size?: number
+          payment_status?: Database["public"]["Enums"]["payment_status"]
+          special_requests?: string | null
+          status?: Database["public"]["Enums"]["booking_status"]
+          stripe_payment_intent?: string | null
+          stripe_session_id?: string | null
+          total_estimate_usd?: number | null
+          travel_date?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookings_itinerary_id_fkey"
+            columns: ["itinerary_id"]
+            isOneToOne: false
+            referencedRelation: "itineraries"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      destinations: {
+        Row: {
+          best_season: string | null
+          country: string
+          created_at: string
+          description: string
+          featured_trips: string[]
+          id: string
+          image: string
+          name: string
+          published: boolean
+          region: string
+          slug: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          best_season?: string | null
+          country: string
+          created_at?: string
+          description: string
+          featured_trips?: string[]
+          id?: string
+          image: string
+          name: string
+          published?: boolean
+          region: string
+          slug: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          best_season?: string | null
+          country?: string
+          created_at?: string
+          description?: string
+          featured_trips?: string[]
+          id?: string
+          image?: string
+          name?: string
+          published?: boolean
+          region?: string
+          slug?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       enquiries: {
         Row: {
           created_at: string
@@ -23,6 +174,7 @@ export type Database = {
           message: string
           name: string
           phone: string | null
+          status: string
         }
         Insert: {
           created_at?: string
@@ -32,6 +184,7 @@ export type Database = {
           message: string
           name: string
           phone?: string | null
+          status?: string
         }
         Update: {
           created_at?: string
@@ -41,6 +194,234 @@ export type Database = {
           message?: string
           name?: string
           phone?: string | null
+          status?: string
+        }
+        Relationships: []
+      }
+      faqs: {
+        Row: {
+          answer: string
+          category: Database["public"]["Enums"]["faq_category"]
+          created_at: string
+          id: string
+          published: boolean
+          question: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          answer: string
+          category: Database["public"]["Enums"]["faq_category"]
+          created_at?: string
+          id?: string
+          published?: boolean
+          question: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          answer?: string
+          category?: Database["public"]["Enums"]["faq_category"]
+          created_at?: string
+          id?: string
+          published?: boolean
+          question?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      itineraries: {
+        Row: {
+          category_id: string
+          created_at: string
+          deposit_usd: number
+          description: string
+          highlights: string[]
+          id: string
+          image: string
+          name: string
+          nights: string
+          price_from_usd: number | null
+          published: boolean
+          slug: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          category_id: string
+          created_at?: string
+          deposit_usd?: number
+          description: string
+          highlights?: string[]
+          id?: string
+          image: string
+          name: string
+          nights: string
+          price_from_usd?: number | null
+          published?: boolean
+          slug: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          category_id?: string
+          created_at?: string
+          deposit_usd?: number
+          description?: string
+          highlights?: string[]
+          id?: string
+          image?: string
+          name?: string
+          nights?: string
+          price_from_usd?: number | null
+          published?: boolean
+          slug?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "itineraries_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "journey_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      journal_articles: {
+        Row: {
+          category: string
+          content: string[]
+          created_at: string
+          date: string
+          excerpt: string
+          id: string
+          image: string
+          published: boolean
+          read_time: string
+          slug: string
+          sort_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          content?: string[]
+          created_at?: string
+          date: string
+          excerpt: string
+          id?: string
+          image: string
+          published?: boolean
+          read_time: string
+          slug: string
+          sort_order?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          content?: string[]
+          created_at?: string
+          date?: string
+          excerpt?: string
+          id?: string
+          image?: string
+          published?: boolean
+          read_time?: string
+          slug?: string
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      journey_categories: {
+        Row: {
+          created_at: string
+          hero_image: string
+          id: string
+          intro: string
+          published: boolean
+          slug: string
+          sort_order: number
+          tagline: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          hero_image: string
+          id?: string
+          intro: string
+          published?: boolean
+          slug: string
+          sort_order?: number
+          tagline: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          hero_image?: string
+          id?: string
+          intro?: string
+          published?: boolean
+          slug?: string
+          sort_order?: number
+          tagline?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      lodges: {
+        Row: {
+          amenities: string[]
+          created_at: string
+          description: string
+          gallery: string[]
+          hero_image: string
+          id: string
+          location: string
+          name: string
+          price_from_usd: number | null
+          published: boolean
+          slug: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          amenities?: string[]
+          created_at?: string
+          description: string
+          gallery?: string[]
+          hero_image: string
+          id?: string
+          location: string
+          name: string
+          price_from_usd?: number | null
+          published?: boolean
+          slug: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          amenities?: string[]
+          created_at?: string
+          description?: string
+          gallery?: string[]
+          hero_image?: string
+          id?: string
+          location?: string
+          name?: string
+          price_from_usd?: number | null
+          published?: boolean
+          slug?: string
+          sort_order?: number
+          updated_at?: string
         }
         Relationships: []
       }
@@ -62,15 +443,177 @@ export type Database = {
         }
         Relationships: []
       }
+      private_travel_requests: {
+        Row: {
+          budget_usd: string | null
+          created_at: string
+          destinations: string | null
+          email: string
+          full_name: string
+          id: string
+          interests: string[]
+          notes: string | null
+          party_size: number | null
+          phone: string | null
+          status: string
+          travel_dates: string | null
+        }
+        Insert: {
+          budget_usd?: string | null
+          created_at?: string
+          destinations?: string | null
+          email: string
+          full_name: string
+          id?: string
+          interests?: string[]
+          notes?: string | null
+          party_size?: number | null
+          phone?: string | null
+          status?: string
+          travel_dates?: string | null
+        }
+        Update: {
+          budget_usd?: string | null
+          created_at?: string
+          destinations?: string | null
+          email?: string
+          full_name?: string
+          id?: string
+          interests?: string[]
+          notes?: string | null
+          party_size?: number | null
+          phone?: string | null
+          status?: string
+          travel_dates?: string | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id: string
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      site_settings: {
+        Row: {
+          key: string
+          updated_at: string
+          value: Json
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          value: Json
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          value?: Json
+        }
+        Relationships: []
+      }
+      testimonials: {
+        Row: {
+          created_at: string
+          id: string
+          image: string | null
+          location: string | null
+          name: string
+          published: boolean
+          quote: string
+          rating: number
+          sort_order: number
+          trip_taken: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          image?: string | null
+          location?: string | null
+          name: string
+          published?: boolean
+          quote: string
+          rating?: number
+          sort_order?: number
+          trip_taken?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          image?: string | null
+          location?: string | null
+          name?: string
+          published?: boolean
+          quote?: string
+          rating?: number
+          sort_order?: number
+          trip_taken?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "editor" | "customer"
+      booking_status: "pending" | "confirmed" | "cancelled" | "completed"
+      faq_category: "planning" | "conservation" | "logistics"
+      payment_status: "unpaid" | "deposit_paid" | "paid_in_full" | "refunded"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -197,6 +740,11 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "editor", "customer"],
+      booking_status: ["pending", "confirmed", "cancelled", "completed"],
+      faq_category: ["planning", "conservation", "logistics"],
+      payment_status: ["unpaid", "deposit_paid", "paid_in_full", "refunded"],
+    },
   },
 } as const

@@ -84,7 +84,7 @@ function JourneyPage() {
               Featured Itineraries
             </h2>
             <div className="space-y-16">
-              {journey.itineraries.map((it, idx) => (
+              {journey.itineraries.map((it: typeof journey.itineraries[number], idx: number) => (
                 <article
                   key={it.name}
                   className={`grid md:grid-cols-2 gap-10 items-center ${idx % 2 === 1 ? "md:[&>div:first-child]:order-2" : ""}`}
@@ -97,7 +97,7 @@ function JourneyPage() {
                     <h3 className="font-serif text-3xl text-foreground mb-4">{it.name}</h3>
                     <p className="text-foreground/75 mb-6 leading-relaxed">{it.description}</p>
                     <ul className="space-y-2 mb-8">
-                      {it.highlights.map((h) => (
+                      {it.highlights.map((h: string) => (
                         <li key={h} className="flex gap-3 text-foreground/80">
                           <Check className="w-4 h-4 text-gold mt-1 shrink-0" />
                           <span>{h}</span>

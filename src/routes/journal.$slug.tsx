@@ -91,7 +91,7 @@ function ArticlePage() {
 
           <div className="max-w-3xl mx-auto px-6 py-16 md:py-20">
             <div className="space-y-6 text-foreground/85 text-lg leading-relaxed font-serif">
-              {article.content.map((p, i) => (
+              {article.content.map((p: string, i: number) => (
                 <p key={i}>{p}</p>
               ))}
             </div>

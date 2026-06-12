@@ -67,10 +67,9 @@ export const createBooking = createServerFn({ method: "POST" })
       const apiKey = process.env.LOVABLE_API_KEY;
       const stripeKey = process.env.STRIPE_SANDBOX_API_KEY;
       if (apiKey && stripeKey) {
-        const origin =
-          (await import("@tanstack/react-start/server")).getRequestHost
-            ? `https://${(await import("@tanstack/react-start/server")).getRequestHost()}`
-            : "";
+        const { getRequestHost } = await import("@tanstack/react-start/server");
+        const host = getRequestHost();
+        const origin = host ? `https://${host}` : "";
         const body = new URLSearchParams();
         body.set("mode", "payment");
         body.set("success_url", `${origin}/booking/success?booking_id=${booking.id}`);

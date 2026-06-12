@@ -78,14 +78,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
+      { title: "Baobab Collective" },
+      { name: "description", content: "The Baobab Collective website offers curated luxury safari journeys and authentic African experiences." },
       { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { property: "og:title", content: "Baobab Collective" },
+      { property: "og:description", content: "The Baobab Collective website offers curated luxury safari journeys and authentic African experiences." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "Baobab Collective" },
+      { name: "twitter:description", content: "The Baobab Collective website offers curated luxury safari journeys and authentic African experiences." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/88c3b0b3-36b3-472d-9ae0-b28332a8e693/id-preview-45faa79e--d702f976-096d-4eec-878b-b661d48940a1.lovable.app-1781269926378.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/88c3b0b3-36b3-472d-9ae0-b28332a8e693/id-preview-45faa79e--d702f976-096d-4eec-878b-b661d48940a1.lovable.app-1781269926378.png" },
     ],
     links: [
       {

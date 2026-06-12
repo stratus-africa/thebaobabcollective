@@ -1,19 +1,59 @@
-import { useState } from "react";
-import { Menu, X } from "lucide-react";
-import { Link } from "@tanstack/react-router";
+import { useState, useEffect } from "react";
+import { Menu, X, ChevronDown } from "lucide-react";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { BaobabLogo } from "./Logo";
+import { supabase } from "@/integrations/supabase/client";
+import type { User } from "@supabase/supabase-js";
 
-const navItems = [
+const primaryItems = [
   { label: "Home", to: "/" as const },
-  { label: "About", to: "/about" as const },
   { label: "Journeys", to: "/journeys" as const },
+  { label: "Lodges", to: "/lodges" as const },
+  { label: "Destinations", to: "/destinations" as const },
   { label: "Journal", to: "/journal" as const },
+];
+
+const moreItems = [
+  { label: "About", to: "/about" as const },
   { label: "About Africa", to: "/about-africa" as const },
-  { label: "Contact", to: "/contact" as const },
+  { label: "Testimonials", to: "/testimonials" as const },
+  { label: "FAQ", to: "/faq" as const },
+  { label: "Private Travel", to: "/private-travel" as const },
 ];
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => setUser(data.user));
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+    return () => sub.subscription.unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    if (!user) {
+      setIsAdmin(false);
+      return;
+    }
+    supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", user.id)
+      .eq("role", "admin")
+      .maybeSingle()
+      .then(({ data }) => setIsAdmin(!!data));
+  }, [user]);
+
+  const signOut = async () => {
+    await supabase.auth.signOut();
+    navigate({ to: "/" });
+  };
 
   return (
     <header className="sticky top-0 z-50">
@@ -32,30 +72,76 @@ export function Navbar() {
             </div>
           </Link>
 
-          <nav aria-label="Primary" className="hidden lg:flex items-center gap-9">
-            {navItems.map((item) => (
+          <nav aria-label="Primary" className="hidden lg:flex items-center gap-7">
+            {primaryItems.map((item) => (
               <Link
                 key={item.to}
                 to={item.to}
                 activeOptions={{ exact: item.to === "/" }}
-                className="text-[12px] tracking-[0.2em] uppercase text-foreground/70 hover:text-foreground transition-colors relative pb-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-                activeProps={{ className: "text-foreground [&>span]:opacity-100" }}
+                className="text-[12px] tracking-[0.2em] uppercase text-foreground/70 hover:text-foreground"
+                activeProps={{ className: "text-foreground" }}
               >
                 {item.label}
-                <span className="absolute left-0 right-0 -bottom-0.5 h-px bg-gold opacity-0 transition-opacity" />
               </Link>
             ))}
+
+            <div className="relative" onMouseLeave={() => setMoreOpen(false)}>
+              <button
+                onMouseEnter={() => setMoreOpen(true)}
+                onClick={() => setMoreOpen((o) => !o)}
+                className="text-[12px] tracking-[0.2em] uppercase text-foreground/70 hover:text-foreground inline-flex items-center gap-1"
+              >
+                More <ChevronDown className="w-3 h-3" />
+              </button>
+              {moreOpen && (
+                <div className="absolute right-0 top-full pt-2">
+                  <div className="bg-background border border-border shadow-lg py-2 min-w-[200px]">
+                    {moreItems.map((m) => (
+                      <Link
+                        key={m.to}
+                        to={m.to}
+                        onClick={() => setMoreOpen(false)}
+                        className="block px-5 py-2 text-[12px] tracking-[0.15em] uppercase text-foreground/75 hover:text-foreground hover:bg-cream"
+                      >
+                        {m.label}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           </nav>
 
-          <Link
-            to="/contact"
-            className="hidden lg:inline-flex items-center justify-center border border-gold text-gold uppercase tracking-[0.2em] text-[11px] px-6 py-3 hover:bg-gold hover:text-gold-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2"
-          >
-            Enquire Now
-          </Link>
+          <div className="hidden lg:flex items-center gap-4">
+            {user ? (
+              <>
+                {isAdmin && (
+                  <Link to="/admin" className="text-[11px] tracking-[0.2em] uppercase text-gold hover:underline">
+                    Admin
+                  </Link>
+                )}
+                <Link to="/my-bookings" className="text-[11px] tracking-[0.2em] uppercase text-foreground/70 hover:text-foreground">
+                  My Bookings
+                </Link>
+                <button onClick={signOut} className="text-[11px] tracking-[0.2em] uppercase text-foreground/70 hover:text-foreground">
+                  Sign out
+                </button>
+              </>
+            ) : (
+              <Link to="/auth" className="text-[11px] tracking-[0.2em] uppercase text-foreground/70 hover:text-foreground">
+                Sign in
+              </Link>
+            )}
+            <Link
+              to="/contact"
+              className="inline-flex items-center justify-center border border-gold text-gold uppercase tracking-[0.2em] text-[11px] px-5 py-3 hover:bg-gold hover:text-gold-foreground transition-colors"
+            >
+              Enquire
+            </Link>
+          </div>
 
           <button
-            className="lg:hidden p-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold rounded"
+            className="lg:hidden p-2"
             onClick={() => setOpen((o) => !o)}
             aria-label={open ? "Close menu" : "Open menu"}
             aria-expanded={open}
@@ -65,24 +151,45 @@ export function Navbar() {
         </div>
 
         {open && (
-          <div className="lg:hidden border-t border-border/40 bg-background px-6 py-4 flex flex-col gap-4">
-            {navItems.map((item) => (
+          <div className="lg:hidden border-t border-border/40 bg-background px-6 py-4 flex flex-col gap-3 max-h-[80vh] overflow-y-auto">
+            {[...primaryItems, ...moreItems].map((item) => (
               <Link
                 key={item.to}
                 to={item.to}
                 onClick={() => setOpen(false)}
-                className="text-[12px] tracking-[0.2em] uppercase text-foreground/80 hover:text-foreground"
+                className="text-[12px] tracking-[0.2em] uppercase text-foreground/80 hover:text-foreground py-1"
               >
                 {item.label}
               </Link>
             ))}
-            <Link
-              to="/contact"
-              onClick={() => setOpen(false)}
-              className="inline-flex items-center justify-center border border-gold text-gold uppercase tracking-[0.2em] text-[11px] px-6 py-3 mt-2"
-            >
-              Enquire Now
-            </Link>
+            <div className="pt-3 mt-2 border-t border-border/40 flex flex-col gap-3">
+              {user ? (
+                <>
+                  {isAdmin && (
+                    <Link to="/admin" onClick={() => setOpen(false)} className="text-[11px] tracking-[0.2em] uppercase text-gold">
+                      Admin
+                    </Link>
+                  )}
+                  <Link to="/my-bookings" onClick={() => setOpen(false)} className="text-[11px] tracking-[0.2em] uppercase text-foreground/80">
+                    My Bookings
+                  </Link>
+                  <button onClick={() => { setOpen(false); signOut(); }} className="text-left text-[11px] tracking-[0.2em] uppercase text-foreground/80">
+                    Sign out
+                  </button>
+                </>
+              ) : (
+                <Link to="/auth" onClick={() => setOpen(false)} className="text-[11px] tracking-[0.2em] uppercase text-foreground/80">
+                  Sign in
+                </Link>
+              )}
+              <Link
+                to="/contact"
+                onClick={() => setOpen(false)}
+                className="inline-flex items-center justify-center border border-gold text-gold uppercase tracking-[0.2em] text-[11px] px-6 py-3 mt-2"
+              >
+                Enquire Now
+              </Link>
+            </div>
           </div>
         )}
       </div>

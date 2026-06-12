@@ -9,15 +9,40 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TestimonialsRouteImport } from './routes/testimonials'
+import { Route as PrivateTravelRouteImport } from './routes/private-travel'
+import { Route as LodgesRouteImport } from './routes/lodges'
 import { Route as JourneysRouteImport } from './routes/journeys'
 import { Route as JournalRouteImport } from './routes/journal'
+import { Route as FaqRouteImport } from './routes/faq'
+import { Route as DestinationsRouteImport } from './routes/destinations'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AboutAfricaRouteImport } from './routes/about-africa'
 import { Route as AboutRouteImport } from './routes/about'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as JourneysSlugRouteImport } from './routes/journeys.$slug'
 import { Route as JournalSlugRouteImport } from './routes/journal.$slug'
+import { Route as BookingSuccessRouteImport } from './routes/booking.success'
+import { Route as BookSlugRouteImport } from './routes/book.$slug'
+import { Route as AuthenticatedMyBookingsRouteImport } from './routes/_authenticated/my-bookings'
 
+const TestimonialsRoute = TestimonialsRouteImport.update({
+  id: '/testimonials',
+  path: '/testimonials',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivateTravelRoute = PrivateTravelRouteImport.update({
+  id: '/private-travel',
+  path: '/private-travel',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LodgesRoute = LodgesRouteImport.update({
+  id: '/lodges',
+  path: '/lodges',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const JourneysRoute = JourneysRouteImport.update({
   id: '/journeys',
   path: '/journeys',
@@ -28,9 +53,24 @@ const JournalRoute = JournalRouteImport.update({
   path: '/journal',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FaqRoute = FaqRouteImport.update({
+  id: '/faq',
+  path: '/faq',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DestinationsRoute = DestinationsRouteImport.update({
+  id: '/destinations',
+  path: '/destinations',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutAfricaRoute = AboutAfricaRouteImport.update({
@@ -41,6 +81,10 @@ const AboutAfricaRoute = AboutAfricaRouteImport.update({
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -58,14 +102,38 @@ const JournalSlugRoute = JournalSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => JournalRoute,
 } as any)
+const BookingSuccessRoute = BookingSuccessRouteImport.update({
+  id: '/booking/success',
+  path: '/booking/success',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BookSlugRoute = BookSlugRouteImport.update({
+  id: '/book/$slug',
+  path: '/book/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedMyBookingsRoute = AuthenticatedMyBookingsRouteImport.update({
+  id: '/my-bookings',
+  path: '/my-bookings',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/about-africa': typeof AboutAfricaRoute
+  '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
+  '/destinations': typeof DestinationsRoute
+  '/faq': typeof FaqRoute
   '/journal': typeof JournalRouteWithChildren
   '/journeys': typeof JourneysRouteWithChildren
+  '/lodges': typeof LodgesRoute
+  '/private-travel': typeof PrivateTravelRoute
+  '/testimonials': typeof TestimonialsRoute
+  '/my-bookings': typeof AuthenticatedMyBookingsRoute
+  '/book/$slug': typeof BookSlugRoute
+  '/booking/success': typeof BookingSuccessRoute
   '/journal/$slug': typeof JournalSlugRoute
   '/journeys/$slug': typeof JourneysSlugRoute
 }
@@ -73,20 +141,39 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/about-africa': typeof AboutAfricaRoute
+  '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
+  '/destinations': typeof DestinationsRoute
+  '/faq': typeof FaqRoute
   '/journal': typeof JournalRouteWithChildren
   '/journeys': typeof JourneysRouteWithChildren
+  '/lodges': typeof LodgesRoute
+  '/private-travel': typeof PrivateTravelRoute
+  '/testimonials': typeof TestimonialsRoute
+  '/my-bookings': typeof AuthenticatedMyBookingsRoute
+  '/book/$slug': typeof BookSlugRoute
+  '/booking/success': typeof BookingSuccessRoute
   '/journal/$slug': typeof JournalSlugRoute
   '/journeys/$slug': typeof JourneysSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/about-africa': typeof AboutAfricaRoute
+  '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
+  '/destinations': typeof DestinationsRoute
+  '/faq': typeof FaqRoute
   '/journal': typeof JournalRouteWithChildren
   '/journeys': typeof JourneysRouteWithChildren
+  '/lodges': typeof LodgesRoute
+  '/private-travel': typeof PrivateTravelRoute
+  '/testimonials': typeof TestimonialsRoute
+  '/_authenticated/my-bookings': typeof AuthenticatedMyBookingsRoute
+  '/book/$slug': typeof BookSlugRoute
+  '/booking/success': typeof BookingSuccessRoute
   '/journal/$slug': typeof JournalSlugRoute
   '/journeys/$slug': typeof JourneysSlugRoute
 }
@@ -96,9 +183,18 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/about-africa'
+    | '/auth'
     | '/contact'
+    | '/destinations'
+    | '/faq'
     | '/journal'
     | '/journeys'
+    | '/lodges'
+    | '/private-travel'
+    | '/testimonials'
+    | '/my-bookings'
+    | '/book/$slug'
+    | '/booking/success'
     | '/journal/$slug'
     | '/journeys/$slug'
   fileRoutesByTo: FileRoutesByTo
@@ -106,34 +202,83 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/about-africa'
+    | '/auth'
     | '/contact'
+    | '/destinations'
+    | '/faq'
     | '/journal'
     | '/journeys'
+    | '/lodges'
+    | '/private-travel'
+    | '/testimonials'
+    | '/my-bookings'
+    | '/book/$slug'
+    | '/booking/success'
     | '/journal/$slug'
     | '/journeys/$slug'
   id:
     | '__root__'
     | '/'
+    | '/_authenticated'
     | '/about'
     | '/about-africa'
+    | '/auth'
     | '/contact'
+    | '/destinations'
+    | '/faq'
     | '/journal'
     | '/journeys'
+    | '/lodges'
+    | '/private-travel'
+    | '/testimonials'
+    | '/_authenticated/my-bookings'
+    | '/book/$slug'
+    | '/booking/success'
     | '/journal/$slug'
     | '/journeys/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
   AboutAfricaRoute: typeof AboutAfricaRoute
+  AuthRoute: typeof AuthRoute
   ContactRoute: typeof ContactRoute
+  DestinationsRoute: typeof DestinationsRoute
+  FaqRoute: typeof FaqRoute
   JournalRoute: typeof JournalRouteWithChildren
   JourneysRoute: typeof JourneysRouteWithChildren
+  LodgesRoute: typeof LodgesRoute
+  PrivateTravelRoute: typeof PrivateTravelRoute
+  TestimonialsRoute: typeof TestimonialsRoute
+  BookSlugRoute: typeof BookSlugRoute
+  BookingSuccessRoute: typeof BookingSuccessRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/testimonials': {
+      id: '/testimonials'
+      path: '/testimonials'
+      fullPath: '/testimonials'
+      preLoaderRoute: typeof TestimonialsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/private-travel': {
+      id: '/private-travel'
+      path: '/private-travel'
+      fullPath: '/private-travel'
+      preLoaderRoute: typeof PrivateTravelRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lodges': {
+      id: '/lodges'
+      path: '/lodges'
+      fullPath: '/lodges'
+      preLoaderRoute: typeof LodgesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/journeys': {
       id: '/journeys'
       path: '/journeys'
@@ -148,11 +293,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof JournalRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/faq': {
+      id: '/faq'
+      path: '/faq'
+      fullPath: '/faq'
+      preLoaderRoute: typeof FaqRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/destinations': {
+      id: '/destinations'
+      path: '/destinations'
+      fullPath: '/destinations'
+      preLoaderRoute: typeof DestinationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/contact': {
       id: '/contact'
       path: '/contact'
       fullPath: '/contact'
       preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about-africa': {
@@ -167,6 +333,13 @@ declare module '@tanstack/react-router' {
       path: '/about'
       fullPath: '/about'
       preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -190,8 +363,40 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof JournalSlugRouteImport
       parentRoute: typeof JournalRoute
     }
+    '/booking/success': {
+      id: '/booking/success'
+      path: '/booking/success'
+      fullPath: '/booking/success'
+      preLoaderRoute: typeof BookingSuccessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/book/$slug': {
+      id: '/book/$slug'
+      path: '/book/$slug'
+      fullPath: '/book/$slug'
+      preLoaderRoute: typeof BookSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/my-bookings': {
+      id: '/_authenticated/my-bookings'
+      path: '/my-bookings'
+      fullPath: '/my-bookings'
+      preLoaderRoute: typeof AuthenticatedMyBookingsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
+
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedMyBookingsRoute: typeof AuthenticatedMyBookingsRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedMyBookingsRoute: AuthenticatedMyBookingsRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
 interface JournalRouteChildren {
   JournalSlugRoute: typeof JournalSlugRoute
@@ -218,11 +423,20 @@ const JourneysRouteWithChildren = JourneysRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AboutRoute: AboutRoute,
   AboutAfricaRoute: AboutAfricaRoute,
+  AuthRoute: AuthRoute,
   ContactRoute: ContactRoute,
+  DestinationsRoute: DestinationsRoute,
+  FaqRoute: FaqRoute,
   JournalRoute: JournalRouteWithChildren,
   JourneysRoute: JourneysRouteWithChildren,
+  LodgesRoute: LodgesRoute,
+  PrivateTravelRoute: PrivateTravelRoute,
+  TestimonialsRoute: TestimonialsRoute,
+  BookSlugRoute: BookSlugRoute,
+  BookingSuccessRoute: BookingSuccessRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

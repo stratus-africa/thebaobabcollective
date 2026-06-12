@@ -104,12 +104,21 @@ function JourneyPage() {
                         </li>
                       ))}
                     </ul>
-                    <Link
-                      to="/contact"
-                      className="inline-flex items-center gap-2 border border-gold text-gold uppercase tracking-[0.25em] text-[11px] px-6 py-3 hover:bg-gold hover:text-gold-foreground transition-colors"
-                    >
-                      Enquire <ArrowRight className="w-3 h-3" />
-                    </Link>
+                    <div className="flex flex-wrap gap-3">
+                      <Link
+                        to="/book/$slug"
+                        params={{ slug: it.name.toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") }}
+                        className="inline-flex items-center gap-2 bg-gold text-gold-foreground uppercase tracking-[0.25em] text-[11px] px-6 py-3 hover:bg-gold/90"
+                      >
+                        Book This Journey <ArrowRight className="w-3 h-3" />
+                      </Link>
+                      <Link
+                        to="/contact"
+                        className="inline-flex items-center gap-2 border border-gold text-gold uppercase tracking-[0.25em] text-[11px] px-6 py-3 hover:bg-gold hover:text-gold-foreground transition-colors"
+                      >
+                        Enquire
+                      </Link>
+                    </div>
                   </div>
                 </article>
               ))}

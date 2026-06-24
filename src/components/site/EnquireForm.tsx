@@ -99,6 +99,8 @@ export function EnquireForm({
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [errors, setErrors] = useState<Partial<Record<keyof Draft | "form", string>>>({});
+  const [tripOpen, setTripOpen] = useState(false);
+  const [experiencesOpen, setExperiencesOpen] = useState(false);
 
   const storageKey = useMemo(() => {
     if (autosaveKey === null) return null;

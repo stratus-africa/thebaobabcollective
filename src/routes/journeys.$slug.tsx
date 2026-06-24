@@ -138,6 +138,13 @@ function JourneyPage() {
                         defaultDestination={it.name}
                         sourceUrl={`/journeys/${journey.slug}`}
                         autosaveKey={`enquire:itinerary:${(it as any).slug ?? it.name}`}
+                        context={{
+                          kind: "Itinerary",
+                          title: it.name,
+                          dates: it.nights,
+                          slug: (it as any).slug ?? it.name.toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""),
+                          image: it.image,
+                        }}
                         trigger={
                           <button
                             type="button"

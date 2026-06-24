@@ -137,14 +137,8 @@ export function EnquireForm({
     setValues((prev) => ({ ...prev, [k]: v }));
   }
 
-  function toggleExperience(name: string) {
-    setValues((prev) => ({
-      ...prev,
-      experiences: prev.experiences.includes(name)
-        ? prev.experiences.filter((p) => p !== name)
-        : [...prev.experiences, name],
-    }));
-  }
+
+
 
   function blurValidate(name: keyof Draft) {
     const v = String(values[name] ?? "");

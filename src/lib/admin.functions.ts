@@ -166,11 +166,11 @@ const EnquiryListSchema = z.object({
   status: z.enum(["all", "new", "handled", "spam"]).default("all"),
   search: z.string().trim().max(120).optional(),
   limit: z.number().int().min(1).max(200).default(100),
-}).optional();
+});
 
 export const adminListEnquiries = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => EnquiryListSchema.parse(d ?? {}) ?? { status: "all", limit: 100 })
+  .inputValidator((d: unknown) => EnquiryListSchema.parse(d ?? {}))
   .handler(async ({ data, context }) => {
     await assertAdmin(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -187,18 +187,20 @@ export const adminListEnquiries = createServerFn({ method: "POST" })
     const { data: rows, error } = await q;
     if (error) throw new Error(error.message);
 
-    // Fetch latest email_send_log row per message_id for these enquiries
-    const messageIds = (rows ?? []).map((r: any) => r.message_id).filter(Boolean);
-    let emailMap: Record<string, { status: string; error_message: string | null; created_at: string }> = {};
+    const messageIds = (rows ?? [])
+      .map((r: any) => r.message_id as string | null)
+      .filter((m): m is string => Boolean(m));
+    const emailMap: Record<string, { status: string; error_message: string | null; created_at: string }> = {};
     if (messageIds.length) {
       const { data: logs } = await supabaseAdmin
         .from("email_send_log")
         .select("message_id, status, error_message, created_at")
         .in("message_id", messageIds)
         .order("created_at", { ascending: false });
-      for (const l of logs ?? []) {
-        if (!emailMap[l.message_id]) {
-          emailMap[l.message_id] = {
+      for (const l of (logs ?? []) as any[]) {
+        const mid = l.message_id as string | null;
+        if (mid && !emailMap[mid]) {
+          emailMap[mid] = {
             status: l.status,
             error_message: l.error_message,
             created_at: l.created_at,
@@ -223,13 +225,16 @@ export const adminUpdateEnquiry = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await assertAdmin(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const patch: Record<string, unknown> = { status: data.status };
-    patch.handled_at = data.status === "handled" ? new Date().toISOString() : null;
-    patch.handled_by = data.status === "handled" ? context.userId : null;
-    const { error } = await supabaseAdmin.from("enquiries").update(patch).eq("id", data.id);
+    const patch = {
+      status: data.status,
+      handled_at: data.status === "handled" ? new Date().toISOString() : null,
+      handled_by: data.status === "handled" ? context.userId : null,
+    };
+    const { error } = await supabaseAdmin.from("enquiries").update(patch as any).eq("id", data.id);
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
 
 
 // ---- Private Travel ----

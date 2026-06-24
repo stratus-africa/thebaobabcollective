@@ -209,34 +209,67 @@ export type Database = {
       }
       enquiries: {
         Row: {
+          accommodation_style: string | null
+          adults: number | null
+          budget: string | null
+          children: number | null
           created_at: string
           destination: string | null
           email: string
+          experiences: string[] | null
           id: string
           message: string
           name: string
-          phone: string | null
+          phone: string
+          referral_source: string | null
+          source_url: string | null
           status: string
+          subject: string | null
+          subscribe_newsletter: boolean
+          travel_dates: string | null
+          trip_type: string | null
         }
         Insert: {
+          accommodation_style?: string | null
+          adults?: number | null
+          budget?: string | null
+          children?: number | null
           created_at?: string
           destination?: string | null
           email: string
+          experiences?: string[] | null
           id?: string
           message: string
           name: string
-          phone?: string | null
+          phone: string
+          referral_source?: string | null
+          source_url?: string | null
           status?: string
+          subject?: string | null
+          subscribe_newsletter?: boolean
+          travel_dates?: string | null
+          trip_type?: string | null
         }
         Update: {
+          accommodation_style?: string | null
+          adults?: number | null
+          budget?: string | null
+          children?: number | null
           created_at?: string
           destination?: string | null
           email?: string
+          experiences?: string[] | null
           id?: string
           message?: string
           name?: string
-          phone?: string | null
+          phone?: string
+          referral_source?: string | null
+          source_url?: string | null
           status?: string
+          subject?: string | null
+          subscribe_newsletter?: boolean
+          travel_dates?: string | null
+          trip_type?: string | null
         }
         Relationships: []
       }

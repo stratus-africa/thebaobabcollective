@@ -2,7 +2,9 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowRight, Check } from "lucide-react";
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
+import { ShareButtons } from "@/components/site/ShareButtons";
 import { getJourney, journeys, type Itinerary } from "@/lib/content";
+
 
 export const Route = createFileRoute("/journeys/$slug")({
   loader: ({ params }) => {
@@ -64,12 +66,22 @@ function JourneyPage() {
             className="absolute inset-0 w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
-          <div className="relative max-w-7xl mx-auto px-6 lg:px-10 pb-16 text-background">
-            <p className="text-[11px] tracking-[0.3em] uppercase text-gold mb-4">Our Journeys</p>
-            <h1 className="font-serif text-5xl md:text-7xl leading-[1.05] mb-4">{journey.title}</h1>
-            <p className="text-lg md:text-xl text-background/90 max-w-xl">{journey.tagline}</p>
+          <div className="relative max-w-7xl mx-auto px-6 lg:px-10 pb-16 text-background w-full flex flex-wrap items-end justify-between gap-6">
+            <div>
+              <p className="text-[11px] tracking-[0.3em] uppercase text-gold mb-4">Our Journeys</p>
+              <h1 className="font-serif text-5xl md:text-7xl leading-[1.05] mb-4">{journey.title}</h1>
+              <p className="text-lg md:text-xl text-background/90 max-w-xl">{journey.tagline}</p>
+            </div>
+            <div className="text-background/90">
+              <ShareButtons
+                title={`${journey.title} — The Baobab Collective`}
+                description={journey.tagline}
+                label="Share"
+              />
+            </div>
           </div>
         </section>
+
 
         <section className="py-20 md:py-28 bg-cream">
           <div className="max-w-3xl mx-auto px-6 lg:px-10 text-center">

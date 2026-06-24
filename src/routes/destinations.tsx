@@ -3,9 +3,11 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
+import { ShareButtons } from "@/components/site/ShareButtons";
 import { getDestinations } from "@/lib/cms.functions";
 import { Input } from "@/components/ui/input";
 import { Search, MapPin } from "lucide-react";
+
 
 const q = queryOptions({ queryKey: ["destinations"], queryFn: () => getDestinations() });
 
@@ -99,7 +101,15 @@ function DestinationsPage() {
                       ))}
                     </div>
                   ) : null}
+                  <div className="mt-5 pt-4 border-t border-border/40">
+                    <ShareButtons
+                      title={`${d.name}, ${d.country} — The Baobab Collective`}
+                      description={d.description?.slice(0, 140)}
+                      label="Share"
+                    />
+                  </div>
                 </div>
+
               </article>
             ))}
             {filtered.length === 0 && (

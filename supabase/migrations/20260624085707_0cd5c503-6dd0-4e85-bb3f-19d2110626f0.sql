@@ -1,0 +1,16 @@
+
+ALTER TABLE public.enquiries
+  ADD COLUMN IF NOT EXISTS subject TEXT,
+  ADD COLUMN IF NOT EXISTS travel_dates TEXT,
+  ADD COLUMN IF NOT EXISTS adults INTEGER,
+  ADD COLUMN IF NOT EXISTS children INTEGER,
+  ADD COLUMN IF NOT EXISTS budget TEXT,
+  ADD COLUMN IF NOT EXISTS trip_type TEXT,
+  ADD COLUMN IF NOT EXISTS accommodation_style TEXT,
+  ADD COLUMN IF NOT EXISTS experiences TEXT[],
+  ADD COLUMN IF NOT EXISTS referral_source TEXT,
+  ADD COLUMN IF NOT EXISTS subscribe_newsletter BOOLEAN NOT NULL DEFAULT false,
+  ADD COLUMN IF NOT EXISTS source_url TEXT;
+
+UPDATE public.enquiries SET phone = '—' WHERE phone IS NULL OR phone = '';
+ALTER TABLE public.enquiries ALTER COLUMN phone SET NOT NULL;

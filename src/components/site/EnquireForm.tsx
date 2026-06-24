@@ -150,6 +150,15 @@ export function EnquireForm({
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (honeypot.trim() !== "") {
+      // Silent bot rejection — show success to avoid signaling
+      setSubmitted(true);
+      return;
+    }
+    if (Date.now() - mountedAt.current < 2000) {
+      setErrors({ form: "Please take a moment to review your details before submitting." });
+      return;
+    }
     const next: typeof errors = {};
     (["name", "email", "phone", "message"] as const).forEach((f) => {
       const err = validateField(f, String(values[f] ?? ""));
@@ -157,7 +166,6 @@ export function EnquireForm({
     });
     if (Object.keys(next).length) {
       setErrors(next);
-      // Focus first invalid field
       const first = Object.keys(next)[0];
       const el = document.getElementById(first);
       el?.focus();
@@ -168,6 +176,7 @@ export function EnquireForm({
     try {
       await submit({
         data: {
+          company: "",
           name: values.name.trim(),
           email: values.email.trim(),
           phone: values.phone.trim(),

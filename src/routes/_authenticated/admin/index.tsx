@@ -104,96 +104,100 @@ function Dashboard() {
         </div>
       </section>
 
-      {/* Recent activity + Quick tasks */}
-      <section className="grid gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-2 bg-background border border-border rounded-xl">
-          <div className="px-6 py-5 border-b border-border flex items-center justify-between">
-            <h2 className="font-serif text-xl text-foreground">Recent Activity</h2>
-            <Link to="/admin/enquiries" className="text-[11px] tracking-[0.2em] uppercase text-gold hover:underline">
-              View all
-            </Link>
-          </div>
-          <ul className="divide-y divide-border/70">
-            {isLoading
-              ? Array.from({ length: 5 }).map((_, i) => (
-                  <li key={i} className="px-6 py-4 flex items-center gap-4">
-                    <Skeleton className="h-9 w-9 rounded-full" />
-                    <div className="flex-1 space-y-2">
-                      <Skeleton className="h-3 w-1/3" />
-                      <Skeleton className="h-3 w-2/3" />
-                    </div>
-                    <Skeleton className="h-3 w-12" />
-                  </li>
-                ))
-              : (data?.activity ?? []).length === 0
-              ? (
-                <li className="px-6 py-10 text-center text-sm text-foreground/60">No recent activity yet.</li>
-              )
-              : (data?.activity ?? []).map((a, i) => {
-                  const Icon = a.kind === "booking" ? Calendar : a.kind === "enquiry" ? MessageSquare : Plane;
-                  return (
+      {/* Main grid: left content, right admin tools (stacked) */}
+      <section className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
+        <div className="space-y-6 min-w-0">
+          <div className="bg-background border border-border rounded-xl">
+            <div className="px-6 py-5 border-b border-border flex items-center justify-between">
+              <h2 className="font-serif text-xl text-foreground">Recent Activity</h2>
+              <Link to="/admin/enquiries" className="text-[11px] tracking-[0.2em] uppercase text-gold hover:underline">
+                View all
+              </Link>
+            </div>
+            <ul className="divide-y divide-border/70">
+              {isLoading
+                ? Array.from({ length: 5 }).map((_, i) => (
                     <li key={i} className="px-6 py-4 flex items-center gap-4">
-                      <span className="h-9 w-9 rounded-full bg-gold/15 text-gold flex items-center justify-center shrink-0">
+                      <Skeleton className="h-9 w-9 rounded-full" />
+                      <div className="flex-1 space-y-2">
+                        <Skeleton className="h-3 w-1/3" />
+                        <Skeleton className="h-3 w-2/3" />
+                      </div>
+                      <Skeleton className="h-3 w-12" />
+                    </li>
+                  ))
+                : (data?.activity ?? []).length === 0
+                ? (
+                  <li className="px-6 py-10 text-center text-sm text-foreground/60">No recent activity yet.</li>
+                )
+                : (data?.activity ?? []).map((a, i) => {
+                    const Icon = a.kind === "booking" ? Calendar : a.kind === "enquiry" ? MessageSquare : Plane;
+                    return (
+                      <li key={i} className="px-6 py-4 flex items-center gap-4">
+                        <span className="h-9 w-9 rounded-full bg-gold/15 text-gold flex items-center justify-center shrink-0">
+                          <Icon className="w-4 h-4" strokeWidth={1.6} />
+                        </span>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm text-foreground truncate">{a.title}</p>
+                          <p className="text-xs text-foreground/60 truncate">{a.subtitle}</p>
+                        </div>
+                        <span className="text-[11px] text-foreground/50 shrink-0">{formatRelative(a.at)}</span>
+                      </li>
+                    );
+                  })}
+            </ul>
+          </div>
+
+          <div className="bg-background border border-border rounded-xl">
+            <div className="px-6 py-5 border-b border-border">
+              <h2 className="font-serif text-xl text-foreground">Quick Tasks</h2>
+            </div>
+            <ul className="p-3 space-y-1">
+              {quickTasks.map((t) => {
+                const Icon = t.icon;
+                return (
+                  <li key={t.to}>
+                    <Link
+                      to={t.to as any}
+                      className="group flex items-center gap-3 p-3 rounded-lg hover:bg-muted/60 transition-colors"
+                    >
+                      <span className="h-9 w-9 rounded-lg bg-cream text-foreground flex items-center justify-center shrink-0 group-hover:bg-gold group-hover:text-gold-foreground transition-colors">
                         <Icon className="w-4 h-4" strokeWidth={1.6} />
                       </span>
-                      <div className="min-w-0 flex-1">
-                        <p className="text-sm text-foreground truncate">{a.title}</p>
-                        <p className="text-xs text-foreground/60 truncate">{a.subtitle}</p>
-                      </div>
-                      <span className="text-[11px] text-foreground/50 shrink-0">{formatRelative(a.at)}</span>
-                    </li>
-                  );
-                })}
-          </ul>
+                      <span className="text-sm text-foreground flex-1">{t.label}</span>
+                      <ArrowRight className="w-4 h-4 text-foreground/40 group-hover:text-gold transition-colors" />
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
         </div>
 
-        <div className="bg-background border border-border rounded-xl">
-          <div className="px-6 py-5 border-b border-border">
-            <h2 className="font-serif text-xl text-foreground">Quick Tasks</h2>
-          </div>
-          <ul className="p-3 space-y-1">
-            {quickTasks.map((t) => {
+        <aside className="space-y-3">
+          <h2 className="font-serif text-xl text-foreground">Admin Tools</h2>
+          <div className="flex flex-col gap-3">
+            {tools.map((t) => {
               const Icon = t.icon;
               return (
-                <li key={t.to}>
-                  <Link
-                    to={t.to as any}
-                    className="group flex items-center gap-3 p-3 rounded-lg hover:bg-muted/60 transition-colors"
-                  >
-                    <span className="h-9 w-9 rounded-lg bg-cream text-foreground flex items-center justify-center shrink-0 group-hover:bg-gold group-hover:text-gold-foreground transition-colors">
-                      <Icon className="w-4 h-4" strokeWidth={1.6} />
-                    </span>
-                    <span className="text-sm text-foreground flex-1">{t.label}</span>
-                    <ArrowRight className="w-4 h-4 text-foreground/40 group-hover:text-gold transition-colors" />
-                  </Link>
-                </li>
+                <Link
+                  key={t.to}
+                  to={t.to as any}
+                  className="group flex items-start gap-3 bg-background border border-border rounded-xl p-4 hover:border-gold/50 hover:shadow-md transition-all"
+                >
+                  <span className="h-10 w-10 rounded-lg bg-forest/10 text-forest flex items-center justify-center shrink-0 group-hover:bg-gold/15 group-hover:text-gold transition-colors">
+                    <Icon className="w-5 h-5" strokeWidth={1.6} />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="font-serif text-base text-foreground">{t.label}</p>
+                    <p className="text-xs text-foreground/60 mt-0.5">{t.blurb}</p>
+                  </div>
+                  <ArrowRight className="w-4 h-4 text-foreground/30 group-hover:text-gold transition-colors mt-1" />
+                </Link>
               );
             })}
-          </ul>
-        </div>
-      </section>
-
-      {/* Admin tools */}
-      <section>
-        <h2 className="font-serif text-xl text-foreground mb-4">Admin Tools</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {tools.map((t) => {
-            const Icon = t.icon;
-            return (
-              <Link
-                key={t.to}
-                to={t.to as any}
-                className="group bg-background border border-border rounded-xl p-5 hover:border-gold/50 hover:-translate-y-0.5 hover:shadow-md transition-all"
-              >
-                <span className="h-10 w-10 rounded-lg bg-forest/10 text-forest flex items-center justify-center mb-4 group-hover:bg-gold/15 group-hover:text-gold transition-colors">
-                  <Icon className="w-5 h-5" strokeWidth={1.6} />
-                </span>
-                <p className="font-serif text-lg text-foreground">{t.label}</p>
-                <p className="text-xs text-foreground/60 mt-1">{t.blurb}</p>
-              </Link>
-            );
-          })}
-        </div>
+          </div>
+        </aside>
       </section>
     </div>
   );

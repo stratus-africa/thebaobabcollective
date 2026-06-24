@@ -61,6 +61,8 @@ export const Route = createFileRoute("/journeys/$slug")({
 function JourneyPage() {
   const { journey } = Route.useLoaderData();
   const others = journeys.filter((j) => j.slug !== journey.slug);
+  const { data: destinations } = useQuery(featuredDestinationsQuery);
+  const featuredDestinations = (destinations ?? []).slice(0, 3);
 
   return (
     <div className="bg-background min-h-screen">

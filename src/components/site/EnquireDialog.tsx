@@ -31,6 +31,7 @@ export function EnquireDialog({
   sourceUrl,
   compact,
   autosaveKey,
+  context,
 }: EnquireDialogProps) {
   const isControlled = openProp !== undefined;
   const [internalOpen, setInternalOpen] = useState(false);

@@ -53,7 +53,7 @@ export function Footer() {
             <li><Link to="/about" className="text-[11px] tracking-wider uppercase text-foreground/75 hover:text-gold">About</Link></li>
             <li><Link to="/journeys" className="text-[11px] tracking-wider uppercase text-foreground/75 hover:text-gold">Journeys</Link></li>
             <li><Link to="/journal" className="text-[11px] tracking-wider uppercase text-foreground/75 hover:text-gold">Journal</Link></li>
-            <li><Link to="/about-africa" className="text-[11px] tracking-wider uppercase text-foreground/75 hover:text-gold">About Africa</Link></li>
+            
             <li><Link to="/contact" className="text-[11px] tracking-wider uppercase text-foreground/75 hover:text-gold">Contact</Link></li>
           </ul>
         </nav>

@@ -324,14 +324,6 @@ export function EnquireForm({
             error={errors.phone}
             placeholder="+27 00 000 0000"
           />
-          <Field
-            label="How did you hear about us?"
-            name="referral_source"
-            as="select"
-            options={REFERRALS}
-            value={values.referral_source}
-            onChange={(v) => setField("referral_source", v)}
-          />
         </div>
       </fieldset>
 

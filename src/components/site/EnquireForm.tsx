@@ -93,6 +93,7 @@ export function EnquireForm({
   compact,
   className,
   autosaveKey,
+  context,
 }: EnquireFormProps) {
   const submit = useServerFn(submitEnquiry);
   const [loading, setLoading] = useState(false);

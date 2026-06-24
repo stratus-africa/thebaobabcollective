@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import { useServerFn } from "@tanstack/react-start";
+import { useQuery } from "@tanstack/react-query";
 import { Mail, Phone } from "lucide-react";
 import {
   Dialog,
@@ -9,10 +11,10 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { EnquireForm, type EnquireFormProps } from "@/components/site/EnquireForm";
+import { getSiteSettings, type SiteSettings } from "@/lib/site-settings.functions";
 
-const CONTACT_EMAIL = "info@thebaobabcollective.co.uk";
-const CONTACT_PHONE = "+44 (0) 20 0000 0000";
-const CONTACT_PHONE_TEL = "+442000000000";
+const FALLBACK_EMAIL = "info@thebaobabcollective.co.uk";
+const FALLBACK_PHONE = "+44 (0) 20 0000 0000";
 
 export type EnquireDialogProps = EnquireFormProps & {
   trigger?: ReactNode;

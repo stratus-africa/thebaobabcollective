@@ -71,7 +71,9 @@ export const Route = createFileRoute("/itineraries/$slug")({
 
 function ItineraryPage() {
   const { itinerary } = Route.useLoaderData();
+  const { itinerary: prefillFromQuery } = Route.useSearch();
   const cat = (itinerary as any).category;
+  const enquiryName = prefillFromQuery || itinerary.name;
 
   return (
     <div className="bg-background min-h-screen">
@@ -201,10 +203,10 @@ function ItineraryPage() {
               <p className="text-[11px] tracking-[0.3em] uppercase text-terracotta mb-4">Enquire</p>
               <h2 className="font-serif text-4xl md:text-5xl text-foreground mb-4">Speak with a Journey Designer</h2>
               <p className="text-foreground/70">
-                Share a few details about your dream {itinerary.name} experience — we'll respond within 24 hours.
+                Share a few details about your dream {enquiryName} experience — we'll respond within 24 hours.
               </p>
             </div>
-            <EnquireForm itineraryName={itinerary.name} />
+            <EnquireForm itineraryName={enquiryName} />
           </div>
         </section>
       </main>

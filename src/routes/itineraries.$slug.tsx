@@ -191,7 +191,7 @@ function ItineraryPage() {
             </aside>
           </div>
         </section>
-        </section>
+
 
         {/* Share */}
         <section className="border-t border-border/40 py-10">

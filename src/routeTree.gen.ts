@@ -24,6 +24,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as JourneysSlugRouteImport } from './routes/journeys.$slug'
 import { Route as JournalSlugRouteImport } from './routes/journal.$slug'
+import { Route as ItinerariesSlugRouteImport } from './routes/itineraries.$slug'
 import { Route as BookingSuccessRouteImport } from './routes/booking.success'
 import { Route as BookSlugRouteImport } from './routes/book.$slug'
 import { Route as AuthenticatedMyBookingsRouteImport } from './routes/_authenticated/my-bookings'
@@ -110,6 +111,11 @@ const JournalSlugRoute = JournalSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => JournalRoute,
 } as any)
+const ItinerariesSlugRoute = ItinerariesSlugRouteImport.update({
+  id: '/itineraries/$slug',
+  path: '/itineraries/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BookingSuccessRoute = BookingSuccessRouteImport.update({
   id: '/booking/success',
   path: '/booking/success',
@@ -189,6 +195,7 @@ export interface FileRoutesByFullPath {
   '/my-bookings': typeof AuthenticatedMyBookingsRoute
   '/book/$slug': typeof BookSlugRoute
   '/booking/success': typeof BookingSuccessRoute
+  '/itineraries/$slug': typeof ItinerariesSlugRoute
   '/journal/$slug': typeof JournalSlugRoute
   '/journeys/$slug': typeof JourneysSlugRoute
   '/admin/bookings': typeof AuthenticatedAdminBookingsRoute
@@ -215,6 +222,7 @@ export interface FileRoutesByTo {
   '/my-bookings': typeof AuthenticatedMyBookingsRoute
   '/book/$slug': typeof BookSlugRoute
   '/booking/success': typeof BookingSuccessRoute
+  '/itineraries/$slug': typeof ItinerariesSlugRoute
   '/journal/$slug': typeof JournalSlugRoute
   '/journeys/$slug': typeof JourneysSlugRoute
   '/admin/bookings': typeof AuthenticatedAdminBookingsRoute
@@ -244,6 +252,7 @@ export interface FileRoutesById {
   '/_authenticated/my-bookings': typeof AuthenticatedMyBookingsRoute
   '/book/$slug': typeof BookSlugRoute
   '/booking/success': typeof BookingSuccessRoute
+  '/itineraries/$slug': typeof ItinerariesSlugRoute
   '/journal/$slug': typeof JournalSlugRoute
   '/journeys/$slug': typeof JourneysSlugRoute
   '/_authenticated/admin/bookings': typeof AuthenticatedAdminBookingsRoute
@@ -273,6 +282,7 @@ export interface FileRouteTypes {
     | '/my-bookings'
     | '/book/$slug'
     | '/booking/success'
+    | '/itineraries/$slug'
     | '/journal/$slug'
     | '/journeys/$slug'
     | '/admin/bookings'
@@ -299,6 +309,7 @@ export interface FileRouteTypes {
     | '/my-bookings'
     | '/book/$slug'
     | '/booking/success'
+    | '/itineraries/$slug'
     | '/journal/$slug'
     | '/journeys/$slug'
     | '/admin/bookings'
@@ -327,6 +338,7 @@ export interface FileRouteTypes {
     | '/_authenticated/my-bookings'
     | '/book/$slug'
     | '/booking/success'
+    | '/itineraries/$slug'
     | '/journal/$slug'
     | '/journeys/$slug'
     | '/_authenticated/admin/bookings'
@@ -354,6 +366,7 @@ export interface RootRouteChildren {
   TestimonialsRoute: typeof TestimonialsRoute
   BookSlugRoute: typeof BookSlugRoute
   BookingSuccessRoute: typeof BookingSuccessRoute
+  ItinerariesSlugRoute: typeof ItinerariesSlugRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
 }
 
@@ -463,6 +476,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/journal/$slug'
       preLoaderRoute: typeof JournalSlugRouteImport
       parentRoute: typeof JournalRoute
+    }
+    '/itineraries/$slug': {
+      id: '/itineraries/$slug'
+      path: '/itineraries/$slug'
+      fullPath: '/itineraries/$slug'
+      preLoaderRoute: typeof ItinerariesSlugRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/booking/success': {
       id: '/booking/success'
@@ -620,6 +640,7 @@ const rootRouteChildren: RootRouteChildren = {
   TestimonialsRoute: TestimonialsRoute,
   BookSlugRoute: BookSlugRoute,
   BookingSuccessRoute: BookingSuccessRoute,
+  ItinerariesSlugRoute: ItinerariesSlugRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
 }
 export const routeTree = rootRouteImport

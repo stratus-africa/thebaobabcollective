@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { adminDashboard } from "@/lib/admin.functions";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 import {
   Calendar, MessageSquare, Plane, Mail, DollarSign, Clock,
   PlusCircle, CheckCircle2, Compass, FileText, ArrowRight,
@@ -30,6 +31,7 @@ function Skeleton({ className = "" }: { className?: string }) {
 function Dashboard() {
   const fn = useServerFn(adminDashboard);
   const { data, isLoading } = useQuery({ queryKey: ["admin-dashboard"], queryFn: () => fn() });
+  const { formatPrice } = useSiteSettings();
 
   const stats = [
     {
@@ -40,7 +42,7 @@ function Dashboard() {
     },
     {
       label: "Total Revenue",
-      value: data?.total_revenue != null ? `$${data.total_revenue.toLocaleString()}` : undefined,
+      value: data?.total_revenue != null ? formatPrice(data.total_revenue) : undefined,
       icon: DollarSign,
       tone: "bg-terracotta/15 text-terracotta",
     },

@@ -90,12 +90,12 @@ function BookPage() {
 
             <div className="bg-cream p-5 border border-border">
               <p className="text-sm text-foreground/80">
-                A refundable deposit of <span className="font-medium text-foreground">${itinerary.deposit_usd?.toLocaleString()}</span> will secure your booking. The balance is due 60 days before travel.
+                A refundable deposit of <span className="font-medium text-foreground">{formatPrice(itinerary.deposit_usd)}</span> will secure your booking. The balance is due 60 days before travel.
               </p>
             </div>
 
             <Button type="submit" disabled={loading} size="lg" className="w-full bg-gold text-gold-foreground hover:bg-gold/90 uppercase tracking-[0.25em] text-[12px]">
-              {loading ? "Preparing checkout…" : `Pay deposit · $${itinerary.deposit_usd?.toLocaleString()}`}
+              {loading ? "Preparing checkout…" : `Pay deposit · ${formatPrice(itinerary.deposit_usd)}`}
             </Button>
           </form>
         </section>

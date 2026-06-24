@@ -2,15 +2,15 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Mail, Phone, Instagram, Facebook } from "lucide-react";
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
-import { EnquireDialog } from "@/components/site/EnquireDialog";
+import { ContactForm } from "@/components/site/ContactForm";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
-      { title: "Enquire — The Baobab Collective" },
-      { name: "description", content: "Let's plan your safari. Get in touch with The Baobab Collective to begin designing your bespoke African journey." },
-      { property: "og:title", content: "Plan Your Journey — The Baobab Collective" },
-      { property: "og:description", content: "Tell us about your dream safari and we'll craft a journey just for you." },
+      { title: "Contact Us — The Baobab Collective" },
+      { name: "description", content: "Get in touch with The Baobab Collective. We're here to help plan your bespoke African journey." },
+      { property: "og:title", content: "Contact Us — The Baobab Collective" },
+      { property: "og:description", content: "Reach out and we'll be in touch within 24 hours." },
       { property: "og:url", content: "/contact" },
     ],
     links: [{ rel: "canonical", href: "/contact" }],
@@ -30,11 +30,11 @@ function ContactPage() {
                 We'd love to hear from you
               </p>
               <h1 className="font-serif text-5xl md:text-6xl text-foreground leading-[1.05] mb-8">
-                Let's Plan<br />Your Journey
+                Contact Us
               </h1>
               <p className="text-foreground/75 mb-8 leading-relaxed">
-                Tell us a little about who's travelling, when, and the kind of experience you're after.
-                One of our journey designers will respond within 24 hours with first ideas and next steps.
+                Whether you have a question, want to discuss a journey, or just want to say hello —
+                drop us a message and one of our team will respond within 24 hours.
               </p>
               <ul className="space-y-5 text-foreground/80">
                 <li className="flex gap-4">
@@ -68,25 +68,15 @@ function ContactPage() {
               </ul>
             </div>
 
-            <div className="bg-background border border-border p-8 md:p-10">
-              <p className="text-[11px] tracking-[0.3em] uppercase text-terracotta mb-4">Start an enquiry</p>
+            <div>
+              <p className="text-[11px] tracking-[0.3em] uppercase text-terracotta mb-4">Get in touch</p>
               <h2 className="font-serif text-3xl md:text-4xl text-foreground mb-4">
-                Share Your Vision
+                Send us a message
               </h2>
               <p className="text-foreground/70 mb-8 leading-relaxed">
-                Open our detailed enquiry form — tell us who's travelling, when, your budget,
-                and the experiences you're dreaming of. We'll respond within 24 hours.
+                Fill in the form below and we'll get back to you as soon as we can.
               </p>
-              <EnquireDialog
-                trigger={
-                  <button
-                    type="button"
-                    className="w-full inline-flex items-center justify-center gap-2 bg-terracotta text-gold-foreground uppercase tracking-[0.25em] text-[12px] py-4 hover:bg-terracotta/90 transition-colors"
-                  >
-                    Open Enquiry Form
-                  </button>
-                }
-              />
+              <ContactForm />
             </div>
           </div>
         </section>

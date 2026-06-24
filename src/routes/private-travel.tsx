@@ -83,10 +83,10 @@ function PrivateTravelPage() {
       <Navbar />
       <main>
         <section className="bg-forest text-forest-foreground py-24 text-center px-6">
-          <p className="text-[11px] tracking-[0.3em] uppercase text-gold mb-4">Private Travel</p>
-          <h1 className="font-serif text-5xl md:text-6xl mb-5">Designed entirely around you.</h1>
+          <p className="text-[11px] tracking-[0.3em] uppercase text-gold mb-4">{c.eyebrow}</p>
+          <h1 className="font-serif text-5xl md:text-6xl mb-5">{c.title}</h1>
           <p className="max-w-2xl mx-auto text-forest-foreground/80">
-            For travellers who want something truly bespoke — every camp, guide and moment shaped to your story.
+            {c.subtitle}
           </p>
         </section>
 
@@ -96,9 +96,9 @@ function PrivateTravelPage() {
               <div className="w-16 h-16 mx-auto rounded-full bg-gold/15 flex items-center justify-center mb-6">
                 <Check className="w-7 h-7 text-gold" />
               </div>
-              <h2 className="font-serif text-3xl mb-3">Request received</h2>
+              <h2 className="font-serif text-3xl mb-3">{c.success_title}</h2>
               <p className="text-foreground/70 mb-6">
-                A confirmation has been sent to your inbox. One of our journey designers will reach out within 48 hours.
+                {c.success_body}
               </p>
             </div>
           </section>

@@ -11,7 +11,7 @@ import { Search, MapPin } from "lucide-react";
 
 const q = queryOptions({ queryKey: ["destinations"], queryFn: () => getDestinations() });
 
-export const Route = createFileRoute("/destinations")({
+export const Route = createFileRoute("/destinations/")({
   loader: ({ context }) => context.queryClient.ensureQueryData(q),
   head: () => ({
     meta: [

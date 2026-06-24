@@ -24,7 +24,7 @@ const searchSchema = z.object({
   sort: z.enum(["featured", "price-asc", "price-desc", "name-asc"]).optional().catch("featured"),
 });
 
-export const Route = createFileRoute("/lodges")({
+export const Route = createFileRoute("/lodges/")({
   validateSearch: zodValidator(searchSchema),
   loader: ({ context }) => context.queryClient.ensureQueryData(lodgesQuery),
   head: () => ({

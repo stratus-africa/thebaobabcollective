@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -7,14 +7,17 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
-import { Trash2, Plus, Pencil } from "lucide-react";
+import { Trash2, Plus, Pencil, Eye, Search, Star, MapPin, Image as ImageIcon } from "lucide-react";
 
 const TABLE_LABELS: Record<string, string> = {
   journey_categories: "Journey Categories",
-  itineraries: "Itineraries",
+  itineraries: "Journeys",
   journal_articles: "Articles",
   lodges: "Lodges",
   destinations: "Destinations",
@@ -22,82 +25,187 @@ const TABLE_LABELS: Record<string, string> = {
   faqs: "FAQs",
 };
 
-const SCHEMAS: Record<string, { name: string; label: string; type: "text" | "textarea" | "number" | "bool" | "array" | "json"; }[]> = {
-  journey_categories: [
-    { name: "slug", label: "Slug", type: "text" },
-    { name: "title", label: "Title", type: "text" },
-    { name: "tagline", label: "Tagline", type: "text" },
-    { name: "intro", label: "Intro", type: "textarea" },
-    { name: "hero_image", label: "Hero Image URL", type: "text" },
-    { name: "sort_order", label: "Sort", type: "number" },
-    { name: "published", label: "Published", type: "bool" },
-  ],
-  itineraries: [
-    { name: "category_id", label: "Category ID", type: "text" },
-    { name: "slug", label: "Slug", type: "text" },
-    { name: "name", label: "Name", type: "text" },
-    { name: "nights", label: "Nights", type: "text" },
-    { name: "description", label: "Description", type: "textarea" },
-    { name: "highlights", label: "Highlights (one per line)", type: "array" },
-    { name: "image", label: "Image URL", type: "text" },
-    { name: "price_from_usd", label: "Price from (USD)", type: "number" },
-    { name: "deposit_usd", label: "Deposit (USD)", type: "number" },
-    { name: "sort_order", label: "Sort", type: "number" },
-    { name: "published", label: "Published", type: "bool" },
-  ],
-  journal_articles: [
-    { name: "slug", label: "Slug", type: "text" },
-    { name: "title", label: "Title", type: "text" },
-    { name: "excerpt", label: "Excerpt", type: "textarea" },
-    { name: "image", label: "Image URL", type: "text" },
-    { name: "date", label: "Date", type: "text" },
-    { name: "read_time", label: "Read time", type: "text" },
-    { name: "category", label: "Category", type: "text" },
-    { name: "content", label: "Paragraphs (one per line)", type: "array" },
-    { name: "sort_order", label: "Sort", type: "number" },
-    { name: "published", label: "Published", type: "bool" },
-  ],
-  lodges: [
-    { name: "slug", label: "Slug", type: "text" },
-    { name: "name", label: "Name", type: "text" },
-    { name: "location", label: "Location", type: "text" },
-    { name: "description", label: "Description", type: "textarea" },
-    { name: "hero_image", label: "Hero image URL", type: "text" },
-    { name: "gallery", label: "Gallery URLs (one per line)", type: "array" },
-    { name: "amenities", label: "Amenities (one per line)", type: "array" },
-    { name: "price_from_usd", label: "Price from (USD)", type: "number" },
-    { name: "sort_order", label: "Sort", type: "number" },
-    { name: "published", label: "Published", type: "bool" },
-  ],
-  destinations: [
-    { name: "slug", label: "Slug", type: "text" },
-    { name: "name", label: "Name", type: "text" },
-    { name: "region", label: "Region", type: "text" },
-    { name: "country", label: "Country", type: "text" },
-    { name: "description", label: "Description", type: "textarea" },
-    { name: "image", label: "Image URL", type: "text" },
-    { name: "best_season", label: "Best season", type: "text" },
-    { name: "featured_trips", label: "Featured trips (one per line)", type: "array" },
-    { name: "sort_order", label: "Sort", type: "number" },
-    { name: "published", label: "Published", type: "bool" },
-  ],
-  testimonials: [
-    { name: "name", label: "Name", type: "text" },
-    { name: "location", label: "Location", type: "text" },
-    { name: "quote", label: "Quote", type: "textarea" },
-    { name: "rating", label: "Rating (1-5)", type: "number" },
-    { name: "trip_taken", label: "Trip", type: "text" },
-    { name: "sort_order", label: "Sort", type: "number" },
-    { name: "published", label: "Published", type: "bool" },
-  ],
-  faqs: [
-    { name: "category", label: "Category (planning|conservation|logistics)", type: "text" },
-    { name: "question", label: "Question", type: "text" },
-    { name: "answer", label: "Answer", type: "textarea" },
-    { name: "sort_order", label: "Sort", type: "number" },
-    { name: "published", label: "Published", type: "bool" },
-  ],
+const TABLE_SINGULAR: Record<string, string> = {
+  journey_categories: "Category",
+  itineraries: "Journey",
+  journal_articles: "Article",
+  lodges: "Lodge",
+  destinations: "Destination",
+  testimonials: "Testimonial",
+  faqs: "FAQ",
 };
+
+// Public-facing view paths per record (uses slug)
+const VIEW_PATH: Record<string, (row: any) => string | null> = {
+  itineraries: (r) => (r.slug ? `/journeys/${r.slug}` : null),
+  destinations: (r) => (r.slug ? `/destinations/${r.slug}` : null),
+  lodges: (r) => (r.slug ? `/lodges/${r.slug}` : null),
+  journal_articles: (r) => (r.slug ? `/journal/${r.slug}` : null),
+  journey_categories: (r) => (r.slug ? `/journeys?cat=${r.slug}` : null),
+  testimonials: () => null,
+  faqs: () => null,
+};
+
+// Field used as the "group" / category filter dropdown per table
+const GROUP_FIELD: Record<string, { field: string; label: string }> = {
+  destinations: { field: "region", label: "regions" },
+  lodges: { field: "location", label: "locations" },
+  itineraries: { field: "nights", label: "lengths" },
+  journal_articles: { field: "category", label: "categories" },
+  testimonials: { field: "location", label: "locations" },
+  faqs: { field: "category", label: "categories" },
+  journey_categories: { field: "slug", label: "categories" },
+};
+
+// Image field per table
+const IMAGE_FIELD: Record<string, string> = {
+  destinations: "image",
+  lodges: "hero_image",
+  itineraries: "image",
+  journal_articles: "image",
+};
+
+// Subtitle composer per table
+const SUBTITLE: Record<string, (r: any) => string> = {
+  destinations: (r) => [r.country, r.region].filter(Boolean).join(", "),
+  lodges: (r) => r.location ?? "",
+  itineraries: (r) => r.nights ?? "",
+  journal_articles: (r) => [r.category, r.date].filter(Boolean).join(" · "),
+  testimonials: (r) => r.location ?? "",
+  faqs: (r) => r.category ?? "",
+  journey_categories: (r) => r.tagline ?? "",
+};
+
+type FieldType = "text" | "textarea" | "number" | "bool" | "array" | "json";
+type FieldDef = { name: string; label: string; type: FieldType; placeholder?: string; icon?: "pin" | "image" | "hash" };
+
+// Grouped layout per table: form sections with rows of side-by-side fields
+const FORM_LAYOUT: Record<string, { rows: FieldDef[][] }> = {
+  destinations: {
+    rows: [
+      [{ name: "name", label: "Name", type: "text", placeholder: "e.g. Bali", icon: "pin" }],
+      [
+        { name: "country", label: "Country", type: "text", placeholder: "e.g. Indonesia" },
+        { name: "region", label: "Region", type: "text", placeholder: "e.g. Asia" },
+      ],
+      [
+        { name: "slug", label: "Slug", type: "text", placeholder: "auto-from-name" },
+        { name: "best_season", label: "Best Season", type: "text", placeholder: "e.g. May – Oct" },
+      ],
+      [{ name: "description", label: "Description", type: "textarea", placeholder: "Describe this destination…" }],
+      [{ name: "image", label: "Image URL", type: "text", placeholder: "https://example.com/image.jpg", icon: "image" }],
+      [{ name: "featured_trips", label: "Featured Trips (one per line)", type: "array" }],
+      [
+        { name: "sort_order", label: "Sort Order", type: "number", icon: "hash" },
+        { name: "published", label: "Active", type: "bool" },
+      ],
+    ],
+  },
+  lodges: {
+    rows: [
+      [{ name: "name", label: "Name", type: "text", placeholder: "e.g. Singita Sabi Sand", icon: "pin" }],
+      [
+        { name: "location", label: "Location", type: "text", placeholder: "e.g. Sabi Sand, South Africa" },
+        { name: "slug", label: "Slug", type: "text", placeholder: "auto-from-name" },
+      ],
+      [{ name: "description", label: "Description", type: "textarea", placeholder: "Describe this lodge…" }],
+      [{ name: "hero_image", label: "Hero Image URL", type: "text", placeholder: "https://example.com/image.jpg", icon: "image" }],
+      [{ name: "gallery", label: "Gallery URLs (one per line)", type: "array" }],
+      [{ name: "amenities", label: "Amenities (one per line)", type: "array" }],
+      [
+        { name: "price_from_usd", label: "Price from (USD)", type: "number" },
+        { name: "sort_order", label: "Sort Order", type: "number", icon: "hash" },
+      ],
+      [{ name: "published", label: "Active", type: "bool" }],
+    ],
+  },
+  itineraries: {
+    rows: [
+      [{ name: "name", label: "Name", type: "text", placeholder: "e.g. Okavango Reverie", icon: "pin" }],
+      [
+        { name: "nights", label: "Nights", type: "text", placeholder: "e.g. 8 nights" },
+        { name: "slug", label: "Slug", type: "text", placeholder: "auto-from-name" },
+      ],
+      [{ name: "category_id", label: "Category ID", type: "text", placeholder: "uuid of journey_categories row" }],
+      [{ name: "description", label: "Description", type: "textarea", placeholder: "Describe this journey…" }],
+      [{ name: "highlights", label: "Highlights (one per line)", type: "array" }],
+      [{ name: "image", label: "Image URL", type: "text", placeholder: "https://example.com/image.jpg", icon: "image" }],
+      [
+        { name: "price_from_usd", label: "Price from (USD)", type: "number" },
+        { name: "deposit_usd", label: "Deposit (USD)", type: "number" },
+      ],
+      [
+        { name: "sort_order", label: "Sort Order", type: "number", icon: "hash" },
+        { name: "published", label: "Active", type: "bool" },
+      ],
+    ],
+  },
+  journal_articles: {
+    rows: [
+      [{ name: "title", label: "Title", type: "text" }],
+      [
+        { name: "slug", label: "Slug", type: "text" },
+        { name: "category", label: "Category", type: "text" },
+      ],
+      [
+        { name: "date", label: "Date", type: "text", placeholder: "e.g. Oct 2026" },
+        { name: "read_time", label: "Read time", type: "text", placeholder: "e.g. 6 min" },
+      ],
+      [{ name: "excerpt", label: "Excerpt", type: "textarea" }],
+      [{ name: "image", label: "Image URL", type: "text", icon: "image" }],
+      [{ name: "content", label: "Paragraphs (one per line)", type: "array" }],
+      [
+        { name: "sort_order", label: "Sort Order", type: "number", icon: "hash" },
+        { name: "published", label: "Active", type: "bool" },
+      ],
+    ],
+  },
+  journey_categories: {
+    rows: [
+      [{ name: "title", label: "Title", type: "text" }],
+      [
+        { name: "slug", label: "Slug", type: "text" },
+        { name: "tagline", label: "Tagline", type: "text" },
+      ],
+      [{ name: "intro", label: "Intro", type: "textarea" }],
+      [{ name: "hero_image", label: "Hero Image URL", type: "text", icon: "image" }],
+      [
+        { name: "sort_order", label: "Sort Order", type: "number", icon: "hash" },
+        { name: "published", label: "Active", type: "bool" },
+      ],
+    ],
+  },
+  testimonials: {
+    rows: [
+      [{ name: "name", label: "Name", type: "text" }],
+      [
+        { name: "location", label: "Location", type: "text" },
+        { name: "trip_taken", label: "Trip", type: "text" },
+      ],
+      [{ name: "quote", label: "Quote", type: "textarea" }],
+      [
+        { name: "rating", label: "Rating (1–5)", type: "number" },
+        { name: "sort_order", label: "Sort Order", type: "number", icon: "hash" },
+      ],
+      [{ name: "published", label: "Active", type: "bool" }],
+    ],
+  },
+  faqs: {
+    rows: [
+      [{ name: "question", label: "Question", type: "text" }],
+      [{ name: "category", label: "Category", type: "text", placeholder: "planning | conservation | logistics" }],
+      [{ name: "answer", label: "Answer", type: "textarea" }],
+      [
+        { name: "sort_order", label: "Sort Order", type: "number", icon: "hash" },
+        { name: "published", label: "Active", type: "bool" },
+      ],
+    ],
+  },
+};
+
+function slugify(s: string) {
+  return s.toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+}
 
 export const Route = createFileRoute("/_authenticated/admin/content/$table")({
   component: ContentAdmin,
@@ -109,8 +217,22 @@ function ContentAdmin() {
   const upsert = useServerFn(adminUpsert);
   const del = useServerFn(adminDelete);
   const qc = useQueryClient();
+
   const [editing, setEditing] = useState<any | null>(null);
   const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const [groupFilter, setGroupFilter] = useState<string>("__all__");
+  const [featuredOnly, setFeaturedOnly] = useState(false);
+  const [activeOnly, setActiveOnly] = useState(false);
+
+  const layout = FORM_LAYOUT[table];
+  const flatFields = useMemo(() => (layout?.rows ?? []).flat(), [layout]);
+  const group = GROUP_FIELD[table];
+  const imageField = IMAGE_FIELD[table];
+  const subtitleFn = SUBTITLE[table] ?? (() => "");
+  const viewPath = VIEW_PATH[table] ?? (() => null);
+  const label = TABLE_LABELS[table] ?? table;
+  const singular = TABLE_SINGULAR[table] ?? "Item";
 
   const { data, isLoading } = useQuery({
     queryKey: ["admin", table],
@@ -119,19 +241,47 @@ function ContentAdmin() {
 
   const mUpsert = useMutation({
     mutationFn: (row: any) => upsert({ data: { table: table as any, row } }),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin", table] }); toast.success("Saved"); setOpen(false); },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["admin", table] });
+      toast.success("Saved");
+      setOpen(false);
+    },
     onError: (e: any) => toast.error(e.message ?? "Error"),
   });
   const mDel = useMutation({
     mutationFn: (id: string) => del({ data: { table: table as any, id } }),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin", table] }); toast.success("Deleted"); },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["admin", table] });
+      toast.success("Deleted");
+    },
   });
 
-  const fields = SCHEMAS[table] ?? [];
+  const groupOptions = useMemo(() => {
+    if (!group || !data) return [] as string[];
+    const set = new Set<string>();
+    data.forEach((r: any) => {
+      const v = r[group.field];
+      if (typeof v === "string" && v.trim()) set.add(v);
+    });
+    return Array.from(set).sort();
+  }, [data, group]);
+
+  const filtered = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    return (data ?? []).filter((r: any) => {
+      if (activeOnly && !r.published) return false;
+      if (featuredOnly && (r.sort_order ?? 0) <= 0) return false;
+      if (group && groupFilter !== "__all__" && r[group.field] !== groupFilter) return false;
+      if (!q) return true;
+      const title = r.name ?? r.title ?? r.question ?? "";
+      const sub = subtitleFn(r);
+      return (title + " " + sub).toLowerCase().includes(q);
+    });
+  }, [data, search, groupFilter, activeOnly, featuredOnly, group, subtitleFn]);
 
   const startCreate = () => {
     const blank: any = { id: "" };
-    fields.forEach((f) => {
+    flatFields.forEach((f) => {
       blank[f.name] = f.type === "bool" ? true : f.type === "number" ? 0 : f.type === "array" ? [] : "";
     });
     setEditing(blank);
@@ -144,7 +294,12 @@ function ContentAdmin() {
   const save = (e: React.FormEvent) => {
     e.preventDefault();
     const row: any = { ...editing };
-    fields.forEach((f) => {
+    // auto-slug if blank
+    if ("slug" in row && !row.slug) {
+      const seed = row.name ?? row.title ?? row.question ?? "";
+      if (seed) row.slug = slugify(String(seed));
+    }
+    flatFields.forEach((f) => {
       if (f.type === "number" && row[f.name] !== null && row[f.name] !== "") row[f.name] = Number(row[f.name]);
       if (f.type === "array" && typeof row[f.name] === "string") {
         row[f.name] = (row[f.name] as string).split("\n").map((s) => s.trim()).filter(Boolean);
@@ -153,68 +308,273 @@ function ContentAdmin() {
     mUpsert.mutate(row);
   };
 
-  const titleField = fields[0]?.name === "slug" ? fields[1]?.name : fields[0]?.name;
+  return (
+    <div>
+      {/* Page header */}
+      <div className="flex items-center justify-between gap-4 mb-6">
+        <div>
+          <h1 className="font-serif text-3xl">{label}</h1>
+          <p className="text-sm text-foreground/60 mt-1">
+            Manage your {label.toLowerCase()} catalog — create, edit, and publish.
+          </p>
+        </div>
+        <Button onClick={startCreate} className="bg-gold text-gold-foreground hover:bg-gold/90">
+          <Plus className="w-4 h-4 mr-1" /> Add {singular}
+        </Button>
+      </div>
+
+      {/* Filter bar */}
+      <div className="bg-background border border-border p-4 mb-6">
+        <div className="grid gap-3 md:grid-cols-[1fr_240px_auto]">
+          <div className="relative">
+            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-foreground/40" />
+            <Input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder={`Search ${label.toLowerCase()}…`}
+              className="pl-9"
+            />
+          </div>
+          {group ? (
+            <Select value={groupFilter} onValueChange={setGroupFilter}>
+              <SelectTrigger>
+                <SelectValue placeholder={`All ${group.label}`} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="__all__">All {group.label}</SelectItem>
+                {groupOptions.map((o) => (
+                  <SelectItem key={o} value={o}>{o}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          ) : <div />}
+          <div className="flex items-center gap-5 px-1">
+            <label className="flex items-center gap-2 text-sm cursor-pointer">
+              <Checkbox checked={featuredOnly} onCheckedChange={(v) => setFeaturedOnly(!!v)} />
+              <span>Featured Only</span>
+            </label>
+            <label className="flex items-center gap-2 text-sm cursor-pointer">
+              <Checkbox checked={activeOnly} onCheckedChange={(v) => setActiveOnly(!!v)} />
+              <span>Active Only</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      {/* Card grid */}
+      {isLoading ? (
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="border border-border bg-background overflow-hidden">
+              <Skeleton className="h-48 w-full" />
+              <div className="p-4 space-y-2">
+                <Skeleton className="h-5 w-2/3" />
+                <Skeleton className="h-4 w-1/2" />
+                <div className="flex gap-2 pt-2">
+                  <Skeleton className="h-8 w-16" />
+                  <Skeleton className="h-8 w-16" />
+                  <Skeleton className="h-8 w-16" />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : filtered.length === 0 ? (
+        <div className="border border-border bg-background p-16 text-center text-foreground/60">
+          No {label.toLowerCase()} match your filters.
+        </div>
+      ) : (
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {filtered.map((row: any) => {
+            const img = imageField ? row[imageField] : null;
+            const title = row.name ?? row.title ?? row.question ?? "Untitled";
+            const sub = subtitleFn(row);
+            const featured = (row.sort_order ?? 0) > 0;
+            const href = viewPath(row);
+            return (
+              <article
+                key={row.id}
+                className="group border border-border bg-background overflow-hidden flex flex-col transition-shadow hover:shadow-lg"
+              >
+                <div className="relative aspect-[16/10] bg-cream overflow-hidden">
+                  {img ? (
+                    <img
+                      src={img}
+                      alt={title}
+                      loading="lazy"
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-foreground/30">
+                      <ImageIcon className="w-10 h-10" />
+                    </div>
+                  )}
+                  {featured && (
+                    <Badge className="absolute top-3 right-3 bg-gold text-gold-foreground hover:bg-gold border-0 shadow">
+                      <Star className="w-3 h-3 mr-1 fill-current" /> Featured
+                    </Badge>
+                  )}
+                  {!row.published && (
+                    <Badge variant="secondary" className="absolute top-3 left-3">Draft</Badge>
+                  )}
+                </div>
+                <div className="p-4 flex-1 flex flex-col">
+                  <h3 className="font-serif text-lg leading-tight">{title}</h3>
+                  {sub && (
+                    <p className="text-sm text-foreground/60 mt-1 flex items-center gap-1">
+                      <MapPin className="w-3.5 h-3.5 opacity-60" /> {sub}
+                    </p>
+                  )}
+                  {group && row[group.field] && (
+                    <p className="text-xs text-foreground/50 mt-2">
+                      <span className="uppercase tracking-wider">{group.field.replace("_", " ")}: </span>
+                      {row[group.field]}
+                    </p>
+                  )}
+                  <div className="mt-4 pt-3 border-t border-border flex gap-2">
+                    <Button variant="outline" size="sm" onClick={() => startEdit(row)}>
+                      <Pencil className="w-3.5 h-3.5 mr-1" /> Edit
+                    </Button>
+                    {href ? (
+                      <Button variant="outline" size="sm" asChild>
+                        <a href={href} target="_blank" rel="noreferrer">
+                          <Eye className="w-3.5 h-3.5 mr-1" /> View
+                        </a>
+                      </Button>
+                    ) : null}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="ml-auto text-destructive border-destructive/30 hover:bg-destructive/5 hover:text-destructive"
+                      onClick={() => confirm(`Delete "${title}"?`) && mDel.mutate(row.id)}
+                    >
+                      <Trash2 className="w-3.5 h-3.5 mr-1" /> Delete
+                    </Button>
+                  </div>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Create / Edit dialog */}
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="max-w-3xl max-h-[92vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="font-serif text-2xl">
+              {editing?.id ? `Edit ${singular}` : `New ${singular}`}
+            </DialogTitle>
+            <DialogDescription>
+              {editing?.id
+                ? `Update the details for this ${singular.toLowerCase()}.`
+                : `Create a new ${singular.toLowerCase()} to showcase on your platform.`}
+            </DialogDescription>
+          </DialogHeader>
+
+          {editing && layout && (
+            <form onSubmit={save} className="space-y-5 pt-2">
+              <div className="bg-cream/40 border border-border p-5 space-y-4">
+                {layout.rows.map((row, ri) => (
+                  <div
+                    key={ri}
+                    className={row.length > 1 ? "grid gap-4 sm:grid-cols-2" : ""}
+                  >
+                    {row.map((f) => (
+                      <FieldInput
+                        key={f.name}
+                        field={f}
+                        value={editing[f.name]}
+                        onChange={(v) => setEditing({ ...editing, [f.name]: v })}
+                      />
+                    ))}
+                  </div>
+                ))}
+              </div>
+
+              <DialogFooter className="gap-2">
+                <Button type="button" variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
+                <Button
+                  type="submit"
+                  disabled={mUpsert.isPending}
+                  className="bg-gold text-gold-foreground hover:bg-gold/90"
+                >
+                  {mUpsert.isPending ? "Saving…" : editing?.id ? `Update ${singular}` : `Create ${singular}`}
+                </Button>
+              </DialogFooter>
+            </form>
+          )}
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
+
+function FieldInput({
+  field,
+  value,
+  onChange,
+}: {
+  field: FieldDef;
+  value: any;
+  onChange: (v: any) => void;
+}) {
+  if (field.type === "bool") {
+    return (
+      <div className="flex items-center gap-2 pt-6">
+        <Checkbox checked={!!value} onCheckedChange={(v) => onChange(!!v)} id={field.name} />
+        <Label htmlFor={field.name} className="cursor-pointer">{field.label}</Label>
+      </div>
+    );
+  }
+  const iconEl =
+    field.icon === "pin" ? <MapPin className="w-4 h-4" /> :
+    field.icon === "image" ? <ImageIcon className="w-4 h-4" /> :
+    field.icon === "hash" ? <span className="text-xs">#</span> : null;
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="font-serif text-3xl">{TABLE_LABELS[table]}</h1>
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={startCreate} className="bg-gold text-gold-foreground hover:bg-gold/90"><Plus className="w-4 h-4 mr-1" /> New</Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-            <DialogHeader><DialogTitle>{editing?.id ? "Edit" : "Create"}</DialogTitle></DialogHeader>
-            {editing && (
-              <form onSubmit={save} className="space-y-4">
-                {fields.map((f) => (
-                  <div key={f.name}>
-                    <Label>{f.label}</Label>
-                    {f.type === "textarea" ? (
-                      <Textarea rows={4} value={editing[f.name] ?? ""} onChange={(e) => setEditing({ ...editing, [f.name]: e.target.value })} />
-                    ) : f.type === "array" ? (
-                      <Textarea rows={4} value={Array.isArray(editing[f.name]) ? (editing[f.name] as string[]).join("\n") : editing[f.name] ?? ""} onChange={(e) => setEditing({ ...editing, [f.name]: e.target.value })} />
-                    ) : f.type === "bool" ? (
-                      <div className="pt-1"><Checkbox checked={!!editing[f.name]} onCheckedChange={(v) => setEditing({ ...editing, [f.name]: !!v })} /></div>
-                    ) : f.type === "number" ? (
-                      <Input type="number" value={editing[f.name] ?? 0} onChange={(e) => setEditing({ ...editing, [f.name]: e.target.value })} />
-                    ) : (
-                      <Input value={editing[f.name] ?? ""} onChange={(e) => setEditing({ ...editing, [f.name]: e.target.value })} />
-                    )}
-                  </div>
-                ))}
-                <Button type="submit" disabled={mUpsert.isPending} className="w-full">{mUpsert.isPending ? "Saving…" : "Save"}</Button>
-              </form>
-            )}
-          </DialogContent>
-        </Dialog>
-      </div>
-
-      {isLoading && <p>Loading…</p>}
-      <div className="bg-background border border-border overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead className="bg-cream">
-            <tr className="text-left text-[11px] tracking-[0.2em] uppercase text-foreground/70">
-              <th className="p-3">{titleField}</th>
-              <th className="p-3">Published</th>
-              <th className="p-3 w-32"></th>
-            </tr>
-          </thead>
-          <tbody>
-            {data?.map((row: any) => (
-              <tr key={row.id} className="border-t border-border">
-                <td className="p-3">{row[titleField!]}</td>
-                <td className="p-3">{row.published ? "Yes" : "—"}</td>
-                <td className="p-3 text-right">
-                  <button onClick={() => startEdit(row)} className="text-foreground/60 hover:text-foreground mr-3"><Pencil className="w-4 h-4 inline" /></button>
-                  <button onClick={() => confirm("Delete?") && mDel.mutate(row.id)} className="text-foreground/60 hover:text-destructive"><Trash2 className="w-4 h-4 inline" /></button>
-                </td>
-              </tr>
-            ))}
-            {data?.length === 0 && <tr><td colSpan={3} className="p-10 text-center text-foreground/60">No rows.</td></tr>}
-          </tbody>
-        </table>
-      </div>
+      <Label className="mb-1.5 block">{field.label}</Label>
+      {field.type === "textarea" ? (
+        <Textarea
+          rows={4}
+          value={value ?? ""}
+          placeholder={field.placeholder}
+          onChange={(e) => onChange(e.target.value)}
+        />
+      ) : field.type === "array" ? (
+        <Textarea
+          rows={4}
+          value={Array.isArray(value) ? (value as string[]).join("\n") : value ?? ""}
+          placeholder={field.placeholder ?? "One per line"}
+          onChange={(e) => onChange(e.target.value)}
+        />
+      ) : field.type === "number" ? (
+        <div className="relative">
+          {iconEl && (
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/40">{iconEl}</span>
+          )}
+          <Input
+            type="number"
+            value={value ?? 0}
+            placeholder={field.placeholder}
+            onChange={(e) => onChange(e.target.value)}
+            className={iconEl ? "pl-9" : ""}
+          />
+        </div>
+      ) : (
+        <div className="relative">
+          {iconEl && (
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/40">{iconEl}</span>
+          )}
+          <Input
+            value={value ?? ""}
+            placeholder={field.placeholder}
+            onChange={(e) => onChange(e.target.value)}
+            className={iconEl ? "pl-9" : ""}
+          />
+        </div>
+      )}
     </div>
   );
 }

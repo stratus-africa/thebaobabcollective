@@ -19,10 +19,11 @@ export const Route = createFileRoute("/journeys/$slug")({
     if (!journey) throw notFound();
     return { journey };
   },
-  head: ({ loaderData }) => {
+  head: ({ loaderData, params }) => {
     const j = loaderData?.journey;
     const title = j ? `${j.title} Journeys — The Baobab Collective` : "Journey";
-    const desc = j?.intro ?? "Curated safari journey";
+    const desc = j?.intro?.slice(0, 160) ?? "Curated safari journey";
+    const url = `https://thebaobabcollective.co.uk/journeys/${params.slug}`;
     return {
       meta: [
         { title },
@@ -30,9 +31,14 @@ export const Route = createFileRoute("/journeys/$slug")({
         { property: "og:title", content: title },
         { property: "og:description", content: desc },
         { property: "og:type", content: "article" },
-        { property: "og:url", content: j ? `/journeys/${j.slug}` : "/journeys" },
+        { property: "og:url", content: url },
+        ...(j?.heroImage ? [{ property: "og:image", content: j.heroImage }] : []),
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: title },
+        { name: "twitter:description", content: desc },
+        ...(j?.heroImage ? [{ name: "twitter:image", content: j.heroImage }] : []),
       ],
-      links: j ? [{ rel: "canonical", href: `/journeys/${j.slug}` }] : [],
+      links: [{ rel: "canonical", href: url }],
     };
   },
   notFoundComponent: () => (
@@ -161,6 +167,33 @@ function JourneyPage() {
             </div>
           </div>
         </section>
+
+        {(() => {
+          const images = [journey.heroImage, ...(journey.itineraries as Itinerary[]).map((i) => i.image)].filter(Boolean);
+          const unique = Array.from(new Set(images));
+          if (unique.length < 2) return null;
+          return (
+            <section className="pb-20 bg-cream pt-16">
+              <div className="max-w-7xl mx-auto px-6 lg:px-10">
+                <p className="text-[11px] tracking-[0.3em] uppercase text-terracotta mb-3 text-center">Glimpses</p>
+                <h2 className="font-serif text-3xl md:text-4xl text-foreground mb-10 text-center">Gallery</h2>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+                  {unique.map((src, i) => (
+                    <div key={`${src}-${i}`} className="aspect-[4/3] overflow-hidden">
+                      <img
+                        src={src}
+                        alt={`${journey.title} — image ${i + 1}`}
+                        loading="lazy"
+                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
+          );
+        })()}
+
 
         <section className="bg-forest text-forest-foreground py-20 text-center">
           <div className="max-w-2xl mx-auto px-6">

@@ -25,10 +25,11 @@ export const Route = createFileRoute("/destinations/$slug")({
     await context.queryClient.ensureQueryData(allDestQuery);
     return { destination: d };
   },
-  head: ({ loaderData }) => {
+  head: ({ loaderData, params }) => {
     const d = loaderData?.destination;
     const title = d ? `${d.name}, ${d.country} — The Baobab Collective` : "Destination";
     const desc = d?.description?.slice(0, 160) ?? "Discover this destination.";
+    const url = `https://thebaobabcollective.co.uk/destinations/${params.slug}`;
     return {
       meta: [
         { title },
@@ -36,10 +37,14 @@ export const Route = createFileRoute("/destinations/$slug")({
         { property: "og:title", content: title },
         { property: "og:description", content: desc },
         { property: "og:type", content: "article" },
+        { property: "og:url", content: url },
         ...(d?.image ? [{ property: "og:image", content: d.image }] : []),
-        ...(d ? [{ property: "og:url", content: `/destinations/${d.slug}` }] : []),
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: title },
+        { name: "twitter:description", content: desc },
+        ...(d?.image ? [{ name: "twitter:image", content: d.image }] : []),
       ],
-      links: d ? [{ rel: "canonical", href: `/destinations/${d.slug}` }] : [],
+      links: [{ rel: "canonical", href: url }],
     };
   },
   notFoundComponent: () => (
@@ -102,18 +107,39 @@ function DestinationPage() {
         </section>
 
         <section className="py-20 md:py-24 bg-cream">
-          <div className="max-w-3xl mx-auto px-6 lg:px-10">
-            <p className="text-[11px] tracking-[0.3em] uppercase text-terracotta mb-5">About this place</p>
-            <p className="font-serif text-2xl md:text-3xl text-foreground leading-relaxed whitespace-pre-line">
-              {d.description}
-            </p>
+          <div className="max-w-5xl mx-auto px-6 lg:px-10 grid md:grid-cols-3 gap-10">
+            <div className="md:col-span-2">
+              <p className="text-[11px] tracking-[0.3em] uppercase text-terracotta mb-5">Overview</p>
+              <p className="font-serif text-2xl md:text-3xl text-foreground leading-relaxed whitespace-pre-line">
+                {d.description}
+              </p>
+            </div>
+            <aside className="md:border-l md:border-border/60 md:pl-10 space-y-6 text-sm">
+              <div>
+                <p className="text-[11px] tracking-[0.25em] uppercase text-foreground/60 mb-2">Country</p>
+                <p className="text-foreground/90">{d.country}</p>
+              </div>
+              <div>
+                <p className="text-[11px] tracking-[0.25em] uppercase text-foreground/60 mb-2">Region</p>
+                <p className="text-foreground/90">{d.region}</p>
+              </div>
+              {d.best_season && (
+                <div>
+                  <p className="text-[11px] tracking-[0.25em] uppercase text-foreground/60 mb-2 inline-flex items-center gap-2">
+                    <Calendar className="w-3 h-3 text-gold" /> Best time to go
+                  </p>
+                  <p className="text-foreground/90">{d.best_season}</p>
+                </div>
+              )}
+            </aside>
           </div>
         </section>
 
         {d.featured_trips?.length ? (
           <section className="py-16 md:py-20">
             <div className="max-w-5xl mx-auto px-6 lg:px-10">
-              <h2 className="font-serif text-3xl text-foreground mb-8 text-center">Featured Trips</h2>
+              <h2 className="font-serif text-3xl text-foreground mb-3 text-center">Activities & Experiences</h2>
+              <p className="text-center text-foreground/60 text-sm mb-8">A taste of what awaits in {d.name}</p>
               <div className="flex flex-wrap justify-center gap-3">
                 {d.featured_trips.map((t: string) => (
                   <span
@@ -127,6 +153,7 @@ function DestinationPage() {
             </div>
           </section>
         ) : null}
+
 
         <section className="bg-forest text-forest-foreground py-20 text-center">
           <div className="max-w-2xl mx-auto px-6">

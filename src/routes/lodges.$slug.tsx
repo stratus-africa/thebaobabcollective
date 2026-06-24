@@ -25,10 +25,11 @@ export const Route = createFileRoute("/lodges/$slug")({
     await context.queryClient.ensureQueryData(allLodgesQuery);
     return { lodge: l };
   },
-  head: ({ loaderData }) => {
+  head: ({ loaderData, params }) => {
     const l = loaderData?.lodge;
     const title = l ? `${l.name}, ${l.location} — The Baobab Collective` : "Lodge";
     const desc = l?.description?.slice(0, 160) ?? "A handpicked safari lodge.";
+    const url = `https://thebaobabcollective.co.uk/lodges/${params.slug}`;
     return {
       meta: [
         { title },
@@ -36,10 +37,14 @@ export const Route = createFileRoute("/lodges/$slug")({
         { property: "og:title", content: title },
         { property: "og:description", content: desc },
         { property: "og:type", content: "article" },
+        { property: "og:url", content: url },
         ...(l?.hero_image ? [{ property: "og:image", content: l.hero_image }] : []),
-        ...(l ? [{ property: "og:url", content: `/lodges/${l.slug}` }] : []),
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: title },
+        { name: "twitter:description", content: desc },
+        ...(l?.hero_image ? [{ name: "twitter:image", content: l.hero_image }] : []),
       ],
-      links: l ? [{ rel: "canonical", href: `/lodges/${l.slug}` }] : [],
+      links: [{ rel: "canonical", href: url }],
     };
   },
   notFoundComponent: () => (

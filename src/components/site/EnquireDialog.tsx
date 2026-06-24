@@ -45,6 +45,16 @@ export function EnquireDialog({
   const open = isControlled ? openProp! : internalOpen;
   const lastSyncedHash = useRef<string | null>(null);
 
+  const fetchSettings = useServerFn(getSiteSettings);
+  const { data: settings } = useQuery<SiteSettings>({
+    queryKey: ["site-settings"],
+    queryFn: () => fetchSettings(),
+    staleTime: 5 * 60_000,
+  });
+  const contactEmail = settings?.contact?.email || FALLBACK_EMAIL;
+  const contactPhone = settings?.contact?.phone || FALLBACK_PHONE;
+  const contactPhoneTel = settings?.contact?.phone_tel || contactPhone.replace(/[^\d+]/g, "");
+
   const setOpen = useCallback(
     (v: boolean) => {
       if (!isControlled) setInternalOpen(v);

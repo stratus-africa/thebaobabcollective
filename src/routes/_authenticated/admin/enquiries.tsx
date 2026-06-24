@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Search, CheckCircle2, Mail, Loader2, AlertCircle, Ban, RotateCcw } from "lucide-react";
 import { adminListEnquiries, adminUpdateEnquiry } from "@/lib/admin.functions";

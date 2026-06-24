@@ -257,11 +257,14 @@ function SignaturesSection({ signatures }: { signatures: AdventuresPage["signatu
   const difficulties = ["Easy", "Moderate", "Active", "Challenging"];
 
   const filtered = useMemo(() => {
-    const q = search.q.trim().toLowerCase();
+    const q = (search.q ?? "").trim().toLowerCase();
+    const region = search.region ?? "";
+    const terrain = search.terrain ?? "";
+    const difficulty = search.difficulty ?? "";
     return signatures.filter((s) => {
-      if (search.region && s.region !== search.region) return false;
-      if (search.terrain && s.terrain !== search.terrain) return false;
-      if (search.difficulty && s.difficulty !== search.difficulty) return false;
+      if (region && s.region !== region) return false;
+      if (terrain && s.terrain !== terrain) return false;
+      if (difficulty && s.difficulty !== difficulty) return false;
       if (q) {
         const haystack = `${s.name} ${s.region} ${s.description} ${(s.highlights || []).join(" ")}`.toLowerCase();
         if (!haystack.includes(q)) return false;
@@ -270,7 +273,7 @@ function SignaturesSection({ signatures }: { signatures: AdventuresPage["signatu
     });
   }, [signatures, search]);
 
-  const hasFilters = !!(search.q || search.region || search.terrain || search.difficulty);
+  const hasFilters = !!((search.q ?? "") || (search.region ?? "") || (search.terrain ?? "") || (search.difficulty ?? ""));
 
   const setParam = (k: "q" | "region" | "terrain" | "difficulty", v: string) =>
     navigate({

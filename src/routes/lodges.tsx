@@ -42,48 +42,59 @@ function LodgesPage() {
           </p>
         </section>
 
-        <section className="py-20">
-          <div className="max-w-7xl mx-auto px-6 lg:px-10 grid md:grid-cols-2 gap-10">
+        <section className="py-16 md:py-20">
+          <div className="max-w-7xl mx-auto px-6 lg:px-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
             {lodges.map((l) => (
-              <article key={l.id} className="bg-cream group">
-                <div className="aspect-[4/3] overflow-hidden">
-                  <img src={l.hero_image} alt={l.name} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+              <article
+                key={l.id}
+                className="group flex flex-col bg-background border border-border rounded-xl overflow-hidden transition-all duration-500 hover:-translate-y-1 hover:shadow-2xl hover:shadow-foreground/10 hover:border-gold/40"
+              >
+                <div className="relative aspect-[4/3] overflow-hidden">
+                  <img
+                    src={l.hero_image}
+                    alt={l.name}
+                    loading="lazy"
+                    className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  <span className="absolute top-4 left-4 inline-flex items-center gap-1.5 bg-background/90 backdrop-blur text-[10px] tracking-[0.2em] uppercase px-3 py-1.5 text-foreground rounded-full">
+                    <MapPin className="w-3 h-3 text-gold" /> {l.location}
+                  </span>
+                  {l.price_from_usd ? (
+                    <span className="absolute top-4 right-4 bg-gold text-gold-foreground text-[10px] tracking-[0.2em] uppercase px-3 py-1.5 rounded-full font-medium">
+                      From ${l.price_from_usd.toLocaleString()}
+                    </span>
+                  ) : null}
                 </div>
-                <div className="p-8">
-                  <div className="flex items-center gap-2 text-[11px] tracking-[0.2em] uppercase text-gold mb-3">
-                    <MapPin className="w-3 h-3" /> {l.location}
-                  </div>
-                  <h2 className="font-serif text-3xl text-foreground mb-3">{l.name}</h2>
-                  <p className="text-foreground/75 leading-relaxed mb-5 line-clamp-3">{l.description}</p>
+                <div className="p-6 md:p-7 flex flex-col flex-1">
+                  <h2 className="font-serif text-2xl md:text-3xl text-foreground mb-3 group-hover:text-gold transition-colors">{l.name}</h2>
+                  <p className="text-foreground/70 text-sm leading-relaxed mb-5 line-clamp-3 flex-1">{l.description}</p>
                   {l.amenities?.length ? (
-                    <ul className="flex flex-wrap gap-2 mb-6">
+                    <ul className="flex flex-wrap gap-1.5 mb-5">
                       {l.amenities.slice(0, 4).map((a) => (
-                        <li key={a} className="text-[11px] tracking-wider uppercase border border-border px-3 py-1 text-foreground/70">{a}</li>
+                        <li key={a} className="text-[10px] tracking-[0.15em] uppercase border border-border/70 px-2.5 py-1 text-foreground/70 rounded-full">{a}</li>
                       ))}
                     </ul>
                   ) : null}
-                  <div className="flex items-center justify-between gap-4 flex-wrap">
-                    {l.price_from_usd ? (
-                      <p className="text-sm text-foreground/70">
-                        <span className="text-foreground font-medium">${l.price_from_usd.toLocaleString()}</span> / night
-                      </p>
-                    ) : <span />}
+                  <div className="pt-4 border-t border-border/60 flex items-center justify-between gap-3">
+                    <p className="text-xs text-foreground/60">
+                      {l.price_from_usd ? <><span className="text-foreground/90">${l.price_from_usd.toLocaleString()}</span> / night</> : "On enquiry"}
+                    </p>
                     <Link
                       to="/contact"
                       search={{ subject: `Enquiry about ${l.name}` } as any}
-                      className="inline-flex items-center gap-2 border border-gold text-gold uppercase tracking-[0.25em] text-[11px] px-5 py-2.5 hover:bg-gold hover:text-gold-foreground"
+                      className="inline-flex items-center gap-2 text-[11px] tracking-[0.25em] uppercase text-foreground group-hover:text-gold transition-colors"
                     >
-                      Enquire <ArrowRight className="w-3 h-3" />
+                      Enquire <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
                     </Link>
                   </div>
-                  <div className="mt-5 pt-5 border-t border-border/40">
+                  <div className="mt-4 pt-4 border-t border-border/40">
                     <ShareButtons
                       title={`${l.name} — ${l.location}`}
                       description={l.description?.slice(0, 140)}
                       label="Share lodge"
                     />
                   </div>
-
                 </div>
               </article>
             ))}

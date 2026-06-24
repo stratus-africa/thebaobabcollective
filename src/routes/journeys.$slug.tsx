@@ -338,6 +338,14 @@ function JourneyPage() {
         </section>
       </main>
       <Footer />
+      <Lightbox
+        images={galleryItems}
+        open={lightboxOpen}
+        onOpenChange={setLightboxOpen}
+        index={lightboxIndex}
+        onIndexChange={setLightboxIndex}
+        title={`${journey.title} gallery`}
+      />
     </div>
   );
 }

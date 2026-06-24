@@ -18,6 +18,7 @@ import { Route as FaqRouteImport } from './routes/faq'
 import { Route as DestinationsRouteImport } from './routes/destinations'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AdventuresRouteImport } from './routes/adventures'
 import { Route as AboutAfricaRouteImport } from './routes/about-africa'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
@@ -79,6 +80,11 @@ const ContactRoute = ContactRouteImport.update({
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdventuresRoute = AdventuresRouteImport.update({
+  id: '/adventures',
+  path: '/adventures',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutAfricaRoute = AboutAfricaRouteImport.update({
@@ -176,6 +182,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/about-africa': typeof AboutAfricaRoute
+  '/adventures': typeof AdventuresRoute
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
   '/destinations': typeof DestinationsRoute
@@ -203,6 +210,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/about-africa': typeof AboutAfricaRoute
+  '/adventures': typeof AdventuresRoute
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
   '/destinations': typeof DestinationsRoute
@@ -231,6 +239,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/about-africa': typeof AboutAfricaRoute
+  '/adventures': typeof AdventuresRoute
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
   '/destinations': typeof DestinationsRoute
@@ -260,6 +269,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/about-africa'
+    | '/adventures'
     | '/auth'
     | '/contact'
     | '/destinations'
@@ -287,6 +297,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/about-africa'
+    | '/adventures'
     | '/auth'
     | '/contact'
     | '/destinations'
@@ -314,6 +325,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/about'
     | '/about-africa'
+    | '/adventures'
     | '/auth'
     | '/contact'
     | '/destinations'
@@ -343,6 +355,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
   AboutAfricaRoute: typeof AboutAfricaRoute
+  AdventuresRoute: typeof AdventuresRoute
   AuthRoute: typeof AuthRoute
   ContactRoute: typeof ContactRoute
   DestinationsRoute: typeof DestinationsRoute
@@ -421,6 +434,13 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/adventures': {
+      id: '/adventures'
+      path: '/adventures'
+      fullPath: '/adventures'
+      preLoaderRoute: typeof AdventuresRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about-africa': {
@@ -608,6 +628,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AboutRoute: AboutRoute,
   AboutAfricaRoute: AboutAfricaRoute,
+  AdventuresRoute: AdventuresRoute,
   AuthRoute: AuthRoute,
   ContactRoute: ContactRoute,
   DestinationsRoute: DestinationsRoute,

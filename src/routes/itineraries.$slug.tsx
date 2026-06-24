@@ -191,6 +191,19 @@ function ItineraryPage() {
             </aside>
           </div>
         </section>
+        </section>
+
+        {/* Share */}
+        <section className="border-t border-border/40 py-10">
+          <div className="max-w-7xl mx-auto px-6 lg:px-10 flex flex-wrap items-center justify-between gap-6">
+            <p className="font-serif text-xl text-foreground">Inspired? Share {itinerary.name} with a fellow traveller.</p>
+            <ShareButtons
+              title={`${itinerary.name} — The Baobab Collective`}
+              description={itinerary.description?.slice(0, 140)}
+              label="Share this journey"
+            />
+          </div>
+        </section>
 
         {/* Enquire Form */}
         <section id="enquire" className="bg-cream py-20 md:py-24 scroll-mt-24">
@@ -202,7 +215,7 @@ function ItineraryPage() {
                 Share a few details about your dream {enquiryName} experience — we'll respond within 24 hours.
               </p>
             </div>
-            <EnquireForm itineraryName={enquiryName} />
+            <EnquireForm defaultSubject={enquiryName} defaultDestination={enquiryName} />
           </div>
         </section>
       </main>
@@ -211,61 +224,3 @@ function ItineraryPage() {
   );
 }
 
-function EnquireForm({ itineraryName }: { itineraryName: string }) {
-  const submit = useServerFn(submitEnquiry);
-  const [loading, setLoading] = useState(false);
-
-  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setLoading(true);
-    const fd = new FormData(e.currentTarget);
-    try {
-      await submit({
-        data: {
-          name: String(fd.get("name") ?? ""),
-          email: String(fd.get("email") ?? ""),
-          phone: String(fd.get("phone") ?? ""),
-          destination: itineraryName,
-          message: String(fd.get("message") ?? ""),
-        },
-      });
-      toast.success("Enquiry sent — we'll be in touch shortly.");
-      (e.target as HTMLFormElement).reset();
-    } catch (err: any) {
-      toast.error(err?.message ?? "Could not submit enquiry.");
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  return (
-    <form onSubmit={onSubmit} className="bg-background p-8 md:p-10 space-y-5 shadow-sm">
-      <div className="grid md:grid-cols-2 gap-5">
-        <div>
-          <Label htmlFor="name">Full Name</Label>
-          <Input id="name" name="name" required className="mt-2" />
-        </div>
-        <div>
-          <Label htmlFor="email">Email</Label>
-          <Input id="email" name="email" type="email" required className="mt-2" />
-        </div>
-      </div>
-      <div>
-        <Label htmlFor="phone">Phone (optional)</Label>
-        <Input id="phone" name="phone" className="mt-2" />
-      </div>
-      <div>
-        <Label htmlFor="message">Tell us about your dream journey</Label>
-        <Textarea id="message" name="message" rows={5} required className="mt-2"
-          placeholder={`Travel dates, group size, special requests for ${itineraryName}...`} />
-      </div>
-      <button
-        type="submit"
-        disabled={loading}
-        className="inline-flex items-center gap-2 bg-gold text-gold-foreground uppercase tracking-[0.25em] text-[11px] px-8 py-4 hover:bg-gold/90 disabled:opacity-60"
-      >
-        {loading ? <><Loader2 className="w-3 h-3 animate-spin" /> Sending</> : <>Send Enquiry <ArrowRight className="w-3 h-3" /></>}
-      </button>
-    </form>
-  );
-}

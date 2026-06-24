@@ -1,17 +1,26 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
-import { Loader2, Save, Image as ImageIcon } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Loader2, Save, Image as ImageIcon, Shield, ShieldOff, Trash2, UserCog, Search } from "lucide-react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import {
   getSiteSettings,
   saveSiteSettings,
   type SiteSettings,
 } from "@/lib/site-settings.functions";
+import {
+  listAdminUsers, setUserRole, deleteAdminUser, type AdminUserRow,
+} from "@/lib/users-admin.functions";
 import { SITE_SETTINGS_QUERY_KEY } from "@/hooks/useSiteSettings";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated/admin/settings")({
   component: SettingsPage,
@@ -219,18 +228,6 @@ function SettingsPage() {
 }
 
 // ─── Users Management ────────────────────────────────────────────────
-import { useMemo } from "react";
-import { Shield, ShieldOff, Trash2, UserCog, Search } from "lucide-react";
-import {
-  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
-  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import {
-  listAdminUsers, setUserRole, deleteAdminUser, type AdminUserRow,
-} from "@/lib/users-admin.functions";
-import { supabase } from "@/integrations/supabase/client";
-
 function UsersManagement() {
   const queryClient = useQueryClient();
   const fetchUsers = useServerFn(listAdminUsers);

@@ -212,17 +212,26 @@ function ItineraryPage() {
           </div>
         </section>
 
-        {/* Enquire Form */}
-        <section id="enquire" className="bg-cream py-20 md:py-24 scroll-mt-24">
-          <div className="max-w-3xl mx-auto px-6">
-            <div className="text-center mb-10">
-              <p className="text-[11px] tracking-[0.3em] uppercase text-terracotta mb-4">Enquire</p>
-              <h2 className="font-serif text-4xl md:text-5xl text-foreground mb-4">Speak with a Journey Designer</h2>
-              <p className="text-foreground/70">
-                Share a few details about your dream {enquiryName} experience — we'll respond within 24 hours.
-              </p>
-            </div>
-            <EnquireForm defaultSubject={enquiryName} defaultDestination={enquiryName} />
+        {/* Enquire CTA */}
+        <section className="bg-cream py-20 md:py-24">
+          <div className="max-w-3xl mx-auto px-6 text-center">
+            <p className="text-[11px] tracking-[0.3em] uppercase text-terracotta mb-4">Enquire</p>
+            <h2 className="font-serif text-4xl md:text-5xl text-foreground mb-4">Speak with a Journey Designer</h2>
+            <p className="text-foreground/70 mb-8">
+              Share a few details about your dream {enquiryName} experience — we'll respond within 24 hours.
+            </p>
+            <EnquireDialog
+              defaultSubject={enquiryName}
+              defaultDestination={enquiryName}
+              trigger={
+                <button
+                  type="button"
+                  className="inline-flex items-center justify-center gap-2 bg-terracotta text-gold-foreground uppercase tracking-[0.25em] text-[12px] px-8 py-4 hover:bg-terracotta/90 transition-colors"
+                >
+                  Start Your Enquiry
+                </button>
+              }
+            />
           </div>
         </section>
       </main>

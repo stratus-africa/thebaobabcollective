@@ -3,9 +3,11 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
+import { ShareButtons } from "@/components/site/ShareButtons";
 import { getDestinations } from "@/lib/cms.functions";
 import { Input } from "@/components/ui/input";
 import { Search, MapPin } from "lucide-react";
+
 
 const q = queryOptions({ queryKey: ["destinations"], queryFn: () => getDestinations() });
 

@@ -2,7 +2,6 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Mail, Phone, Instagram, Facebook } from "lucide-react";
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
-import { EnquireForm } from "@/components/site/EnquireForm";
 import { EnquireDialog } from "@/components/site/EnquireDialog";
 
 export const Route = createFileRoute("/contact")({

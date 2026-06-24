@@ -1,33 +1,108 @@
+import { Link } from "@tanstack/react-router";
+import { Compass, MapPin, Mountain, Tent } from "lucide-react";
 import heroImg from "@/assets/hero-baobab.jpg";
+
+const proofAvatars = [
+  "https://randomuser.me/api/portraits/women/68.jpg",
+  "https://randomuser.me/api/portraits/men/32.jpg",
+  "https://randomuser.me/api/portraits/women/45.jpg",
+  "https://randomuser.me/api/portraits/men/76.jpg",
+  "https://randomuser.me/api/portraits/women/12.jpg",
+];
+
+const quickLinks = [
+  { to: "/destinations", label: "Destinations", icon: MapPin },
+  { to: "/journeys", label: "Journeys", icon: Compass },
+  { to: "/adventures", label: "Adventures", icon: Mountain },
+  { to: "/lodges", label: "Lodges", icon: Tent },
+] as const;
 
 export function Hero() {
   return (
-    <section className="relative h-[600px] md:h-[640px] w-full overflow-hidden">
-      <img
-        src={heroImg}
-        alt="Safari jeep beside baobab tree at sunset"
-        width={1920}
-        height={1080}
-        className="absolute inset-0 w-full h-full object-cover"
-      />
-      <div className="absolute inset-0 bg-gradient-to-r from-background/70 via-background/20 to-transparent" />
-      <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-10 h-full flex items-center">
-        <div className="max-w-lg animate-fade-up">
-          <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl text-foreground leading-[1.05]">
-            JOURNEYS<br />THAT CONNECT
-          </h1>
-          <div className="w-16 h-px bg-gold my-7" />
-          <p className="text-foreground/85 text-lg leading-relaxed mb-8">
-            Curated safari experiences<br />
-            that immerse, inspire and<br />
-            leave a lasting impact.
-          </p>
-          <a
-            href="#journeys"
-            className="inline-flex items-center bg-gold text-gold-foreground uppercase tracking-[0.25em] text-[11px] px-8 py-4 hover:bg-gold/90 transition-colors"
-          >
-            Explore Journeys
-          </a>
+    <section className="relative w-full overflow-hidden pb-28 md:pb-36">
+      <div className="relative h-[640px] md:h-[720px] w-full">
+        <img
+          src={heroImg}
+          alt="Safari jeep beside baobab tree at sunset"
+          width={1920}
+          height={1080}
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-background/75 via-background/25 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent" />
+
+        <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-10 h-full flex items-center">
+          <div className="max-w-xl animate-fade-up">
+            <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl text-foreground leading-[1.05]">
+              JOURNEYS<br />THAT CONNECT
+            </h1>
+            <div className="w-16 h-px bg-gold my-7" />
+            <p className="text-foreground/85 text-lg leading-relaxed mb-8">
+              Curated safari experiences that immerse, inspire and leave a lasting impact.
+            </p>
+            <div className="flex flex-wrap items-center gap-4">
+              <a
+                href="#journeys"
+                className="inline-flex items-center bg-gold text-gold-foreground uppercase tracking-[0.25em] text-[11px] px-8 py-4 hover:bg-gold/90 transition-colors"
+              >
+                Explore Journeys
+              </a>
+              <Link
+                to="/contact"
+                className="inline-flex items-center border border-foreground/30 text-foreground uppercase tracking-[0.25em] text-[11px] px-8 py-4 hover:border-gold hover:text-gold transition-colors"
+              >
+                Plan With Us
+              </Link>
+            </div>
+
+            <div className="mt-10 flex items-center gap-4">
+              <div className="flex -space-x-3">
+                {proofAvatars.map((src, i) => (
+                  <img
+                    key={src}
+                    src={src}
+                    alt=""
+                    loading="lazy"
+                    className="h-9 w-9 rounded-full border-2 border-background object-cover"
+                    style={{ zIndex: proofAvatars.length - i }}
+                  />
+                ))}
+                <span className="h-9 w-9 rounded-full border-2 border-background bg-gold text-gold-foreground text-[10px] font-medium flex items-center justify-center">
+                  +120
+                </span>
+              </div>
+              <p className="text-foreground/80 text-xs tracking-wide">
+                Trusted by travellers across 24 countries this season
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Floating quick-explore card */}
+      <div className="relative z-20 max-w-5xl mx-auto px-6 lg:px-10 -mt-20 md:-mt-24">
+        <div className="bg-background/95 backdrop-blur border border-border shadow-xl">
+          <div className="px-6 md:px-8 py-5 border-b border-border flex items-center justify-between">
+            <span className="font-serif text-xl text-foreground">Where shall we wander?</span>
+            <span className="hidden md:inline text-[11px] uppercase tracking-[0.25em] text-muted-foreground">
+              Curated · Conservation-led
+            </span>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4">
+            {quickLinks.map(({ to, label, icon: Icon }) => (
+              <Link
+                key={to}
+                to={to}
+                className="group flex flex-col items-start gap-3 p-6 border-t md:border-t-0 md:border-l border-border first:border-l-0 first:border-t-0 hover:bg-muted/40 transition-colors"
+              >
+                <Icon className="h-5 w-5 text-gold" strokeWidth={1.5} />
+                <span className="font-serif text-lg text-foreground">{label}</span>
+                <span className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground group-hover:text-gold transition-colors">
+                  Explore →
+                </span>
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
     </section>

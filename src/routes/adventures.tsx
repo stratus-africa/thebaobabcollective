@@ -273,7 +273,10 @@ function SignaturesSection({ signatures }: { signatures: AdventuresPage["signatu
   const hasFilters = !!(search.q || search.region || search.terrain || search.difficulty);
 
   const setParam = (k: "q" | "region" | "terrain" | "difficulty", v: string) =>
-    navigate({ search: (prev) => ({ ...prev, [k]: v }), replace: true });
+    navigate({
+      search: (prev: z.infer<typeof searchSchema>) => ({ ...prev, [k]: v }),
+      replace: true,
+    });
 
   const clearAll = () =>
     navigate({ search: { q: "", region: "", terrain: "", difficulty: "" }, replace: true });

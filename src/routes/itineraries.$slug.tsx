@@ -5,7 +5,7 @@ import { ArrowRight, Check, Calendar, MapPin, Users, Sparkles } from "lucide-rea
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
 import { EnquireDialog } from "@/components/site/EnquireDialog";
-import { BookDialog } from "@/components/site/BookDialog";
+
 import { ShareButtons } from "@/components/site/ShareButtons";
 import { getItineraryBySlug } from "@/lib/cms.functions";
 

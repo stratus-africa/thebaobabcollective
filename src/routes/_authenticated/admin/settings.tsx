@@ -4,7 +4,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Loader2, Save, Image as ImageIcon, Shield, ShieldOff, Trash2, UserCog, Search,
-  Upload, Mail, Palette, Users as UsersIcon, X, Send,
+  Upload, Mail, Palette, Users as UsersIcon, X, Send, Coins,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
@@ -59,6 +59,12 @@ function SettingsPage() {
             <Mail className="w-4 h-4" /> Contact
           </TabsTrigger>
           <TabsTrigger
+            value="currency"
+            className="w-full justify-start gap-2 data-[state=active]:bg-cream data-[state=active]:text-foreground data-[state=active]:shadow-none border border-transparent data-[state=active]:border-border px-4 py-2.5"
+          >
+            <Coins className="w-4 h-4" /> Currency
+          </TabsTrigger>
+          <TabsTrigger
             value="users"
             className="w-full justify-start gap-2 data-[state=active]:bg-cream data-[state=active]:text-foreground data-[state=active]:shadow-none border border-transparent data-[state=active]:border-border px-4 py-2.5"
           >
@@ -72,6 +78,9 @@ function SettingsPage() {
           </TabsContent>
           <TabsContent value="contact" className="mt-0">
             <SiteSettingsForm tab="contact" />
+          </TabsContent>
+          <TabsContent value="currency" className="mt-0">
+            <CurrencyForm />
           </TabsContent>
           <TabsContent value="users" className="mt-0 space-y-8">
             <InvitePanel />

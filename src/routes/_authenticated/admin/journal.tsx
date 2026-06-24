@@ -472,7 +472,7 @@ function JournalAdmin() {
                         ) : (
                           <Upload className="w-4 h-4 mr-1.5" />
                         )}
-                        Upload image
+                        {editing.image ? "Replace image" : "Upload image"}
                       </Button>
                       {editing.image && (
                         <Button
@@ -481,10 +481,13 @@ function JournalAdmin() {
                           size="sm"
                           onClick={() => onChange("image", "")}
                         >
-                          Remove
+                          <Trash2 className="w-4 h-4 mr-1.5" /> Remove
                         </Button>
                       )}
                     </div>
+                    <p className="text-[11px] text-foreground/50">
+                      Preview updates instantly. PNG or JPG, up to 5MB.
+                    </p>
                   </div>
                 </div>
               </div>

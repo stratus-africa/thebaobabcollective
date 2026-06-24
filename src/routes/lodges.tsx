@@ -206,25 +206,18 @@ function LodgesGrid() {
                           "On enquiry"
                         )}
                       </p>
-                      <EnquireDialog
-                        defaultSubject={`Enquiry about ${l.name}`}
-                        defaultDestination={l.location}
-                        sourceUrl={`/lodges#${l.slug}`}
-                        autosaveKey={`enquire:lodge:${l.slug}`}
-                        trigger={
-                          <button
-                            type="button"
-                            aria-label={`Enquire about ${l.name}`}
-                            className="inline-flex items-center gap-2 text-[11px] tracking-[0.25em] uppercase text-foreground hover:text-gold focus-visible:outline-none focus-visible:text-gold transition-colors min-h-11 px-1"
-                          >
-                            Enquire{" "}
-                            <ArrowRight
-                              aria-hidden="true"
-                              className="w-4 h-4 motion-safe:transition-transform motion-safe:duration-300 group-hover:translate-x-1"
-                            />
-                          </button>
-                        }
-                      />
+                      <Link
+                        to="/lodges/$slug"
+                        params={{ slug: l.slug }}
+                        aria-label={`View ${l.name}`}
+                        className="inline-flex items-center gap-2 text-[11px] tracking-[0.25em] uppercase text-foreground hover:text-gold focus-visible:outline-none focus-visible:text-gold transition-colors min-h-11 px-1"
+                      >
+                        View Lodge{" "}
+                        <ArrowRight
+                          aria-hidden="true"
+                          className="w-4 h-4 motion-safe:transition-transform motion-safe:duration-300 group-hover:translate-x-1"
+                        />
+                      </Link>
                     </div>
                     <div className="mt-4 pt-4 border-t border-border/40">
                       <ShareButtons

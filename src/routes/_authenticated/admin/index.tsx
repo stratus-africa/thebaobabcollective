@@ -33,12 +33,6 @@ function Dashboard() {
 
   const stats = [
     {
-      label: "Total Bookings",
-      value: data?.bookings,
-      icon: Calendar,
-      tone: "bg-gold/15 text-gold",
-    },
-    {
       label: "Active Enquiries",
       value: data?.enquiries,
       icon: MessageSquare,
@@ -50,17 +44,11 @@ function Dashboard() {
       icon: DollarSign,
       tone: "bg-terracotta/15 text-terracotta",
     },
-    {
-      label: "Pending Bookings",
-      value: data?.pending_bookings,
-      icon: Clock,
-      tone: "bg-cream text-foreground",
-    },
   ];
 
   const quickTasks = [
     { to: "/admin/content/itineraries", label: "Add an Itinerary", icon: PlusCircle },
-    { to: "/admin/bookings", label: "Review Bookings", icon: CheckCircle2 },
+    { to: "/admin/enquiries", label: "Review Enquiries", icon: CheckCircle2 },
     { to: "/admin/adventures", label: "Update Adventures Page", icon: Compass },
     { to: "/admin/content/journal_articles", label: "Publish an Article", icon: FileText },
   ];
@@ -121,7 +109,7 @@ function Dashboard() {
         <div className="lg:col-span-2 bg-background border border-border rounded-xl">
           <div className="px-6 py-5 border-b border-border flex items-center justify-between">
             <h2 className="font-serif text-xl text-foreground">Recent Activity</h2>
-            <Link to="/admin/bookings" className="text-[11px] tracking-[0.2em] uppercase text-gold hover:underline">
+            <Link to="/admin/enquiries" className="text-[11px] tracking-[0.2em] uppercase text-gold hover:underline">
               View all
             </Link>
           </div>

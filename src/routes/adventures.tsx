@@ -374,7 +374,7 @@ function SignaturesSection({ signatures }: { signatures: AdventuresPage["signatu
               return (
                 <article key={a.slug} className="group">
                   <Link
-                    to="/itineraries/$slug"
+                    to="/adventures/$slug"
                     params={{ slug: a.slug }}
                     className="block overflow-hidden aspect-[4/3] mb-6"
                   >
@@ -403,7 +403,7 @@ function SignaturesSection({ signatures }: { signatures: AdventuresPage["signatu
                     </span>
                   </div>
                   <h3 className="font-serif text-3xl text-foreground mb-3">
-                    <Link to="/itineraries/$slug" params={{ slug: a.slug }} className="hover:text-gold">
+                    <Link to="/adventures/$slug" params={{ slug: a.slug }} className="hover:text-gold">
                       {a.name}
                     </Link>
                   </h3>
@@ -418,14 +418,14 @@ function SignaturesSection({ signatures }: { signatures: AdventuresPage["signatu
                   </ul>
                   <div className="flex flex-wrap gap-3">
                     <Link
-                      to="/itineraries/$slug"
+                      to="/adventures/$slug"
                       params={{ slug: a.slug }}
                       className="inline-flex items-center gap-2 bg-gold text-gold-foreground uppercase tracking-[0.25em] text-[11px] px-6 py-3 hover:bg-gold/90"
                     >
                       View Itinerary <ArrowRight className="w-3 h-3" />
                     </Link>
                     <Link
-                      to="/itineraries/$slug"
+                      to="/adventures/$slug"
                       params={{ slug: a.slug }}
                       search={{ itinerary: a.name } as any}
                       hash="enquire"

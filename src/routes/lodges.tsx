@@ -62,7 +62,7 @@ function LodgesPage() {
                       ))}
                     </ul>
                   ) : null}
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between gap-4 flex-wrap">
                     {l.price_from_usd ? (
                       <p className="text-sm text-foreground/70">
                         <span className="text-foreground font-medium">${l.price_from_usd.toLocaleString()}</span> / night
@@ -76,6 +76,14 @@ function LodgesPage() {
                       Enquire <ArrowRight className="w-3 h-3" />
                     </Link>
                   </div>
+                  <div className="mt-5 pt-5 border-t border-border/40">
+                    <ShareButtons
+                      title={`${l.name} — ${l.location}`}
+                      description={l.description?.slice(0, 140)}
+                      label="Share lodge"
+                    />
+                  </div>
+
                 </div>
               </article>
             ))}

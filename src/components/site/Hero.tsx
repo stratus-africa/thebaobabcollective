@@ -27,7 +27,7 @@ export function Hero({ content }: { content?: HeroContent | null } = {}) {
     <section className="relative w-full overflow-hidden pb-28 md:pb-36">
       <div className="relative h-[640px] md:h-[720px] w-full">
         <img
-          src={heroImg}
+          src={heroSrc}
           alt="Safari jeep beside baobab tree at sunset"
           width={1920}
           height={1080}
@@ -39,24 +39,24 @@ export function Hero({ content }: { content?: HeroContent | null } = {}) {
         <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-10 h-full flex items-center">
           <div className="max-w-xl animate-fade-up">
             <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl text-foreground leading-[1.05]">
-              JOURNEYS<br />THAT CONNECT
+              {c.hero_title_line1}<br />{c.hero_title_line2}
             </h1>
             <div className="w-16 h-px bg-gold my-7" />
             <p className="text-foreground/85 text-lg leading-relaxed mb-8">
-              Curated safari experiences that immerse, inspire and leave a lasting impact.
+              {c.hero_subtitle}
             </p>
             <div className="flex flex-wrap items-center gap-4">
               <a
                 href="#journeys"
                 className="inline-flex items-center bg-gold text-gold-foreground uppercase tracking-[0.25em] text-[11px] px-8 py-4 hover:bg-gold/90 transition-colors"
               >
-                Explore Journeys
+                {c.hero_cta_primary}
               </a>
               <Link
                 to="/contact"
                 className="inline-flex items-center border border-foreground/30 text-foreground uppercase tracking-[0.25em] text-[11px] px-8 py-4 hover:border-gold hover:text-gold transition-colors"
               >
-                Plan With Us
+                {c.hero_cta_secondary}
               </Link>
             </div>
 
@@ -77,7 +77,7 @@ export function Hero({ content }: { content?: HeroContent | null } = {}) {
                 </span>
               </div>
               <p className="text-foreground/80 text-xs tracking-wide">
-                Trusted by travellers across 24 countries this season
+                {c.hero_proof_text}
               </p>
             </div>
           </div>

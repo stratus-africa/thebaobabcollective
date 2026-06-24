@@ -1,17 +1,13 @@
 import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
-import { useState } from "react";
 import { z } from "zod";
 import { fallback, zodValidator } from "@tanstack/zod-adapter";
-import { ArrowRight, Check, Calendar, MapPin, Users, Sparkles, Loader2 } from "lucide-react";
+import { ArrowRight, Check, Calendar, MapPin, Users, Sparkles } from "lucide-react";
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { toast } from "sonner";
+import { EnquireForm } from "@/components/site/EnquireForm";
+import { ShareButtons } from "@/components/site/ShareButtons";
 import { getItineraryBySlug } from "@/lib/cms.functions";
-import { submitEnquiry } from "@/lib/submissions.functions";
+
 
 const itinerarySearchSchema = z.object({
   itinerary: fallback(z.string(), "").default(""),

@@ -2,8 +2,10 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
+import { ShareButtons } from "@/components/site/ShareButtons";
 import { getLodges } from "@/lib/cms.functions";
 import { MapPin, ArrowRight } from "lucide-react";
+
 
 const lodgesQuery = queryOptions({
   queryKey: ["lodges"],

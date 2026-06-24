@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Mail, Phone, Instagram, Facebook } from "lucide-react";
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
-import { EnquireForm } from "@/components/site/EnquireForm";
+import { EnquireDialog } from "@/components/site/EnquireDialog";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -68,7 +68,26 @@ function ContactPage() {
               </ul>
             </div>
 
-            <EnquireForm />
+            <div className="bg-background border border-border p-8 md:p-10">
+              <p className="text-[11px] tracking-[0.3em] uppercase text-terracotta mb-4">Start an enquiry</p>
+              <h2 className="font-serif text-3xl md:text-4xl text-foreground mb-4">
+                Share Your Vision
+              </h2>
+              <p className="text-foreground/70 mb-8 leading-relaxed">
+                Open our detailed enquiry form — tell us who's travelling, when, your budget,
+                and the experiences you're dreaming of. We'll respond within 24 hours.
+              </p>
+              <EnquireDialog
+                trigger={
+                  <button
+                    type="button"
+                    className="w-full inline-flex items-center justify-center gap-2 bg-terracotta text-gold-foreground uppercase tracking-[0.25em] text-[12px] py-4 hover:bg-terracotta/90 transition-colors"
+                  >
+                    Open Enquiry Form
+                  </button>
+                }
+              />
+            </div>
           </div>
         </section>
       </main>

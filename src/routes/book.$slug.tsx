@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { getItineraryBySlug } from "@/lib/cms.functions";
 import { createBooking } from "@/lib/bookings.functions";
 import { toast } from "sonner";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 export const Route = createFileRoute("/book/$slug")({
   ssr: false,
@@ -35,6 +36,7 @@ export const Route = createFileRoute("/book/$slug")({
 
 function BookPage() {
   const { itinerary } = Route.useLoaderData() as { itinerary: any };
+  const { formatPrice } = useSiteSettings();
   const book = useServerFn(createBooking);
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
@@ -71,7 +73,7 @@ function BookPage() {
           <div className="max-w-4xl mx-auto px-6">
             <p className="text-[11px] tracking-[0.3em] uppercase text-gold mb-3">Book this journey</p>
             <h1 className="font-serif text-4xl md:text-5xl text-foreground">{itinerary.name}</h1>
-            <p className="text-foreground/70 mt-3">{itinerary.nights} · From ${itinerary.price_from_usd?.toLocaleString() ?? "—"} pp</p>
+            <p className="text-foreground/70 mt-3">{itinerary.nights} · From {formatPrice(itinerary.price_from_usd)} pp</p>
           </div>
         </section>
 

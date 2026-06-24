@@ -1,10 +1,13 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
+import { useState } from "react";
 import { ArrowRight, MapPin, Check } from "lucide-react";
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
 import { ShareButtons } from "@/components/site/ShareButtons";
 import { EnquireDialog } from "@/components/site/EnquireDialog";
+import { Breadcrumbs } from "@/components/site/Breadcrumbs";
+import { Lightbox } from "@/components/site/Lightbox";
 import { getLodgeBySlug, getLodges } from "@/lib/cms.functions";
 
 const lodgeQuery = (slug: string) =>
@@ -30,6 +33,31 @@ export const Route = createFileRoute("/lodges/$slug")({
     const title = l ? `${l.name}, ${l.location} — The Baobab Collective` : "Lodge";
     const desc = l?.description?.slice(0, 160) ?? "A handpicked safari lodge.";
     const url = `https://thebaobabcollective.co.uk/lodges/${params.slug}`;
+    const ldLodge = l
+      ? {
+          "@context": "https://schema.org",
+          "@type": "LodgingBusiness",
+          name: l.name,
+          description: l.description ?? undefined,
+          image: l.hero_image ?? undefined,
+          address: l.location ? { "@type": "PostalAddress", addressLocality: l.location } : undefined,
+          amenityFeature: l.amenities?.map((a: string) => ({
+            "@type": "LocationFeatureSpecification",
+            name: a,
+            value: true,
+          })),
+          url,
+        }
+      : null;
+    const ldCrumbs = {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: "https://thebaobabcollective.co.uk/" },
+        { "@type": "ListItem", position: 2, name: "Lodges", item: "https://thebaobabcollective.co.uk/lodges" },
+        { "@type": "ListItem", position: 3, name: l?.name ?? params.slug, item: url },
+      ],
+    };
     return {
       meta: [
         { title },
@@ -45,6 +73,10 @@ export const Route = createFileRoute("/lodges/$slug")({
         ...(l?.hero_image ? [{ name: "twitter:image", content: l.hero_image }] : []),
       ],
       links: [{ rel: "canonical", href: url }],
+      scripts: [
+        ...(ldLodge ? [{ type: "application/ld+json", children: JSON.stringify(ldLodge) }] : []),
+        { type: "application/ld+json", children: JSON.stringify(ldCrumbs) },
+      ],
     };
   },
   notFoundComponent: () => (
@@ -74,12 +106,25 @@ function LodgePage() {
   const { slug } = Route.useParams();
   const { data: l } = useSuspenseQuery(lodgeQuery(slug));
   const { data: all } = useSuspenseQuery(allLodgesQuery);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
   if (!l) return null;
   const others = (all ?? []).filter((x: any) => x.slug !== l.slug).slice(0, 3);
+  const gallery = (l.gallery ?? []).map((src: string, i: number) => ({
+    src,
+    alt: `${l.name} — image ${i + 1}`,
+    caption: `${l.name} · ${l.location}`,
+  }));
 
   return (
     <div className="bg-background min-h-screen">
       <Navbar />
+      <Breadcrumbs
+        items={[
+          { label: "Lodges", to: "/lodges" },
+          { label: l.name },
+        ]}
+      />
       <main>
         <section className="relative h-[60vh] min-h-[420px] flex items-end">
           {l.hero_image && (
@@ -133,20 +178,29 @@ function LodgePage() {
           </section>
         ) : null}
 
-        {l.gallery?.length ? (
+        {gallery.length ? (
           <section className="pb-20">
             <div className="max-w-7xl mx-auto px-6 lg:px-10">
               <h2 className="font-serif text-3xl text-foreground mb-8 text-center">Gallery</h2>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
-                {l.gallery.map((src: string, i: number) => (
-                  <div key={`${src}-${i}`} className="aspect-[4/3] overflow-hidden">
+                {gallery.map((g: { src: string; alt: string }, i: number) => (
+                  <button
+                    type="button"
+                    key={`${g.src}-${i}`}
+                    onClick={() => {
+                      setLightboxIndex(i);
+                      setLightboxOpen(true);
+                    }}
+                    className="aspect-[4/3] overflow-hidden group block"
+                    aria-label={`Open image ${i + 1} in lightbox`}
+                  >
                     <img
-                      src={src}
-                      alt={`${l.name} — image ${i + 1}`}
+                      src={g.src}
+                      alt={g.alt}
                       loading="lazy"
-                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                     />
-                  </div>
+                  </button>
                 ))}
               </div>
             </div>
@@ -214,6 +268,14 @@ function LodgePage() {
         )}
       </main>
       <Footer />
+      <Lightbox
+        images={gallery}
+        open={lightboxOpen}
+        onOpenChange={setLightboxOpen}
+        index={lightboxIndex}
+        onIndexChange={setLightboxIndex}
+        title={`${l.name} gallery`}
+      />
     </div>
   );
 }

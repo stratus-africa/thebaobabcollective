@@ -1,10 +1,13 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
+import { useState } from "react";
 import { ArrowRight, MapPin, Calendar } from "lucide-react";
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
 import { ShareButtons } from "@/components/site/ShareButtons";
 import { EnquireDialog } from "@/components/site/EnquireDialog";
+import { Breadcrumbs } from "@/components/site/Breadcrumbs";
+import { Lightbox } from "@/components/site/Lightbox";
 import { getDestinationBySlug, getDestinations } from "@/lib/cms.functions";
 
 const destQuery = (slug: string) =>
@@ -30,6 +33,35 @@ export const Route = createFileRoute("/destinations/$slug")({
     const title = d ? `${d.name}, ${d.country} — The Baobab Collective` : "Destination";
     const desc = d?.description?.slice(0, 160) ?? "Discover this destination.";
     const url = `https://thebaobabcollective.co.uk/destinations/${params.slug}`;
+    const ldDest = d
+      ? {
+          "@context": "https://schema.org",
+          "@type": "TouristDestination",
+          name: d.name,
+          description: d.description ?? undefined,
+          image: d.image ?? undefined,
+          url,
+          touristType: d.region ?? undefined,
+          address: {
+            "@type": "PostalAddress",
+            addressCountry: d.country,
+            addressRegion: d.region ?? undefined,
+          },
+          includesAttraction: d.featured_trips?.map((t: string) => ({
+            "@type": "TouristAttraction",
+            name: t,
+          })),
+        }
+      : null;
+    const ldCrumbs = {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: "https://thebaobabcollective.co.uk/" },
+        { "@type": "ListItem", position: 2, name: "Destinations", item: "https://thebaobabcollective.co.uk/destinations" },
+        { "@type": "ListItem", position: 3, name: d?.name ?? params.slug, item: url },
+      ],
+    };
     return {
       meta: [
         { title },
@@ -45,6 +77,10 @@ export const Route = createFileRoute("/destinations/$slug")({
         ...(d?.image ? [{ name: "twitter:image", content: d.image }] : []),
       ],
       links: [{ rel: "canonical", href: url }],
+      scripts: [
+        ...(ldDest ? [{ type: "application/ld+json", children: JSON.stringify(ldDest) }] : []),
+        { type: "application/ld+json", children: JSON.stringify(ldCrumbs) },
+      ],
     };
   },
   notFoundComponent: () => (
@@ -74,12 +110,26 @@ function DestinationPage() {
   const { slug } = Route.useParams();
   const { data: d } = useSuspenseQuery(destQuery(slug));
   const { data: all } = useSuspenseQuery(allDestQuery);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
   if (!d) return null;
   const others = (all ?? []).filter((x: any) => x.slug !== d.slug).slice(0, 3);
+  const gallery = (d as any).gallery as string[] | undefined;
+  const galleryItems = (gallery ?? (d.image ? [d.image] : [])).map((src: string, i: number) => ({
+    src,
+    alt: `${d.name} — image ${i + 1}`,
+    caption: `${d.name}, ${d.country}`,
+  }));
 
   return (
     <div className="bg-background min-h-screen">
       <Navbar />
+      <Breadcrumbs
+        items={[
+          { label: "Destinations", to: "/destinations" },
+          { label: d.name },
+        ]}
+      />
       <main>
         <section className="relative h-[60vh] min-h-[420px] flex items-end">
           {d.image && (
@@ -154,6 +204,36 @@ function DestinationPage() {
           </section>
         ) : null}
 
+        {galleryItems.length > 1 && (
+          <section className="pb-20">
+            <div className="max-w-7xl mx-auto px-6 lg:px-10">
+              <h2 className="font-serif text-3xl text-foreground mb-8 text-center">Gallery</h2>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+                {galleryItems.map((g, i) => (
+                  <button
+                    type="button"
+                    key={`${g.src}-${i}`}
+                    onClick={() => {
+                      setLightboxIndex(i);
+                      setLightboxOpen(true);
+                    }}
+                    className="aspect-[4/3] overflow-hidden group block"
+                    aria-label={`Open image ${i + 1} in lightbox`}
+                  >
+                    <img
+                      src={g.src}
+                      alt={g.alt}
+                      loading="lazy"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                    />
+                  </button>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
+
 
         <section className="bg-forest text-forest-foreground py-20 text-center">
           <div className="max-w-2xl mx-auto px-6">
@@ -217,6 +297,14 @@ function DestinationPage() {
         )}
       </main>
       <Footer />
+      <Lightbox
+        images={galleryItems}
+        open={lightboxOpen}
+        onOpenChange={setLightboxOpen}
+        index={lightboxIndex}
+        onIndexChange={setLightboxIndex}
+        title={`${d.name} gallery`}
+      />
     </div>
   );
 }

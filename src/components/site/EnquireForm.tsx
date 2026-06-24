@@ -116,6 +116,9 @@ export function EnquireForm({
     ...EMPTY_DRAFT,
     destination: defaultDestination ?? context?.title ?? "",
     travel_dates: context?.dates ?? "",
+    message: context?.title
+      ? `I'd love to learn more about ${context.kind ? `the ${context.kind.toLowerCase()} ` : ""}${context.title}. Please share availability and how we could shape a trip around it.`
+      : "",
   });
   const hydratedRef = useRef(false);
 

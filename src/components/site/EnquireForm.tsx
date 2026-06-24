@@ -23,6 +23,14 @@ export type EnquireFormProps = {
   className?: string;
   /** localStorage key for autosave. Set null to disable. Defaults to a key per subject. */
   autosaveKey?: string | null;
+  /** Context card shown at the top of the form, prefilled from the page (journey/destination). */
+  context?: {
+    kind?: "Journey" | "Destination" | "Itinerary" | "Lodge";
+    title: string;
+    dates?: string;
+    slug?: string;
+    image?: string;
+  };
 };
 
 type Draft = {

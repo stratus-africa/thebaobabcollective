@@ -212,6 +212,212 @@ function SettingsPage() {
           </div>
         </form>
       )}
+
+      <UsersManagement />
     </div>
+  );
+}
+
+// ─── Users Management ────────────────────────────────────────────────
+import { useMemo } from "react";
+import { Shield, ShieldOff, Trash2, UserCog, Search } from "lucide-react";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
+  listAdminUsers, setUserRole, deleteAdminUser, type AdminUserRow,
+} from "@/lib/users-admin.functions";
+import { supabase } from "@/integrations/supabase/client";
+
+function UsersManagement() {
+  const queryClient = useQueryClient();
+  const fetchUsers = useServerFn(listAdminUsers);
+  const setRole = useServerFn(setUserRole);
+  const deleteUser = useServerFn(deleteAdminUser);
+  const [me, setMe] = useState<string | null>(null);
+  const [q, setQ] = useState("");
+  const [busy, setBusy] = useState<string | null>(null);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => setMe(data.user?.id ?? null));
+  }, []);
+
+  const { data: users, isLoading } = useQuery<AdminUserRow[]>({
+    queryKey: ["admin-users"],
+    queryFn: () => fetchUsers(),
+  });
+
+  const filtered = useMemo(() => {
+    const list = users ?? [];
+    if (!q.trim()) return list;
+    const needle = q.toLowerCase();
+    return list.filter(
+      (u) =>
+        (u.email ?? "").toLowerCase().includes(needle) ||
+        (u.full_name ?? "").toLowerCase().includes(needle),
+    );
+  }, [users, q]);
+
+  async function toggleAdmin(u: AdminUserRow) {
+    const isAdmin = u.roles.includes("admin");
+    setBusy(u.id);
+    try {
+      await setRole({ data: { user_id: u.id, role: "admin", grant: !isAdmin } });
+      toast.success(isAdmin ? "Admin role revoked." : "Granted admin role.");
+      await queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Failed to update role");
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  async function removeUser(u: AdminUserRow) {
+    setBusy(u.id);
+    try {
+      await deleteUser({ data: { user_id: u.id } });
+      toast.success("User deleted.");
+      await queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Failed to delete user");
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  return (
+    <section className="mt-10 bg-background border border-border rounded-lg p-6 md:p-8 space-y-5">
+      <div className="flex items-center gap-3">
+        <UserCog className="w-5 h-5 text-gold" aria-hidden="true" />
+        <h2 className="font-serif text-xl text-foreground">Users</h2>
+      </div>
+      <p className="text-sm text-foreground/65">
+        Grant or revoke admin access and remove accounts. Changes apply immediately.
+      </p>
+
+      <div className="relative max-w-sm">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/50" aria-hidden="true" />
+        <Input
+          type="search"
+          placeholder="Search by name or email…"
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          className="pl-9"
+          aria-label="Search users"
+        />
+      </div>
+
+      <div className="overflow-x-auto -mx-6 md:-mx-8">
+        <table className="min-w-full text-sm">
+          <thead>
+            <tr className="text-left text-[11px] tracking-[0.2em] uppercase text-foreground/55 border-y border-border">
+              <th className="px-6 md:px-8 py-3 font-medium">User</th>
+              <th className="px-3 py-3 font-medium">Roles</th>
+              <th className="px-3 py-3 font-medium">Joined</th>
+              <th className="px-3 py-3 font-medium">Last sign-in</th>
+              <th className="px-6 md:px-8 py-3 font-medium text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-border/70">
+            {isLoading ? (
+              <tr>
+                <td colSpan={5} className="px-6 py-10 text-center text-foreground/60">
+                  <Loader2 className="w-4 h-4 animate-spin inline mr-2" /> Loading users…
+                </td>
+              </tr>
+            ) : filtered.length === 0 ? (
+              <tr>
+                <td colSpan={5} className="px-6 py-10 text-center text-foreground/60">No users found.</td>
+              </tr>
+            ) : (
+              filtered.map((u) => {
+                const isAdmin = u.roles.includes("admin");
+                const isSelf = me === u.id;
+                const rowBusy = busy === u.id;
+                return (
+                  <tr key={u.id} className="align-middle">
+                    <td className="px-6 md:px-8 py-3">
+                      <div className="font-medium text-foreground">{u.full_name || "—"}</div>
+                      <div className="text-xs text-foreground/60">{u.email}</div>
+                    </td>
+                    <td className="px-3 py-3">
+                      <div className="flex flex-wrap gap-1">
+                        {u.roles.length === 0 ? (
+                          <span className="text-xs text-foreground/50">—</span>
+                        ) : (
+                          u.roles.map((r) => (
+                            <span
+                              key={r}
+                              className={`text-[10px] tracking-wider uppercase px-2 py-0.5 rounded-full border ${
+                                r === "admin"
+                                  ? "border-gold/40 text-gold bg-gold/10"
+                                  : "border-border text-foreground/70"
+                              }`}
+                            >
+                              {r}
+                            </span>
+                          ))
+                        )}
+                      </div>
+                    </td>
+                    <td className="px-3 py-3 text-xs text-foreground/65 whitespace-nowrap">
+                      {new Date(u.created_at).toLocaleDateString()}
+                    </td>
+                    <td className="px-3 py-3 text-xs text-foreground/65 whitespace-nowrap">
+                      {u.last_sign_in_at ? new Date(u.last_sign_in_at).toLocaleDateString() : "Never"}
+                    </td>
+                    <td className="px-6 md:px-8 py-3">
+                      <div className="flex items-center justify-end gap-2">
+                        <button
+                          type="button"
+                          onClick={() => toggleAdmin(u)}
+                          disabled={rowBusy || (isSelf && isAdmin)}
+                          title={isSelf && isAdmin ? "You can't remove your own admin role" : undefined}
+                          className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-md border border-border hover:bg-muted disabled:opacity-50"
+                        >
+                          {isAdmin ? <ShieldOff className="w-3.5 h-3.5" /> : <Shield className="w-3.5 h-3.5" />}
+                          {isAdmin ? "Revoke admin" : "Make admin"}
+                        </button>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <button
+                              type="button"
+                              disabled={rowBusy || isSelf}
+                              title={isSelf ? "You can't delete your own account" : undefined}
+                              className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-md border border-destructive/40 text-destructive hover:bg-destructive/10 disabled:opacity-50"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" /> Delete
+                            </button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Delete user?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This permanently removes <strong>{u.email}</strong> and all their data. This cannot be undone.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => removeUser(u)}
+                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                              >
+                                Delete user
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })
+            )}
+          </tbody>
+        </table>
+      </div>
+    </section>
   );
 }

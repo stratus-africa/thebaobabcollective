@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { adminDashboard } from "@/lib/admin.functions";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 import {
   Calendar, MessageSquare, Plane, Mail, DollarSign, Clock,
   PlusCircle, CheckCircle2, Compass, FileText, ArrowRight,

@@ -9,6 +9,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { submitPrivateTravelRequest } from "@/lib/private-travel.functions";
+import { getPageContent } from "@/lib/page-content.functions";
+import { PAGE_DEFAULTS } from "@/lib/page-content.defaults";
 import { toast } from "sonner";
 import { Check } from "lucide-react";
 
@@ -26,6 +28,10 @@ const INTERESTS = [
 ];
 
 export const Route = createFileRoute("/private-travel")({
+  loader: async () => {
+    const content = await getPageContent({ data: { key: "private_travel" } }).catch(() => null);
+    return { content: { ...PAGE_DEFAULTS.private_travel, ...(content ?? {}) } };
+  },
   head: () => ({
     meta: [
       { title: "Private Travel — Bespoke Safari Planning | The Baobab Collective" },
@@ -36,6 +42,7 @@ export const Route = createFileRoute("/private-travel")({
 });
 
 function PrivateTravelPage() {
+  const { content: c } = Route.useLoaderData();
   const submit = useServerFn(submitPrivateTravelRequest);
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);

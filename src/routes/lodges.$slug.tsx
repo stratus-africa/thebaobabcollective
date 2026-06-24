@@ -1,10 +1,13 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
+import { useState } from "react";
 import { ArrowRight, MapPin, Check } from "lucide-react";
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
 import { ShareButtons } from "@/components/site/ShareButtons";
 import { EnquireDialog } from "@/components/site/EnquireDialog";
+import { Breadcrumbs } from "@/components/site/Breadcrumbs";
+import { Lightbox } from "@/components/site/Lightbox";
 import { getLodgeBySlug, getLodges } from "@/lib/cms.functions";
 
 const lodgeQuery = (slug: string) =>
@@ -30,6 +33,31 @@ export const Route = createFileRoute("/lodges/$slug")({
     const title = l ? `${l.name}, ${l.location} — The Baobab Collective` : "Lodge";
     const desc = l?.description?.slice(0, 160) ?? "A handpicked safari lodge.";
     const url = `https://thebaobabcollective.co.uk/lodges/${params.slug}`;
+    const ldLodge = l
+      ? {
+          "@context": "https://schema.org",
+          "@type": "LodgingBusiness",
+          name: l.name,
+          description: l.description ?? undefined,
+          image: l.hero_image ?? undefined,
+          address: l.location ? { "@type": "PostalAddress", addressLocality: l.location } : undefined,
+          amenityFeature: l.amenities?.map((a: string) => ({
+            "@type": "LocationFeatureSpecification",
+            name: a,
+            value: true,
+          })),
+          url,
+        }
+      : null;
+    const ldCrumbs = {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: "https://thebaobabcollective.co.uk/" },
+        { "@type": "ListItem", position: 2, name: "Lodges", item: "https://thebaobabcollective.co.uk/lodges" },
+        { "@type": "ListItem", position: 3, name: l?.name ?? params.slug, item: url },
+      ],
+    };
     return {
       meta: [
         { title },
@@ -45,6 +73,10 @@ export const Route = createFileRoute("/lodges/$slug")({
         ...(l?.hero_image ? [{ name: "twitter:image", content: l.hero_image }] : []),
       ],
       links: [{ rel: "canonical", href: url }],
+      scripts: [
+        ...(ldLodge ? [{ type: "application/ld+json", children: JSON.stringify(ldLodge) }] : []),
+        { type: "application/ld+json", children: JSON.stringify(ldCrumbs) },
+      ],
     };
   },
   notFoundComponent: () => (

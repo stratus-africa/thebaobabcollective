@@ -23,14 +23,19 @@ const groups: NavGroup[] = [
     ],
   },
   {
+    label: "Management",
+    items: [
+      { to: "/admin/adventures", label: "Adventures", icon: Compass },
+      { to: "/admin/content/lodges", label: "Lodges", icon: Building },
+      { to: "/admin/content/itineraries", label: "Journeys", icon: Calendar },
+      { to: "/admin/content/destinations", label: "Destinations", icon: MapPin },
+    ],
+  },
+  {
     label: "Content",
     items: [
-      { to: "/admin/adventures", label: "Adventures Page", icon: Compass },
       { to: "/admin/content/journey_categories", label: "Journey Categories", icon: Globe },
-      { to: "/admin/content/itineraries", label: "Itineraries", icon: Calendar },
       { to: "/admin/journal", label: "Journal", icon: FileText },
-      { to: "/admin/content/lodges", label: "Lodges", icon: Building },
-      { to: "/admin/content/destinations", label: "Destinations", icon: MapPin },
       { to: "/admin/content/testimonials", label: "Testimonials", icon: Star },
       { to: "/admin/content/faqs", label: "FAQs", icon: HelpCircle },
     ],

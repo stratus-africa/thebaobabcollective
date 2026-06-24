@@ -2,18 +2,28 @@ import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { adminList, adminUpsert, adminDelete } from "@/lib/admin.functions";
+import { adminList, adminUpsert, adminDelete, adminUploadImage } from "@/lib/admin.functions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter,
+} from "@/components/ui/dialog";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
-import { Trash2, Plus, Pencil, Eye, Search, Star, MapPin, Image as ImageIcon } from "lucide-react";
+import {
+  Trash2, Plus, Pencil, Eye, Search, Star, MapPin, Image as ImageIcon,
+  Upload, X, RefreshCw, ChevronLeft, ChevronRight, Loader2,
+} from "lucide-react";
+import { RichTextEditor } from "@/components/admin/RichTextEditor";
 
 const TABLE_LABELS: Record<string, string> = {
   journey_categories: "Journey Categories",
@@ -35,7 +45,6 @@ const TABLE_SINGULAR: Record<string, string> = {
   faqs: "FAQ",
 };
 
-// Public-facing view paths per record (uses slug)
 const VIEW_PATH: Record<string, (row: any) => string | null> = {
   itineraries: (r) => (r.slug ? `/journeys/${r.slug}` : null),
   destinations: (r) => (r.slug ? `/destinations/${r.slug}` : null),
@@ -46,7 +55,6 @@ const VIEW_PATH: Record<string, (row: any) => string | null> = {
   faqs: () => null,
 };
 
-// Field used as the "group" / category filter dropdown per table
 const GROUP_FIELD: Record<string, { field: string; label: string }> = {
   destinations: { field: "region", label: "regions" },
   lodges: { field: "location", label: "locations" },
@@ -57,15 +65,14 @@ const GROUP_FIELD: Record<string, { field: string; label: string }> = {
   journey_categories: { field: "slug", label: "categories" },
 };
 
-// Image field per table
 const IMAGE_FIELD: Record<string, string> = {
   destinations: "image",
   lodges: "hero_image",
   itineraries: "image",
   journal_articles: "image",
+  journey_categories: "hero_image",
 };
 
-// Subtitle composer per table
 const SUBTITLE: Record<string, (r: any) => string> = {
   destinations: (r) => [r.country, r.region].filter(Boolean).join(", "),
   lodges: (r) => r.location ?? "",
@@ -76,10 +83,9 @@ const SUBTITLE: Record<string, (r: any) => string> = {
   journey_categories: (r) => r.tagline ?? "",
 };
 
-type FieldType = "text" | "textarea" | "number" | "bool" | "array" | "json";
-type FieldDef = { name: string; label: string; type: FieldType; placeholder?: string; icon?: "pin" | "image" | "hash" };
+type FieldType = "text" | "textarea" | "rich" | "number" | "bool" | "array" | "image";
+type FieldDef = { name: string; label: string; type: FieldType; placeholder?: string; icon?: "pin" | "hash" };
 
-// Grouped layout per table: form sections with rows of side-by-side fields
 const FORM_LAYOUT: Record<string, { rows: FieldDef[][] }> = {
   destinations: {
     rows: [
@@ -92,8 +98,8 @@ const FORM_LAYOUT: Record<string, { rows: FieldDef[][] }> = {
         { name: "slug", label: "Slug", type: "text", placeholder: "auto-from-name" },
         { name: "best_season", label: "Best Season", type: "text", placeholder: "e.g. May – Oct" },
       ],
-      [{ name: "description", label: "Description", type: "textarea", placeholder: "Describe this destination…" }],
-      [{ name: "image", label: "Image URL", type: "text", placeholder: "https://example.com/image.jpg", icon: "image" }],
+      [{ name: "description", label: "Description", type: "rich", placeholder: "Describe this destination…" }],
+      [{ name: "image", label: "Hero Image", type: "image" }],
       [{ name: "featured_trips", label: "Featured Trips (one per line)", type: "array" }],
       [
         { name: "sort_order", label: "Sort Order", type: "number", icon: "hash" },
@@ -108,8 +114,8 @@ const FORM_LAYOUT: Record<string, { rows: FieldDef[][] }> = {
         { name: "location", label: "Location", type: "text", placeholder: "e.g. Sabi Sand, South Africa" },
         { name: "slug", label: "Slug", type: "text", placeholder: "auto-from-name" },
       ],
-      [{ name: "description", label: "Description", type: "textarea", placeholder: "Describe this lodge…" }],
-      [{ name: "hero_image", label: "Hero Image URL", type: "text", placeholder: "https://example.com/image.jpg", icon: "image" }],
+      [{ name: "description", label: "Description", type: "rich", placeholder: "Describe this lodge…" }],
+      [{ name: "hero_image", label: "Hero Image", type: "image" }],
       [{ name: "gallery", label: "Gallery URLs (one per line)", type: "array" }],
       [{ name: "amenities", label: "Amenities (one per line)", type: "array" }],
       [
@@ -127,13 +133,10 @@ const FORM_LAYOUT: Record<string, { rows: FieldDef[][] }> = {
         { name: "slug", label: "Slug", type: "text", placeholder: "auto-from-name" },
       ],
       [{ name: "category_id", label: "Category ID", type: "text", placeholder: "uuid of journey_categories row" }],
-      [{ name: "description", label: "Description", type: "textarea", placeholder: "Describe this journey…" }],
+      [{ name: "description", label: "Description", type: "rich", placeholder: "Describe this journey…" }],
       [{ name: "highlights", label: "Highlights (one per line)", type: "array" }],
-      [{ name: "image", label: "Image URL", type: "text", placeholder: "https://example.com/image.jpg", icon: "image" }],
-      [
-        { name: "price_from_usd", label: "Price from (USD)", type: "number" },
-        { name: "deposit_usd", label: "Deposit (USD)", type: "number" },
-      ],
+      [{ name: "image", label: "Hero Image", type: "image" }],
+      [{ name: "price_from_usd", label: "Price from (USD)", type: "number" }],
       [
         { name: "sort_order", label: "Sort Order", type: "number", icon: "hash" },
         { name: "published", label: "Active", type: "bool" },
@@ -152,7 +155,7 @@ const FORM_LAYOUT: Record<string, { rows: FieldDef[][] }> = {
         { name: "read_time", label: "Read time", type: "text", placeholder: "e.g. 6 min" },
       ],
       [{ name: "excerpt", label: "Excerpt", type: "textarea" }],
-      [{ name: "image", label: "Image URL", type: "text", icon: "image" }],
+      [{ name: "image", label: "Hero Image", type: "image" }],
       [{ name: "content", label: "Paragraphs (one per line)", type: "array" }],
       [
         { name: "sort_order", label: "Sort Order", type: "number", icon: "hash" },
@@ -167,8 +170,8 @@ const FORM_LAYOUT: Record<string, { rows: FieldDef[][] }> = {
         { name: "slug", label: "Slug", type: "text" },
         { name: "tagline", label: "Tagline", type: "text" },
       ],
-      [{ name: "intro", label: "Intro", type: "textarea" }],
-      [{ name: "hero_image", label: "Hero Image URL", type: "text", icon: "image" }],
+      [{ name: "intro", label: "Intro", type: "rich" }],
+      [{ name: "hero_image", label: "Hero Image", type: "image" }],
       [
         { name: "sort_order", label: "Sort Order", type: "number", icon: "hash" },
         { name: "published", label: "Active", type: "bool" },
@@ -182,7 +185,7 @@ const FORM_LAYOUT: Record<string, { rows: FieldDef[][] }> = {
         { name: "location", label: "Location", type: "text" },
         { name: "trip_taken", label: "Trip", type: "text" },
       ],
-      [{ name: "quote", label: "Quote", type: "textarea" }],
+      [{ name: "quote", label: "Quote", type: "rich" }],
       [
         { name: "rating", label: "Rating (1–5)", type: "number" },
         { name: "sort_order", label: "Sort Order", type: "number", icon: "hash" },
@@ -194,7 +197,7 @@ const FORM_LAYOUT: Record<string, { rows: FieldDef[][] }> = {
     rows: [
       [{ name: "question", label: "Question", type: "text" }],
       [{ name: "category", label: "Category", type: "text", placeholder: "planning | conservation | logistics" }],
-      [{ name: "answer", label: "Answer", type: "textarea" }],
+      [{ name: "answer", label: "Answer", type: "rich" }],
       [
         { name: "sort_order", label: "Sort Order", type: "number", icon: "hash" },
         { name: "published", label: "Active", type: "bool" },
@@ -203,8 +206,63 @@ const FORM_LAYOUT: Record<string, { rows: FieldDef[][] }> = {
   },
 };
 
+const SORT_OPTIONS: Record<string, { value: string; label: string }[]> = {
+  destinations: [
+    { value: "sort_order", label: "Sort Order" },
+    { value: "name", label: "Name" },
+    { value: "country", label: "Country" },
+    { value: "created_at", label: "Newest" },
+  ],
+  lodges: [
+    { value: "sort_order", label: "Sort Order" },
+    { value: "name", label: "Name" },
+    { value: "price_from_usd", label: "Price" },
+    { value: "created_at", label: "Newest" },
+  ],
+  itineraries: [
+    { value: "sort_order", label: "Sort Order" },
+    { value: "name", label: "Name" },
+    { value: "price_from_usd", label: "Price" },
+    { value: "created_at", label: "Newest" },
+  ],
+  journal_articles: [
+    { value: "sort_order", label: "Sort Order" },
+    { value: "title", label: "Title" },
+    { value: "published_at", label: "Published" },
+    { value: "created_at", label: "Newest" },
+  ],
+  journey_categories: [
+    { value: "sort_order", label: "Sort Order" },
+    { value: "title", label: "Title" },
+  ],
+  testimonials: [
+    { value: "sort_order", label: "Sort Order" },
+    { value: "name", label: "Name" },
+    { value: "rating", label: "Rating" },
+  ],
+  faqs: [
+    { value: "sort_order", label: "Sort Order" },
+    { value: "category", label: "Category" },
+  ],
+};
+
+const PAGE_SIZE = 12;
+
 function slugify(s: string) {
   return s.toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+}
+
+function fileToBase64(file: File): Promise<{ base64: string; contentType: string; filename: string }> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result as string;
+      const base64 = result.split(",")[1] ?? "";
+      resolve({ base64, contentType: file.type || "image/jpeg", filename: file.name });
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
 }
 
 export const Route = createFileRoute("/_authenticated/admin/content/$table")({
@@ -220,10 +278,15 @@ function ContentAdmin() {
 
   const [editing, setEditing] = useState<any | null>(null);
   const [open, setOpen] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<any | null>(null);
   const [search, setSearch] = useState("");
   const [groupFilter, setGroupFilter] = useState<string>("__all__");
   const [featuredOnly, setFeaturedOnly] = useState(false);
   const [activeOnly, setActiveOnly] = useState(false);
+
+  const [page, setPage] = useState(1);
+  const [orderBy, setOrderBy] = useState<string>("sort_order");
+  const [orderDir, setOrderDir] = useState<"asc" | "desc">("asc");
 
   const layout = FORM_LAYOUT[table];
   const flatFields = useMemo(() => (layout?.rows ?? []).flat(), [layout]);
@@ -233,17 +296,28 @@ function ContentAdmin() {
   const viewPath = VIEW_PATH[table] ?? (() => null);
   const label = TABLE_LABELS[table] ?? table;
   const singular = TABLE_SINGULAR[table] ?? "Item";
+  const sortOptions = SORT_OPTIONS[table] ?? [{ value: "sort_order", label: "Sort Order" }];
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["admin", table],
-    queryFn: () => list({ data: { table: table as any } }),
+  const { data, isLoading, isFetching } = useQuery({
+    queryKey: ["admin", table, { page, orderBy, orderDir }],
+    queryFn: () =>
+      list({ data: { table: table as any, page, pageSize: PAGE_SIZE, orderBy, orderDir } }),
   });
+  const rows = data?.rows ?? [];
+  const total = data?.count ?? 0;
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
   const mUpsert = useMutation({
     mutationFn: (row: any) => upsert({ data: { table: table as any, row } }),
-    onSuccess: () => {
+    onSuccess: (_d, vars: any) => {
       qc.invalidateQueries({ queryKey: ["admin", table] });
       toast.success("Saved");
+      // Clear any rich-text drafts for this record
+      try {
+        Object.keys(localStorage).forEach((k) => {
+          if (k.startsWith(`cms:rt:${table}:${vars.id || "new"}:`)) localStorage.removeItem(k);
+        });
+      } catch {}
       setOpen(false);
     },
     onError: (e: any) => toast.error(e.message ?? "Error"),
@@ -253,22 +327,24 @@ function ContentAdmin() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["admin", table] });
       toast.success("Deleted");
+      setDeleteTarget(null);
     },
+    onError: (e: any) => toast.error(e.message ?? "Error"),
   });
 
   const groupOptions = useMemo(() => {
-    if (!group || !data) return [] as string[];
+    if (!group) return [] as string[];
     const set = new Set<string>();
-    data.forEach((r: any) => {
+    rows.forEach((r: any) => {
       const v = r[group.field];
       if (typeof v === "string" && v.trim()) set.add(v);
     });
     return Array.from(set).sort();
-  }, [data, group]);
+  }, [rows, group]);
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
-    return (data ?? []).filter((r: any) => {
+    return rows.filter((r: any) => {
       if (activeOnly && !r.published) return false;
       if (featuredOnly && (r.sort_order ?? 0) <= 0) return false;
       if (group && groupFilter !== "__all__" && r[group.field] !== groupFilter) return false;
@@ -277,7 +353,7 @@ function ContentAdmin() {
       const sub = subtitleFn(r);
       return (title + " " + sub).toLowerCase().includes(q);
     });
-  }, [data, search, groupFilter, activeOnly, featuredOnly, group, subtitleFn]);
+  }, [rows, search, groupFilter, activeOnly, featuredOnly, group, subtitleFn]);
 
   const startCreate = () => {
     const blank: any = { id: "" };
@@ -294,7 +370,6 @@ function ContentAdmin() {
   const save = (e: React.FormEvent) => {
     e.preventDefault();
     const row: any = { ...editing };
-    // auto-slug if blank
     if ("slug" in row && !row.slug) {
       const seed = row.name ?? row.title ?? row.question ?? "";
       if (seed) row.slug = slugify(String(seed));
@@ -325,7 +400,7 @@ function ContentAdmin() {
 
       {/* Filter bar */}
       <div className="bg-background border border-border p-4 mb-6">
-        <div className="grid gap-3 md:grid-cols-[1fr_240px_auto]">
+        <div className="grid gap-3 md:grid-cols-[1fr_200px_200px_auto]">
           <div className="relative">
             <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-foreground/40" />
             <Input
@@ -337,9 +412,7 @@ function ContentAdmin() {
           </div>
           {group ? (
             <Select value={groupFilter} onValueChange={setGroupFilter}>
-              <SelectTrigger>
-                <SelectValue placeholder={`All ${group.label}`} />
-              </SelectTrigger>
+              <SelectTrigger><SelectValue placeholder={`All ${group.label}`} /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="__all__">All {group.label}</SelectItem>
                 {groupOptions.map((o) => (
@@ -348,14 +421,33 @@ function ContentAdmin() {
               </SelectContent>
             </Select>
           ) : <div />}
+          <Select
+            value={`${orderBy}:${orderDir}`}
+            onValueChange={(v) => {
+              const [col, dir] = v.split(":");
+              setOrderBy(col);
+              setOrderDir(dir as "asc" | "desc");
+              setPage(1);
+            }}
+          >
+            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectContent>
+              {sortOptions.map((s) => (
+                <span key={s.value}>
+                  <SelectItem value={`${s.value}:asc`}>{s.label} ↑</SelectItem>
+                  <SelectItem value={`${s.value}:desc`}>{s.label} ↓</SelectItem>
+                </span>
+              ))}
+            </SelectContent>
+          </Select>
           <div className="flex items-center gap-5 px-1">
             <label className="flex items-center gap-2 text-sm cursor-pointer">
               <Checkbox checked={featuredOnly} onCheckedChange={(v) => setFeaturedOnly(!!v)} />
-              <span>Featured Only</span>
+              <span>Featured</span>
             </label>
             <label className="flex items-center gap-2 text-sm cursor-pointer">
               <Checkbox checked={activeOnly} onCheckedChange={(v) => setActiveOnly(!!v)} />
-              <span>Active Only</span>
+              <span>Active</span>
             </label>
           </div>
         </div>
@@ -370,11 +462,6 @@ function ContentAdmin() {
               <div className="p-4 space-y-2">
                 <Skeleton className="h-5 w-2/3" />
                 <Skeleton className="h-4 w-1/2" />
-                <div className="flex gap-2 pt-2">
-                  <Skeleton className="h-8 w-16" />
-                  <Skeleton className="h-8 w-16" />
-                  <Skeleton className="h-8 w-16" />
-                </div>
               </div>
             </div>
           ))}
@@ -425,12 +512,6 @@ function ContentAdmin() {
                       <MapPin className="w-3.5 h-3.5 opacity-60" /> {sub}
                     </p>
                   )}
-                  {group && row[group.field] && (
-                    <p className="text-xs text-foreground/50 mt-2">
-                      <span className="uppercase tracking-wider">{group.field.replace("_", " ")}: </span>
-                      {row[group.field]}
-                    </p>
-                  )}
                   <div className="mt-4 pt-3 border-t border-border flex gap-2">
                     <Button variant="outline" size="sm" onClick={() => startEdit(row)}>
                       <Pencil className="w-3.5 h-3.5 mr-1" /> Edit
@@ -446,7 +527,7 @@ function ContentAdmin() {
                       variant="outline"
                       size="sm"
                       className="ml-auto text-destructive border-destructive/30 hover:bg-destructive/5 hover:text-destructive"
-                      onClick={() => confirm(`Delete "${title}"?`) && mDel.mutate(row.id)}
+                      onClick={() => setDeleteTarget(row)}
                     >
                       <Trash2 className="w-3.5 h-3.5 mr-1" /> Delete
                     </Button>
@@ -455,6 +536,24 @@ function ContentAdmin() {
               </article>
             );
           })}
+        </div>
+      )}
+
+      {/* Pagination */}
+      {total > PAGE_SIZE && (
+        <div className="flex items-center justify-between mt-6">
+          <p className="text-sm text-foreground/60">
+            Page {page} of {totalPages} · {total} total
+            {isFetching && <Loader2 className="w-3 h-3 inline ml-2 animate-spin" />}
+          </p>
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" disabled={page === 1} onClick={() => setPage(page - 1)}>
+              <ChevronLeft className="w-4 h-4" /> Prev
+            </Button>
+            <Button variant="outline" size="sm" disabled={page >= totalPages} onClick={() => setPage(page + 1)}>
+              Next <ChevronRight className="w-4 h-4" />
+            </Button>
+          </div>
         </div>
       )}
 
@@ -476,16 +575,14 @@ function ContentAdmin() {
             <form onSubmit={save} className="space-y-5 pt-2">
               <div className="bg-cream/40 border border-border p-5 space-y-4">
                 {layout.rows.map((row, ri) => (
-                  <div
-                    key={ri}
-                    className={row.length > 1 ? "grid gap-4 sm:grid-cols-2" : ""}
-                  >
+                  <div key={ri} className={row.length > 1 ? "grid gap-4 sm:grid-cols-2" : ""}>
                     {row.map((f) => (
                       <FieldInput
                         key={f.name}
                         field={f}
                         value={editing[f.name]}
                         onChange={(v) => setEditing({ ...editing, [f.name]: v })}
+                        autosaveKey={`cms:rt:${table}:${editing.id || "new"}:${f.name}`}
                       />
                     ))}
                   </div>
@@ -506,6 +603,32 @@ function ContentAdmin() {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Delete confirmation */}
+      <AlertDialog open={!!deleteTarget} onOpenChange={(o) => !o && setDeleteTarget(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete {singular.toLowerCase()}?</AlertDialogTitle>
+            <AlertDialogDescription>
+              You're about to permanently delete{" "}
+              <span className="font-medium text-foreground">
+                {deleteTarget?.name ?? deleteTarget?.title ?? deleteTarget?.question ?? "this item"}
+              </span>
+              . This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => deleteTarget && mDel.mutate(deleteTarget.id)}
+              disabled={mDel.isPending}
+            >
+              {mDel.isPending ? "Deleting…" : "Delete"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
@@ -514,10 +637,12 @@ function FieldInput({
   field,
   value,
   onChange,
+  autosaveKey,
 }: {
   field: FieldDef;
   value: any;
   onChange: (v: any) => void;
+  autosaveKey?: string;
 }) {
   if (field.type === "bool") {
     return (
@@ -529,8 +654,25 @@ function FieldInput({
   }
   const iconEl =
     field.icon === "pin" ? <MapPin className="w-4 h-4" /> :
-    field.icon === "image" ? <ImageIcon className="w-4 h-4" /> :
     field.icon === "hash" ? <span className="text-xs">#</span> : null;
+
+  if (field.type === "image") {
+    return <ImageField label={field.label} value={value ?? ""} onChange={onChange} />;
+  }
+
+  if (field.type === "rich") {
+    return (
+      <div>
+        <Label className="mb-1.5 block">{field.label}</Label>
+        <RichTextEditor
+          value={value ?? ""}
+          onChange={onChange}
+          autosaveKey={autosaveKey}
+          placeholder={field.placeholder}
+        />
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -576,5 +718,116 @@ function FieldInput({
         </div>
       )}
     </div>
+  );
+}
+
+function ImageField({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  const upload = useServerFn(adminUploadImage);
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function handleFile(file: File | undefined) {
+    setError(null);
+    if (!file) return;
+    if (!/^image\/(png|jpe?g|webp|gif|avif)$/i.test(file.type)) {
+      setError("Choose a PNG, JPG, WEBP, GIF, or AVIF image.");
+      return;
+    }
+    if (file.size > 8 * 1024 * 1024) {
+      setError("Image must be under 8MB.");
+      return;
+    }
+    setUploading(true);
+    try {
+      const payload = await fileToBase64(file);
+      const res = await upload({ data: payload });
+      onChange(res.url);
+      toast.success("Image uploaded");
+    } catch (e: any) {
+      setError(e.message ?? "Upload failed");
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  return (
+    <div>
+      <Label className="mb-1.5 block">{label}</Label>
+      <div className="border border-border bg-background">
+        {value ? (
+          <div className="relative group">
+            <img src={value} alt="Preview" className="w-full max-h-72 object-cover" />
+            <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              <UploadButton onPick={handleFile} disabled={uploading} variant="replace" />
+              <button
+                type="button"
+                onClick={() => onChange("")}
+                className="bg-background/95 border border-border px-2 py-1 text-xs inline-flex items-center gap-1 hover:bg-destructive hover:text-destructive-foreground"
+              >
+                <X className="w-3.5 h-3.5" /> Remove
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="p-6 flex flex-col items-center justify-center gap-2 text-foreground/50">
+            <ImageIcon className="w-8 h-8" />
+            <UploadButton onPick={handleFile} disabled={uploading} variant="upload" />
+            <p className="text-[11px]">PNG, JPG, WEBP up to 8MB</p>
+          </div>
+        )}
+      </div>
+      <div className="mt-2 flex items-center gap-2">
+        <Input
+          value={value ?? ""}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder="…or paste an image URL"
+          className="text-xs"
+        />
+      </div>
+      {error && <p className="text-xs text-destructive mt-1">{error}</p>}
+      {uploading && (
+        <p className="text-xs text-foreground/60 mt-1 flex items-center gap-1">
+          <Loader2 className="w-3 h-3 animate-spin" /> Uploading…
+        </p>
+      )}
+    </div>
+  );
+}
+
+function UploadButton({
+  onPick,
+  disabled,
+  variant,
+}: {
+  onPick: (f: File | undefined) => void;
+  disabled?: boolean;
+  variant: "upload" | "replace";
+}) {
+  return (
+    <label
+      className={`inline-flex items-center gap-1 text-xs cursor-pointer px-3 py-1.5 border ${
+        variant === "replace"
+          ? "bg-background/95 border-border hover:bg-cream"
+          : "bg-gold text-gold-foreground border-gold hover:bg-gold/90"
+      } ${disabled ? "opacity-50 cursor-wait" : ""}`}
+    >
+      {variant === "replace" ? <RefreshCw className="w-3.5 h-3.5" /> : <Upload className="w-3.5 h-3.5" />}
+      {variant === "replace" ? "Replace" : "Choose image"}
+      <input
+        type="file"
+        accept="image/png,image/jpeg,image/webp,image/gif,image/avif"
+        className="hidden"
+        disabled={disabled}
+        onChange={(e) => onPick(e.target.files?.[0])}
+      />
+    </label>
   );
 }

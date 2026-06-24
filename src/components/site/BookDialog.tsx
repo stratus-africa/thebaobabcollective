@@ -171,9 +171,7 @@ export function BookDialog({
           </DialogTitle>
           <DialogDescription id="book-dialog-desc" className="text-sm text-foreground/70">
             {itinerary.nights ? `${itinerary.nights} · ` : ""}
-            {itinerary.deposit_usd
-              ? `Deposit $${Number(itinerary.deposit_usd).toLocaleString()} secures your dates.`
-              : "Tell us your travel dates and we'll confirm by email."}
+            Tell us your travel dates and we'll confirm by email.
           </DialogDescription>
         </DialogHeader>
 
@@ -254,13 +252,6 @@ export function BookDialog({
                 </div>
               </div>
 
-              {itinerary.deposit_usd && (
-                <div className="bg-cream p-4 text-sm text-foreground/80">
-                  A refundable deposit of{" "}
-                  <span className="font-medium text-foreground">${itinerary.deposit_usd.toLocaleString()}</span>{" "}
-                  secures your booking. Balance due 60 days before travel.
-                </div>
-              )}
 
               {errors.form && (
                 <p role="alert" className="text-sm text-destructive border border-destructive/40 bg-destructive/5 px-4 py-3">
@@ -277,9 +268,7 @@ export function BookDialog({
                   <><Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" /> Preparing checkout…</>
                 ) : (
                   <>
-                    {itinerary.deposit_usd
-                      ? `Pay deposit · $${itinerary.deposit_usd.toLocaleString()}`
-                      : "Request booking"}
+                    Request booking
                     <ArrowRight className="w-3 h-3" aria-hidden="true" />
                   </>
                 )}

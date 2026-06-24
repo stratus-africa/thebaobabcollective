@@ -424,7 +424,7 @@ export function EnquireForm({
               className="w-full flex items-center justify-between px-4 py-3 text-left"
               aria-expanded={experiencesOpen}
             >
-              <span className="font-serif text-xl text-foreground">Experiences of interest</span-stack_modern>
+              <span className="font-serif text-xl text-foreground">Experiences of interest</span>
               {experiencesOpen ? (
                 <ChevronUp className="w-5 h-5 text-foreground/60" aria-hidden="true" />
               ) : (

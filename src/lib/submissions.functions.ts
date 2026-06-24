@@ -52,6 +52,32 @@ export const submitEnquiry = createServerFn({ method: "POST" })
         .insert({ email: data.email.toLowerCase() })
         .then(() => undefined, () => undefined);
     }
+    try {
+      const { enqueueInternalEmail } = await import("@/lib/email/send-internal.server");
+      await enqueueInternalEmail({
+        templateName: "enquiry-notification",
+        templateData: {
+          kind: data.subject ? "Contact" : "Enquiry",
+          name: data.name,
+          email: data.email,
+          phone: data.phone,
+          destination: data.destination || undefined,
+          subject: data.subject || undefined,
+          travelDates: data.travel_dates || undefined,
+          adults: data.adults ?? undefined,
+          children: data.children ?? undefined,
+          budget: data.budget || undefined,
+          tripType: data.trip_type || undefined,
+          accommodationStyle: data.accommodation_style || undefined,
+          experiences: data.experiences,
+          referralSource: data.referral_source || undefined,
+          sourceUrl: data.source_url || undefined,
+          message: data.message,
+        },
+      });
+    } catch (err) {
+      console.error("submitEnquiry: email notification failed", err);
+    }
     return { ok: true as const };
   });
 

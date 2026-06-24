@@ -25,10 +25,11 @@ export const Route = createFileRoute("/destinations/$slug")({
     await context.queryClient.ensureQueryData(allDestQuery);
     return { destination: d };
   },
-  head: ({ loaderData }) => {
+  head: ({ loaderData, params }) => {
     const d = loaderData?.destination;
     const title = d ? `${d.name}, ${d.country} — The Baobab Collective` : "Destination";
     const desc = d?.description?.slice(0, 160) ?? "Discover this destination.";
+    const url = `https://thebaobabcollective.co.uk/destinations/${params.slug}`;
     return {
       meta: [
         { title },
@@ -36,10 +37,14 @@ export const Route = createFileRoute("/destinations/$slug")({
         { property: "og:title", content: title },
         { property: "og:description", content: desc },
         { property: "og:type", content: "article" },
+        { property: "og:url", content: url },
         ...(d?.image ? [{ property: "og:image", content: d.image }] : []),
-        ...(d ? [{ property: "og:url", content: `/destinations/${d.slug}` }] : []),
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: title },
+        { name: "twitter:description", content: desc },
+        ...(d?.image ? [{ name: "twitter:image", content: d.image }] : []),
       ],
-      links: d ? [{ rel: "canonical", href: `/destinations/${d.slug}` }] : [],
+      links: [{ rel: "canonical", href: url }],
     };
   },
   notFoundComponent: () => (

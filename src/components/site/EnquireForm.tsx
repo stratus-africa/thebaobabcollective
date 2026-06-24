@@ -186,7 +186,6 @@ export function EnquireForm({
           trip_type: values.trip_type,
           accommodation_style: values.accommodation_style,
           experiences: values.experiences,
-          referral_source: values.referral_source,
           subscribe_newsletter: values.subscribe,
           source_url: sourceUrl ?? (typeof window !== "undefined" ? window.location.href : ""),
           message: values.message,

@@ -339,90 +339,124 @@ export function EnquireForm({
       </fieldset>
 
       {!compact && (
-        <fieldset className="space-y-5">
-          <legend className="font-serif text-xl text-foreground mb-2">Your trip</legend>
-          <div className="grid md:grid-cols-2 gap-4">
-            <Field
-              label="Where would you like to go?"
-              name="destination"
-              value={values.destination}
-              onChange={(v) => setField("destination", v)}
-            />
-            <Field
-              label="Approximate travel dates"
-              name="travel_dates"
-              placeholder="e.g. May 2027, 10 nights"
-              value={values.travel_dates}
-              onChange={(v) => setField("travel_dates", v)}
-            />
-            <Field
-              label="Adults"
-              name="adults"
-              type="number"
-              min={0}
-              value={values.adults}
-              onChange={(v) => setField("adults", v)}
-            />
-            <Field
-              label="Children"
-              name="children"
-              type="number"
-              min={0}
-              value={values.children}
-              onChange={(v) => setField("children", v)}
-            />
-            <Field
-              label="Trip type"
-              name="trip_type"
-              as="select"
-              options={TRIP_TYPES}
-              value={values.trip_type}
-              onChange={(v) => setField("trip_type", v)}
-            />
-            <Field
-              label="Budget per person (excl. flights)"
-              name="budget"
-              as="select"
-              options={BUDGETS}
-              value={values.budget}
-              onChange={(v) => setField("budget", v)}
-            />
-            <div className="md:col-span-2">
-              <Field
-                label="Accommodation style"
-                name="accommodation_style"
-                as="select"
-                options={STYLES}
-                value={values.accommodation_style}
-                onChange={(v) => setField("accommodation_style", v)}
-              />
-            </div>
+        <>
+          <div className="border border-border">
+            <button
+              type="button"
+              onClick={() => setTripOpen((s) => !s)}
+              className="w-full flex items-center justify-between px-4 py-3 text-left"
+              aria-expanded={tripOpen}
+            >
+              <span className="font-serif text-xl text-foreground">Your trip</span>
+              {tripOpen ? (
+                <ChevronUp className="w-5 h-5 text-foreground/60" aria-hidden="true" />
+              ) : (
+                <ChevronDown className="w-5 h-5 text-foreground/60" aria-hidden="true" />
+              )}
+            </button>
+            {tripOpen && (
+              <div className="px-4 pb-5 space-y-5 border-t border-border">
+                <div className="grid md:grid-cols-2 gap-4 pt-5">
+                  <Field
+                    label="Where would you like to go?"
+                    name="destination"
+                    value={values.destination}
+                    onChange={(v) => setField("destination", v)}
+                  />
+                  <Field
+                    label="Approximate travel dates"
+                    name="travel_dates"
+                    placeholder="e.g. May 2027, 10 nights"
+                    value={values.travel_dates}
+                    onChange={(v) => setField("travel_dates", v)}
+                  />
+                  <Field
+                    label="Adults"
+                    name="adults"
+                    type="number"
+                    min={0}
+                    value={values.adults}
+                    onChange={(v) => setField("adults", v)}
+                  />
+                  <Field
+                    label="Children"
+                    name="children"
+                    type="number"
+                    min={0}
+                    value={values.children}
+                    onChange={(v) => setField("children", v)}
+                  />
+                  <Field
+                    label="Trip type"
+                    name="trip_type"
+                    as="select"
+                    options={TRIP_TYPES}
+                    value={values.trip_type}
+                    onChange={(v) => setField("trip_type", v)}
+                  />
+                  <Field
+                    label="Budget per person (excl. flights)"
+                    name="budget"
+                    as="select"
+                    options={BUDGETS}
+                    value={values.budget}
+                    onChange={(v) => setField("budget", v)}
+                  />
+                  <div className="md:col-span-2">
+                    <Field
+                      label="Accommodation style"
+                      name="accommodation_style"
+                      as="select"
+                      options={STYLES}
+                      value={values.accommodation_style}
+                      onChange={(v) => setField("accommodation_style", v)}
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
-          <div>
-            <Label className="text-sm text-foreground mb-3 block">Experiences of interest</Label>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-              {EXPERIENCES.map((exp) => {
-                const active = values.experiences.includes(exp);
-                return (
-                  <button
-                    key={exp}
-                    type="button"
-                    onClick={() => toggleExperience(exp)}
-                    aria-pressed={active}
-                    className={`text-left text-xs px-3 py-2 border transition-colors ${
-                      active
-                        ? "bg-forest text-forest-foreground border-forest"
-                        : "border-border text-foreground/75 hover:border-gold hover:text-gold"
-                    }`}
-                  >
-                    {exp}
-                  </button>
-                );
-              })}
-            </div>
+          <div className="border border-border">
+            <button
+              type="button"
+              onClick={() => setExperiencesOpen((s) => !s)}
+              className="w-full flex items-center justify-between px-4 py-3 text-left"
+              aria-expanded={experiencesOpen}
+            >
+              <span className="font-serif text-xl text-foreground">Experiences of interest</span-stack_modern>
+              {experiencesOpen ? (
+                <ChevronUp className="w-5 h-5 text-foreground/60" aria-hidden="true" />
+              ) : (
+                <ChevronDown className="w-5 h-5 text-foreground/60" aria-hidden="true" />
+              )}
+            </button>
+            {experiencesOpen && (
+              <div className="px-4 pb-5 border-t border-border">
+                <div className="pt-5 grid grid-cols-2 md:grid-cols-3 gap-2">
+                  {EXPERIENCES.map((exp) => {
+                    const active = values.experiences.includes(exp);
+                    return (
+                      <button
+                        key={exp}
+                        type="button"
+                        onClick={() => toggleExperience(exp)}
+                        aria-pressed={active}
+                        className={`text-left text-xs px-3 py-2 border transition-colors ${
+                          active
+                            ? "bg-forest text-forest-foreground border-forest"
+                            : "border-border text-foreground/75 hover:border-gold hover:text-gold"
+                        }`}
+                      >
+                        {exp}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
-        </fieldset>
+        </>
       )}
 
       <div>

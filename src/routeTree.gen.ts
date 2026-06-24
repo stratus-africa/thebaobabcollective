@@ -29,6 +29,7 @@ import { Route as ItinerariesSlugRouteImport } from './routes/itineraries.$slug'
 import { Route as DestinationsSlugRouteImport } from './routes/destinations.$slug'
 import { Route as BookingSuccessRouteImport } from './routes/booking.success'
 import { Route as BookSlugRouteImport } from './routes/book.$slug'
+import { Route as AdventuresSlugRouteImport } from './routes/adventures.$slug'
 import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin/route'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
 import { Route as AuthenticatedAdminSubscribersRouteImport } from './routes/_authenticated/admin/subscribers'
@@ -142,6 +143,11 @@ const BookSlugRoute = BookSlugRouteImport.update({
   path: '/book/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdventuresSlugRoute = AdventuresSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => AdventuresRoute,
+} as any)
 const AuthenticatedAdminRouteRoute = AuthenticatedAdminRouteRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -222,7 +228,7 @@ const AuthenticatedAdminContentTableRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/adventures': typeof AdventuresRoute
+  '/adventures': typeof AdventuresRouteWithChildren
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
   '/destinations': typeof DestinationsRouteWithChildren
@@ -233,6 +239,7 @@ export interface FileRoutesByFullPath {
   '/private-travel': typeof PrivateTravelRoute
   '/testimonials': typeof TestimonialsRoute
   '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
+  '/adventures/$slug': typeof AdventuresSlugRoute
   '/book/$slug': typeof BookSlugRoute
   '/booking/success': typeof BookingSuccessRoute
   '/destinations/$slug': typeof DestinationsSlugRoute
@@ -256,7 +263,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/adventures': typeof AdventuresRoute
+  '/adventures': typeof AdventuresRouteWithChildren
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
   '/destinations': typeof DestinationsRouteWithChildren
@@ -266,6 +273,7 @@ export interface FileRoutesByTo {
   '/lodges': typeof LodgesRouteWithChildren
   '/private-travel': typeof PrivateTravelRoute
   '/testimonials': typeof TestimonialsRoute
+  '/adventures/$slug': typeof AdventuresSlugRoute
   '/book/$slug': typeof BookSlugRoute
   '/booking/success': typeof BookingSuccessRoute
   '/destinations/$slug': typeof DestinationsSlugRoute
@@ -291,7 +299,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/about': typeof AboutRoute
-  '/adventures': typeof AdventuresRoute
+  '/adventures': typeof AdventuresRouteWithChildren
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
   '/destinations': typeof DestinationsRouteWithChildren
@@ -302,6 +310,7 @@ export interface FileRoutesById {
   '/private-travel': typeof PrivateTravelRoute
   '/testimonials': typeof TestimonialsRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
+  '/adventures/$slug': typeof AdventuresSlugRoute
   '/book/$slug': typeof BookSlugRoute
   '/booking/success': typeof BookingSuccessRoute
   '/destinations/$slug': typeof DestinationsSlugRoute
@@ -338,6 +347,7 @@ export interface FileRouteTypes {
     | '/private-travel'
     | '/testimonials'
     | '/admin'
+    | '/adventures/$slug'
     | '/book/$slug'
     | '/booking/success'
     | '/destinations/$slug'
@@ -371,6 +381,7 @@ export interface FileRouteTypes {
     | '/lodges'
     | '/private-travel'
     | '/testimonials'
+    | '/adventures/$slug'
     | '/book/$slug'
     | '/booking/success'
     | '/destinations/$slug'
@@ -406,6 +417,7 @@ export interface FileRouteTypes {
     | '/private-travel'
     | '/testimonials'
     | '/_authenticated/admin'
+    | '/adventures/$slug'
     | '/book/$slug'
     | '/booking/success'
     | '/destinations/$slug'
@@ -431,7 +443,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
-  AdventuresRoute: typeof AdventuresRoute
+  AdventuresRoute: typeof AdventuresRouteWithChildren
   AuthRoute: typeof AuthRoute
   ContactRoute: typeof ContactRoute
   DestinationsRoute: typeof DestinationsRouteWithChildren
@@ -589,6 +601,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BookSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/adventures/$slug': {
+      id: '/adventures/$slug'
+      path: '/$slug'
+      fullPath: '/adventures/$slug'
+      preLoaderRoute: typeof AdventuresSlugRouteImport
+      parentRoute: typeof AdventuresRoute
+    }
     '/_authenticated/admin': {
       id: '/_authenticated/admin'
       path: '/admin'
@@ -728,6 +747,18 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
+interface AdventuresRouteChildren {
+  AdventuresSlugRoute: typeof AdventuresSlugRoute
+}
+
+const AdventuresRouteChildren: AdventuresRouteChildren = {
+  AdventuresSlugRoute: AdventuresSlugRoute,
+}
+
+const AdventuresRouteWithChildren = AdventuresRoute._addFileChildren(
+  AdventuresRouteChildren,
+)
+
 interface DestinationsRouteChildren {
   DestinationsSlugRoute: typeof DestinationsSlugRoute
 }
@@ -778,7 +809,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AboutRoute: AboutRoute,
-  AdventuresRoute: AdventuresRoute,
+  AdventuresRoute: AdventuresRouteWithChildren,
   AuthRoute: AuthRoute,
   ContactRoute: ContactRoute,
   DestinationsRoute: DestinationsRouteWithChildren,

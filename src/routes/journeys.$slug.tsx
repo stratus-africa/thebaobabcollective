@@ -2,7 +2,9 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowRight, Check } from "lucide-react";
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
+import { ShareButtons } from "@/components/site/ShareButtons";
 import { getJourney, journeys, type Itinerary } from "@/lib/content";
+
 
 export const Route = createFileRoute("/journeys/$slug")({
   loader: ({ params }) => {

@@ -9,6 +9,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { submitPrivateTravelRequest } from "@/lib/private-travel.functions";
+import { getPageContent } from "@/lib/page-content.functions";
+import { PAGE_DEFAULTS } from "@/lib/page-content.defaults";
 import { toast } from "sonner";
 import { Check } from "lucide-react";
 
@@ -26,6 +28,10 @@ const INTERESTS = [
 ];
 
 export const Route = createFileRoute("/private-travel")({
+  loader: async () => {
+    const content = await getPageContent({ data: { key: "private_travel" } }).catch(() => null);
+    return { content: { ...PAGE_DEFAULTS.private_travel, ...(content ?? {}) } };
+  },
   head: () => ({
     meta: [
       { title: "Private Travel — Bespoke Safari Planning | The Baobab Collective" },
@@ -36,6 +42,7 @@ export const Route = createFileRoute("/private-travel")({
 });
 
 function PrivateTravelPage() {
+  const { content: c } = Route.useLoaderData();
   const submit = useServerFn(submitPrivateTravelRequest);
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
@@ -76,10 +83,10 @@ function PrivateTravelPage() {
       <Navbar />
       <main>
         <section className="bg-forest text-forest-foreground py-24 text-center px-6">
-          <p className="text-[11px] tracking-[0.3em] uppercase text-gold mb-4">Private Travel</p>
-          <h1 className="font-serif text-5xl md:text-6xl mb-5">Designed entirely around you.</h1>
+          <p className="text-[11px] tracking-[0.3em] uppercase text-gold mb-4">{c.eyebrow}</p>
+          <h1 className="font-serif text-5xl md:text-6xl mb-5">{c.title}</h1>
           <p className="max-w-2xl mx-auto text-forest-foreground/80">
-            For travellers who want something truly bespoke — every camp, guide and moment shaped to your story.
+            {c.subtitle}
           </p>
         </section>
 
@@ -89,9 +96,9 @@ function PrivateTravelPage() {
               <div className="w-16 h-16 mx-auto rounded-full bg-gold/15 flex items-center justify-center mb-6">
                 <Check className="w-7 h-7 text-gold" />
               </div>
-              <h2 className="font-serif text-3xl mb-3">Request received</h2>
+              <h2 className="font-serif text-3xl mb-3">{c.success_title}</h2>
               <p className="text-foreground/70 mb-6">
-                A confirmation has been sent to your inbox. One of our journey designers will reach out within 48 hours.
+                {c.success_body}
               </p>
             </div>
           </section>
@@ -148,7 +155,7 @@ function PrivateTravelPage() {
               </div>
 
               <Button type="submit" disabled={loading} size="lg" className="w-full bg-gold text-gold-foreground hover:bg-gold/90 uppercase tracking-[0.25em] text-[12px]">
-                {loading ? "Sending…" : "Request my bespoke journey"}
+                {loading ? "Sending…" : c.submit_label}
               </Button>
             </form>
           </section>

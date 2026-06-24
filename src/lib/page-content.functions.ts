@@ -1,0 +1,52 @@
+import { createServerFn } from "@tanstack/react-start";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { createClient } from "@supabase/supabase-js";
+import { z } from "zod";
+
+const KEYS = ["home", "about", "private_travel"] as const;
+type PageKey = (typeof KEYS)[number];
+
+const GetSchema = z.object({ key: z.enum(KEYS) });
+const SaveSchema = z.object({
+  key: z.enum(KEYS),
+  value: z.record(z.string(), z.any()),
+});
+
+async function assertAdmin(context: { supabase: any; userId: string }) {
+  const { data } = await context.supabase.rpc("has_role", {
+    _user_id: context.userId,
+    _role: "admin",
+  });
+  if (!data) throw new Error("Forbidden");
+}
+
+export const getPageContent = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => GetSchema.parse(d))
+  .handler(async ({ data }) => {
+    const supabase = createClient(
+      process.env.SUPABASE_URL!,
+      process.env.SUPABASE_PUBLISHABLE_KEY!,
+      { auth: { storage: undefined, persistSession: false, autoRefreshToken: false } },
+    );
+    const { data: row } = await supabase
+      .from("site_settings")
+      .select("value")
+      .eq("key", `page_${data.key}`)
+      .maybeSingle();
+    return (row?.value as Record<string, any> | null) ?? null;
+  });
+
+export const savePageContent = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => SaveSchema.parse(d))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin
+      .from("site_settings")
+      .upsert({ key: `page_${data.key}`, value: data.value, updated_at: new Date().toISOString() });
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export type { PageKey };

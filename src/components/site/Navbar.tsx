@@ -17,7 +17,7 @@ const primaryItems = [
 
 const moreItems = [
   { label: "About", to: "/about" as const },
-  { label: "About Africa", to: "/about-africa" as const },
+  
   { label: "Testimonials", to: "/testimonials" as const },
   { label: "FAQ", to: "/faq" as const },
   { label: "Private Travel", to: "/private-travel" as const },

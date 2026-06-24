@@ -19,7 +19,6 @@ import { Route as DestinationsRouteImport } from './routes/destinations'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AdventuresRouteImport } from './routes/adventures'
-import { Route as AboutAfricaRouteImport } from './routes/about-africa'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
@@ -39,6 +38,7 @@ import { Route as AuthenticatedAdminEnquiriesRouteImport } from './routes/_authe
 import { Route as AuthenticatedAdminBookingsRouteImport } from './routes/_authenticated/admin/bookings'
 import { Route as AuthenticatedAdminAdventuresRouteImport } from './routes/_authenticated/admin/adventures'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
+import { Route as AuthenticatedAdminPagesPageRouteImport } from './routes/_authenticated/admin/pages.$page'
 import { Route as AuthenticatedAdminContentTableRouteImport } from './routes/_authenticated/admin/content.$table'
 
 const TestimonialsRoute = TestimonialsRouteImport.update({
@@ -89,11 +89,6 @@ const AuthRoute = AuthRouteImport.update({
 const AdventuresRoute = AdventuresRouteImport.update({
   id: '/adventures',
   path: '/adventures',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AboutAfricaRoute = AboutAfricaRouteImport.update({
-  id: '/about-africa',
-  path: '/about-africa',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -198,6 +193,12 @@ const ApiPublicPaymentsWebhookRoute =
     path: '/api/public/payments/webhook',
     getParentRoute: () => rootRouteImport,
   } as any)
+const AuthenticatedAdminPagesPageRoute =
+  AuthenticatedAdminPagesPageRouteImport.update({
+    id: '/pages/$page',
+    path: '/pages/$page',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const AuthenticatedAdminContentTableRoute =
   AuthenticatedAdminContentTableRouteImport.update({
     id: '/content/$table',
@@ -208,7 +209,6 @@ const AuthenticatedAdminContentTableRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/about-africa': typeof AboutAfricaRoute
   '/adventures': typeof AdventuresRoute
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
@@ -235,12 +235,12 @@ export interface FileRoutesByFullPath {
   '/admin/subscribers': typeof AuthenticatedAdminSubscribersRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/content/$table': typeof AuthenticatedAdminContentTableRoute
+  '/admin/pages/$page': typeof AuthenticatedAdminPagesPageRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/about-africa': typeof AboutAfricaRoute
   '/adventures': typeof AdventuresRoute
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
@@ -266,6 +266,7 @@ export interface FileRoutesByTo {
   '/admin/subscribers': typeof AuthenticatedAdminSubscribersRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/content/$table': typeof AuthenticatedAdminContentTableRoute
+  '/admin/pages/$page': typeof AuthenticatedAdminPagesPageRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRoutesById {
@@ -273,7 +274,6 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/about': typeof AboutRoute
-  '/about-africa': typeof AboutAfricaRoute
   '/adventures': typeof AdventuresRoute
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
@@ -300,6 +300,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/subscribers': typeof AuthenticatedAdminSubscribersRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/content/$table': typeof AuthenticatedAdminContentTableRoute
+  '/_authenticated/admin/pages/$page': typeof AuthenticatedAdminPagesPageRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRouteTypes {
@@ -307,7 +308,6 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
-    | '/about-africa'
     | '/adventures'
     | '/auth'
     | '/contact'
@@ -334,12 +334,12 @@ export interface FileRouteTypes {
     | '/admin/subscribers'
     | '/admin/'
     | '/admin/content/$table'
+    | '/admin/pages/$page'
     | '/api/public/payments/webhook'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
-    | '/about-africa'
     | '/adventures'
     | '/auth'
     | '/contact'
@@ -365,13 +365,13 @@ export interface FileRouteTypes {
     | '/admin/subscribers'
     | '/admin'
     | '/admin/content/$table'
+    | '/admin/pages/$page'
     | '/api/public/payments/webhook'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/about'
-    | '/about-africa'
     | '/adventures'
     | '/auth'
     | '/contact'
@@ -398,6 +398,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/subscribers'
     | '/_authenticated/admin/'
     | '/_authenticated/admin/content/$table'
+    | '/_authenticated/admin/pages/$page'
     | '/api/public/payments/webhook'
   fileRoutesById: FileRoutesById
 }
@@ -405,7 +406,6 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
-  AboutAfricaRoute: typeof AboutAfricaRoute
   AdventuresRoute: typeof AdventuresRoute
   AuthRoute: typeof AuthRoute
   ContactRoute: typeof ContactRoute
@@ -492,13 +492,6 @@ declare module '@tanstack/react-router' {
       path: '/adventures'
       fullPath: '/adventures'
       preLoaderRoute: typeof AdventuresRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/about-africa': {
-      id: '/about-africa'
-      path: '/about-africa'
-      fullPath: '/about-africa'
-      preLoaderRoute: typeof AboutAfricaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -634,6 +627,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicPaymentsWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/admin/pages/$page': {
+      id: '/_authenticated/admin/pages/$page'
+      path: '/pages/$page'
+      fullPath: '/admin/pages/$page'
+      preLoaderRoute: typeof AuthenticatedAdminPagesPageRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/admin/content/$table': {
       id: '/_authenticated/admin/content/$table'
       path: '/content/$table'
@@ -654,6 +654,7 @@ interface AuthenticatedAdminRouteRouteChildren {
   AuthenticatedAdminSubscribersRoute: typeof AuthenticatedAdminSubscribersRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
   AuthenticatedAdminContentTableRoute: typeof AuthenticatedAdminContentTableRoute
+  AuthenticatedAdminPagesPageRoute: typeof AuthenticatedAdminPagesPageRoute
 }
 
 const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren =
@@ -667,6 +668,7 @@ const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren
     AuthenticatedAdminSubscribersRoute: AuthenticatedAdminSubscribersRoute,
     AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
     AuthenticatedAdminContentTableRoute: AuthenticatedAdminContentTableRoute,
+    AuthenticatedAdminPagesPageRoute: AuthenticatedAdminPagesPageRoute,
   }
 
 const AuthenticatedAdminRouteRouteWithChildren =
@@ -724,7 +726,6 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AboutRoute: AboutRoute,
-  AboutAfricaRoute: AboutAfricaRoute,
   AdventuresRoute: AdventuresRoute,
   AuthRoute: AuthRoute,
   ContactRoute: ContactRoute,

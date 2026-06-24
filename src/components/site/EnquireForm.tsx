@@ -242,6 +242,22 @@ export function EnquireForm({
       aria-busy={loading}
       className={`bg-background border border-border p-6 md:p-8 space-y-6 ${className ?? ""}`}
     >
+      {/* Honeypot — bots fill this; humans never see it */}
+      <div
+        aria-hidden="true"
+        style={{ position: "absolute", left: "-10000px", top: "auto", width: 1, height: 1, overflow: "hidden" }}
+      >
+        <label htmlFor="company">Company</label>
+        <input
+          id="company"
+          name="company"
+          type="text"
+          tabIndex={-1}
+          autoComplete="off"
+          value={honeypot}
+          onChange={(e) => setHoneypot(e.target.value)}
+        />
+      </div>
       {defaultSubject && (
         <p className="text-[11px] tracking-[0.25em] uppercase text-terracotta">Enquiry — {defaultSubject}</p>
       )}

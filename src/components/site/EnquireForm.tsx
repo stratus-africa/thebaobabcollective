@@ -114,7 +114,8 @@ export function EnquireForm({
   // Single source of truth: a state-backed draft initialised from autosave on mount
   const [values, setValues] = useState<Draft>({
     ...EMPTY_DRAFT,
-    destination: defaultDestination ?? "",
+    destination: defaultDestination ?? context?.title ?? "",
+    travel_dates: context?.dates ?? "",
   });
   const hydratedRef = useRef(false);
 

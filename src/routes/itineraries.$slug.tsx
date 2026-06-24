@@ -4,7 +4,7 @@ import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import { ArrowRight, Check, Calendar, MapPin, Users, Sparkles } from "lucide-react";
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
-import { EnquireForm } from "@/components/site/EnquireForm";
+import { EnquireDialog } from "@/components/site/EnquireDialog";
 import { ShareButtons } from "@/components/site/ShareButtons";
 import { getItineraryBySlug } from "@/lib/cms.functions";
 

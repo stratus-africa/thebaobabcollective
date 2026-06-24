@@ -23,12 +23,29 @@ const TABLES = [
 ] as const;
 type TableName = (typeof TABLES)[number];
 
-const ListSchema = z.object({ table: z.enum(TABLES) });
+const ListSchema = z.object({
+  table: z.enum(TABLES),
+  page: z.number().int().min(1).default(1),
+  pageSize: z.number().int().min(1).max(100).default(12),
+  orderBy: z.string().default("sort_order"),
+  orderDir: z.enum(["asc", "desc"]).default("asc"),
+});
 const UpsertSchema = z.object({
   table: z.enum(TABLES),
   row: z.record(z.string(), z.any()),
 });
 const DeleteSchema = z.object({ table: z.enum(TABLES), id: z.string().uuid() });
+
+// Allow-list of sortable columns per table to prevent injection via orderBy
+const SORTABLE: Record<TableName, string[]> = {
+  journey_categories: ["sort_order", "title", "slug", "created_at", "updated_at"],
+  itineraries: ["sort_order", "name", "price_from_usd", "created_at", "updated_at"],
+  journal_articles: ["sort_order", "title", "published_at", "created_at", "updated_at"],
+  lodges: ["sort_order", "name", "price_from_usd", "created_at", "updated_at"],
+  destinations: ["sort_order", "name", "country", "region", "created_at", "updated_at"],
+  testimonials: ["sort_order", "name", "rating", "created_at", "updated_at"],
+  faqs: ["sort_order", "category", "created_at", "updated_at"],
+};
 
 export const adminList = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -36,12 +53,52 @@ export const adminList = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await assertAdmin(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: rows, error } = await supabaseAdmin
+    const orderCol = SORTABLE[data.table].includes(data.orderBy) ? data.orderBy : "sort_order";
+    const from = (data.page - 1) * data.pageSize;
+    const to = from + data.pageSize - 1;
+    const { data: rows, error, count } = await supabaseAdmin
       .from(data.table)
-      .select("*")
-      .order("sort_order", { ascending: true, nullsFirst: false });
+      .select("*", { count: "exact" })
+      .order(orderCol, { ascending: data.orderDir === "asc", nullsFirst: false })
+      .range(from, to);
     if (error) throw new Error(error.message);
-    return rows ?? [];
+    return { rows: rows ?? [], count: count ?? 0 };
+  });
+
+const UploadImageSchema = z.object({
+  filename: z.string().min(1),
+  contentType: z.string().regex(/^image\/(png|jpe?g|webp|gif|avif)$/i, "Unsupported image type"),
+  base64: z.string().min(1),
+});
+
+export const adminUploadImage = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => UploadImageSchema.parse(d))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const cleanName = data.filename.toLowerCase().replace(/[^a-z0-9.]+/g, "-").replace(/^-|-$/g, "");
+    const path = `cms/${Date.now()}-${cleanName}`;
+
+    const binary = atob(data.base64);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+
+    // 8 MB hard limit (Worker memory)
+    if (bytes.length > 8 * 1024 * 1024) throw new Error("Image exceeds 8MB limit");
+
+    const { error: upErr } = await supabaseAdmin.storage
+      .from("journal-images")
+      .upload(path, bytes, { contentType: data.contentType, upsert: false });
+    if (upErr) throw new Error(upErr.message);
+
+    const { data: signed, error: signErr } = await supabaseAdmin.storage
+      .from("journal-images")
+      .createSignedUrl(path, 60 * 60 * 24 * 365 * 10);
+    if (signErr) throw new Error(signErr.message);
+
+    return { url: signed.signedUrl, path, size: bytes.length };
   });
 
 export const adminUpsert = createServerFn({ method: "POST" })

@@ -268,10 +268,10 @@ export function BookDialog({
                   <><Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" /> Preparing checkout…</>
                 ) : (
                   <>
-                    {itinerary.deposit_usd
-                      ? `Pay deposit · $${itinerary.deposit_usd.toLocaleString()}`
-                      : "Request booking"}
+                    Request booking
                     <ArrowRight className="w-3 h-3" aria-hidden="true" />
+                  </>
+                )}
                   </>
                 )}
               </button>

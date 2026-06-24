@@ -57,22 +57,19 @@ export function ShareButtons({ title, description, url, label = "Share", variant
         return;
       }
       case "native": {
-        if (typeof navigator !== "undefined" && "share" in navigator) {
+        const nav = typeof navigator !== "undefined" ? (navigator as Navigator & { share?: (d: ShareData) => Promise<void> }) : null;
+        if (nav?.share) {
           try {
-            await (navigator as Navigator & { share: (d: ShareData) => Promise<void> }).share({
-              title,
-              text: description,
-              url: href,
-            });
+            await nav.share({ title, text: description, url: href });
             return;
           } catch {
-            // user cancelled
             return;
           }
         }
-        // fallthrough to copy
-        await navigator.clipboard.writeText(href);
-        toast.success("Link copied to clipboard");
+        if (nav?.clipboard) {
+          await nav.clipboard.writeText(href);
+          toast.success("Link copied to clipboard");
+        }
         return;
       }
       case "copy": {

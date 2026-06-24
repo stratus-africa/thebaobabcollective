@@ -155,7 +155,7 @@ function PrivateTravelPage() {
               </div>
 
               <Button type="submit" disabled={loading} size="lg" className="w-full bg-gold text-gold-foreground hover:bg-gold/90 uppercase tracking-[0.25em] text-[12px]">
-                {loading ? "Sending…" : "Request my bespoke journey"}
+                {loading ? "Sending…" : c.submit_label}
               </Button>
             </form>
           </section>

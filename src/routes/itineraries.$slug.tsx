@@ -167,13 +167,18 @@ function ItineraryPage() {
                   {itinerary.price_from_usd ? `$${Number(itinerary.price_from_usd).toLocaleString()}` : "On request"}
                 </p>
                 <p className="text-xs text-foreground/60 mb-6">per person, twin share · {itinerary.nights}</p>
-                <Link
-                  to="/book/$slug"
-                  params={{ slug: itinerary.slug }}
-                  className="w-full inline-flex items-center justify-center gap-2 bg-gold text-gold-foreground uppercase tracking-[0.25em] text-[11px] px-6 py-4 hover:bg-gold/90 mb-3"
-                >
-                  Book This Journey <ArrowRight className="w-3 h-3" />
-                </Link>
+                <BookDialog
+                  itinerary={itinerary as any}
+                  openOnHash="book"
+                  trigger={
+                    <button
+                      type="button"
+                      className="w-full inline-flex items-center justify-center gap-2 bg-gold text-gold-foreground uppercase tracking-[0.25em] text-[11px] px-6 py-4 hover:bg-gold/90 mb-3"
+                    >
+                      Book This Journey <ArrowRight className="w-3 h-3" />
+                    </button>
+                  }
+                />
                 <EnquireDialog
                   defaultSubject={enquiryName}
                   defaultDestination={enquiryName}

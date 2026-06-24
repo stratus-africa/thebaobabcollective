@@ -252,13 +252,6 @@ export function BookDialog({
                 </div>
               </div>
 
-              {itinerary.deposit_usd && (
-                <div className="bg-cream p-4 text-sm text-foreground/80">
-                  A refundable deposit of{" "}
-                  <span className="font-medium text-foreground">${itinerary.deposit_usd.toLocaleString()}</span>{" "}
-                  secures your booking. Balance due 60 days before travel.
-                </div>
-              )}
 
               {errors.form && (
                 <p role="alert" className="text-sm text-destructive border border-destructive/40 bg-destructive/5 px-4 py-3">

@@ -59,9 +59,8 @@ const EMPTY_DRAFT: Draft = {
   children: "0",
   budget: "",
   trip_type: "",
-  accommodation_style: "",
-  referral_source: "",
-  message: "",
+    accommodation_style: "",
+    message: "",
   experiences: [],
   subscribe: true,
 };

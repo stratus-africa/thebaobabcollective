@@ -171,9 +171,7 @@ export function BookDialog({
           </DialogTitle>
           <DialogDescription id="book-dialog-desc" className="text-sm text-foreground/70">
             {itinerary.nights ? `${itinerary.nights} · ` : ""}
-            {itinerary.deposit_usd
-              ? `Deposit $${Number(itinerary.deposit_usd).toLocaleString()} secures your dates.`
-              : "Tell us your travel dates and we'll confirm by email."}
+            Tell us your travel dates and we'll confirm by email.
           </DialogDescription>
         </DialogHeader>
 

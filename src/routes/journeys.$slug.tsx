@@ -3,6 +3,7 @@ import { ArrowRight, Check } from "lucide-react";
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
 import { ShareButtons } from "@/components/site/ShareButtons";
+import { EnquireDialog } from "@/components/site/EnquireDialog";
 import { getJourney, journeys, type Itinerary } from "@/lib/content";
 
 
@@ -124,14 +125,20 @@ function JourneyPage() {
                       >
                         View Itinerary <ArrowRight className="w-3 h-3" />
                       </Link>
-                      <Link
-                        to="/itineraries/$slug"
-                        params={{ slug: (it as any).slug ?? it.name.toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") }}
-                        hash="enquire"
-                        className="inline-flex items-center gap-2 border border-gold text-gold uppercase tracking-[0.25em] text-[11px] px-6 py-3 hover:bg-gold hover:text-gold-foreground transition-colors"
-                      >
-                        Enquire
-                      </Link>
+                      <EnquireDialog
+                        defaultSubject={`Enquiry about ${it.name}`}
+                        defaultDestination={it.name}
+                        sourceUrl={`/journeys/${journey.slug}`}
+                        autosaveKey={`enquire:itinerary:${(it as any).slug ?? it.name}`}
+                        trigger={
+                          <button
+                            type="button"
+                            className="inline-flex items-center gap-2 border border-gold text-gold uppercase tracking-[0.25em] text-[11px] px-6 py-3 hover:bg-gold hover:text-gold-foreground transition-colors"
+                          >
+                            Enquire
+                          </button>
+                        }
+                      />
                     </div>
                   </div>
                 </article>
@@ -146,12 +153,19 @@ function JourneyPage() {
             <p className="text-forest-foreground/80 mb-8">
               Every journey we craft is bespoke. Tell us your dates, dreams and travel style — we'll do the rest.
             </p>
-            <Link
-              to="/contact"
-              className="inline-flex items-center gap-2 bg-gold text-gold-foreground uppercase tracking-[0.25em] text-[12px] px-8 py-4 hover:bg-gold/90 transition-colors"
-            >
-              Start Planning <ArrowRight className="w-3 h-3" />
-            </Link>
+            <EnquireDialog
+              defaultSubject={`Enquiry about ${journey.title}`}
+              sourceUrl={`/journeys/${journey.slug}`}
+              autosaveKey={`enquire:journey:${journey.slug}`}
+              trigger={
+                <button
+                  type="button"
+                  className="inline-flex items-center gap-2 bg-gold text-gold-foreground uppercase tracking-[0.25em] text-[12px] px-8 py-4 hover:bg-gold/90 transition-colors"
+                >
+                  Start Planning <ArrowRight className="w-3 h-3" />
+                </button>
+              }
+            />
           </div>
         </section>
 

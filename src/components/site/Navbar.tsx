@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { BaobabLogo } from "./Logo";
+import { EnquireDialog } from "@/components/site/EnquireDialog";
 import { supabase } from "@/integrations/supabase/client";
 import type { User } from "@supabase/supabase-js";
 
@@ -124,12 +125,17 @@ export function Navbar() {
                 </button>
               </>
             )}
-            <Link
-              to="/contact"
-              className="inline-flex items-center justify-center border border-gold text-gold uppercase tracking-[0.2em] text-[11px] px-5 py-3 hover:bg-gold hover:text-gold-foreground transition-colors"
-            >
-              Enquire
-            </Link>
+            <EnquireDialog
+              autosaveKey="enquire:navbar"
+              trigger={
+                <button
+                  type="button"
+                  className="inline-flex items-center justify-center border border-gold text-gold uppercase tracking-[0.2em] text-[11px] px-5 py-3 hover:bg-gold hover:text-gold-foreground transition-colors"
+                >
+                  Enquire
+                </button>
+              }
+            />
           </div>
 
           <button
@@ -165,13 +171,18 @@ export function Navbar() {
                   </button>
                 </>
               )}
-              <Link
-                to="/contact"
-                onClick={() => setOpen(false)}
-                className="inline-flex items-center justify-center border border-gold text-gold uppercase tracking-[0.2em] text-[11px] px-6 py-3 mt-2"
-              >
-                Enquire Now
-              </Link>
+              <EnquireDialog
+                autosaveKey="enquire:navbar"
+                trigger={
+                  <button
+                    type="button"
+                    onClick={() => setOpen(false)}
+                    className="inline-flex items-center justify-center border border-gold text-gold uppercase tracking-[0.2em] text-[11px] px-6 py-3 mt-2"
+                  >
+                    Enquire Now
+                  </button>
+                }
+              />
             </div>
           </div>
         )}

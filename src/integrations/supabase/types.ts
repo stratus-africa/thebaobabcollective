@@ -367,6 +367,7 @@ export type Database = {
       }
       journal_articles: {
         Row: {
+          author: string | null
           category: string
           content: string[]
           created_at: string
@@ -375,13 +376,16 @@ export type Database = {
           id: string
           image: string
           published: boolean
+          published_at: string | null
           read_time: string
+          scheduled_at: string | null
           slug: string
           sort_order: number
           title: string
           updated_at: string
         }
         Insert: {
+          author?: string | null
           category: string
           content?: string[]
           created_at?: string
@@ -390,13 +394,16 @@ export type Database = {
           id?: string
           image: string
           published?: boolean
+          published_at?: string | null
           read_time: string
+          scheduled_at?: string | null
           slug: string
           sort_order?: number
           title: string
           updated_at?: string
         }
         Update: {
+          author?: string | null
           category?: string
           content?: string[]
           created_at?: string
@@ -405,7 +412,9 @@ export type Database = {
           id?: string
           image?: string
           published?: boolean
+          published_at?: string | null
           read_time?: string
+          scheduled_at?: string | null
           slug?: string
           sort_order?: number
           title?: string

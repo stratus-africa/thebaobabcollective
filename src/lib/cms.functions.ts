@@ -46,10 +46,12 @@ export const getJourneyBySlug = createServerFn({ method: "GET" })
 
 export const getArticles = createServerFn({ method: "GET" }).handler(async () => {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const nowIso = new Date().toISOString();
   const { data, error } = await supabaseAdmin
     .from("journal_articles")
     .select("*")
-    .eq("published", true)
+    .or(`published.eq.true,scheduled_at.lte.${nowIso}`)
+    .order("published_at", { ascending: false, nullsFirst: false })
     .order("sort_order");
   if (error) throw new Error(error.message);
   return data ?? [];
@@ -59,11 +61,12 @@ export const getArticleBySlug = createServerFn({ method: "GET" })
   .inputValidator((d: { slug: string }) => d)
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const nowIso = new Date().toISOString();
     const { data: article } = await supabaseAdmin
       .from("journal_articles")
       .select("*")
       .eq("slug", data.slug)
-      .eq("published", true)
+      .or(`published.eq.true,scheduled_at.lte.${nowIso}`)
       .maybeSingle();
     return article;
   });
@@ -137,4 +140,17 @@ export const getItineraryBySlug = createServerFn({ method: "GET" })
       .eq("published", true)
       .maybeSingle();
     return it;
+  });
+
+export const getDestinationBySlug = createServerFn({ method: "GET" })
+  .inputValidator((d: { slug: string }) => d)
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: dest } = await supabaseAdmin
+      .from("destinations")
+      .select("*")
+      .eq("slug", data.slug)
+      .eq("published", true)
+      .maybeSingle();
+    return dest;
   });

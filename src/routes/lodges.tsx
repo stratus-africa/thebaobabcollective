@@ -11,6 +11,7 @@ import { CardGridSkeleton } from "@/components/site/CardSkeleton";
 import { getLodges } from "@/lib/cms.functions";
 import { MapPin, ArrowRight } from "lucide-react";
 import { EnquireDialog } from "@/components/site/EnquireDialog";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 const lodgesQuery = queryOptions({
   queryKey: ["lodges"],
@@ -81,6 +82,7 @@ function LodgesPage() {
 
 function LodgesGrid() {
   const { data: lodges } = useSuspenseQuery(lodgesQuery);
+  const { formatPrice } = useSiteSettings();
   const search = Route.useSearch();
   const navigate = useNavigate({ from: "/lodges" });
   const q = search.q ?? "";
@@ -173,7 +175,7 @@ function LodgesGrid() {
                     </span>
                     {l.price_from_usd ? (
                       <span className="absolute top-4 right-4 bg-gold text-gold-foreground text-[10px] tracking-[0.2em] uppercase px-3 py-1.5 rounded-full font-medium">
-                        From ${l.price_from_usd.toLocaleString()}
+                        From {formatPrice(l.price_from_usd)}
                       </span>
                     ) : null}
                   </Link>
@@ -205,7 +207,7 @@ function LodgesGrid() {
                       <p className="text-xs text-foreground/60">
                         {l.price_from_usd ? (
                           <>
-                            <span className="text-foreground/90">${l.price_from_usd.toLocaleString()}</span> / night
+                            <span className="text-foreground/90">{formatPrice(l.price_from_usd)}</span> / night
                           </>
                         ) : (
                           "On enquiry"

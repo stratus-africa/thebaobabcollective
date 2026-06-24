@@ -18,6 +18,8 @@ export function useSiteSettings() {
   const email = s?.contact?.email || FALLBACK_EMAIL;
   const phone = s?.contact?.phone || FALLBACK_PHONE;
   const phoneTel = s?.contact?.phone_tel || phone.replace(/[^\d+]/g, "");
+  const currencyCode = s?.currency?.code || "USD";
+  const currencySymbol = s?.currency?.symbol || "$";
   return {
     settings: s,
     email,
@@ -25,6 +27,10 @@ export function useSiteSettings() {
     phoneTel,
     address: s?.contact?.address ?? "",
     logoUrl: s?.branding?.logo_url ?? "",
+    currencyCode,
+    currencySymbol,
+    formatPrice: (amount: number | null | undefined) =>
+      amount == null ? "—" : `${currencySymbol}${Number(amount).toLocaleString()}`,
     isLoading: query.isLoading,
   };
 }

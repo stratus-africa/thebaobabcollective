@@ -9,6 +9,7 @@ import { EnquireDialog } from "@/components/site/EnquireDialog";
 import { Breadcrumbs } from "@/components/site/Breadcrumbs";
 import { Lightbox } from "@/components/site/Lightbox";
 import { getLodgeBySlug, getLodges } from "@/lib/cms.functions";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 const lodgeQuery = (slug: string) =>
   queryOptions({
@@ -106,6 +107,7 @@ function LodgePage() {
   const { slug } = Route.useParams();
   const { data: l } = useSuspenseQuery(lodgeQuery(slug));
   const { data: all } = useSuspenseQuery(allLodgesQuery);
+  const { formatPrice } = useSiteSettings();
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
   if (!l) return null;
@@ -139,7 +141,7 @@ function LodgePage() {
               <h1 className="font-serif text-5xl md:text-7xl leading-[1.05] mb-4">{l.name}</h1>
               {l.price_from_usd ? (
                 <p className="text-sm md:text-base text-background/85">
-                  From <span className="text-gold">${l.price_from_usd.toLocaleString()}</span> / night
+                  From <span className="text-gold">{formatPrice(l.price_from_usd)}</span> / night
                 </p>
               ) : (
                 <p className="text-sm md:text-base text-background/85">Rates on enquiry</p>

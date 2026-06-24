@@ -7,6 +7,7 @@ import type { User } from "@supabase/supabase-js";
 
 const primaryItems = [
   { label: "Home", to: "/" as const },
+  { label: "Adventures", to: "/adventures" as const },
   { label: "Journeys", to: "/journeys" as const },
   { label: "Lodges", to: "/lodges" as const },
   { label: "Destinations", to: "/destinations" as const },

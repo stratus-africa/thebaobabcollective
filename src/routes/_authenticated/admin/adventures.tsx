@@ -224,8 +224,8 @@ function AdminAdventures() {
                 {DIFFICULTIES.map((d) => <option key={d}>{d}</option>)}
               </select>
             </Field>
-            <Field label="Image URL">
-              <Input value={s.image} onChange={(e) => set({ ...s, image: e.target.value })} />
+            <Field label="Image">
+              <ImageUpload value={s.image} onChange={(url) => set({ ...s, image: url })} />
             </Field>
             <Field label="Description">
               <Textarea rows={3} value={s.description} onChange={(e) => set({ ...s, description: e.target.value })} />

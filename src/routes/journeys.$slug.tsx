@@ -1,11 +1,17 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { ArrowRight, Check } from "lucide-react";
+import { useQuery, queryOptions } from "@tanstack/react-query";
+import { ArrowRight, Check, MapPin } from "lucide-react";
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
 import { ShareButtons } from "@/components/site/ShareButtons";
 import { EnquireDialog } from "@/components/site/EnquireDialog";
 import { getJourney, journeys, type Itinerary } from "@/lib/content";
+import { getDestinations } from "@/lib/cms.functions";
 
+const featuredDestinationsQuery = queryOptions({
+  queryKey: ["destinations", "featured"],
+  queryFn: () => getDestinations(),
+});
 
 export const Route = createFileRoute("/journeys/$slug")({
   loader: ({ params }) => {

@@ -304,8 +304,11 @@ export type Database = {
           destination: string | null
           email: string
           experiences: string[] | null
+          handled_at: string | null
+          handled_by: string | null
           id: string
           message: string
+          message_id: string | null
           name: string
           phone: string
           referral_source: string | null
@@ -325,8 +328,11 @@ export type Database = {
           destination?: string | null
           email: string
           experiences?: string[] | null
+          handled_at?: string | null
+          handled_by?: string | null
           id?: string
           message: string
+          message_id?: string | null
           name: string
           phone: string
           referral_source?: string | null
@@ -346,8 +352,11 @@ export type Database = {
           destination?: string | null
           email?: string
           experiences?: string[] | null
+          handled_at?: string | null
+          handled_by?: string | null
           id?: string
           message?: string
+          message_id?: string | null
           name?: string
           phone?: string
           referral_source?: string | null

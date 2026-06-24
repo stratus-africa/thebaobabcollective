@@ -13,7 +13,7 @@ const TRIP_TYPES = ["Honeymoon", "Family safari", "Solo expedition", "Friends / 
 const BUDGETS = ["Under $5k pp", "$5k – $10k pp", "$10k – $20k pp", "$20k – $40k pp", "$40k+ pp", "Open to advice"];
 const STYLES = ["Classic luxury lodges", "Tented camps", "Mobile expeditions", "Eco / conservation camps", "Private villas", "Mix it up"];
 const EXPERIENCES = ["Big Five game viewing", "Walking safaris", "Gorilla / primate trekking", "Birding", "Cultural encounters", "Beach extension", "Helicopter / fly camping", "Photography focus"];
-const REFERRALS = ["Google search", "Instagram", "Facebook", "TikTok", "Friend / family", "Travel agent", "Press / publication", "Other"];
+
 
 export type EnquireFormProps = {
   defaultSubject?: string;

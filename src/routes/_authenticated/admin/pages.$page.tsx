@@ -132,7 +132,7 @@ function PageEditor() {
           <Loader2 className="w-5 h-5 animate-spin inline mr-2" /> Loading…
         </div>
       ) : (
-        <div className="bg-background border border-border p-6 space-y-5 max-w-3xl">
+        <div className="bg-background border border-border p-6 space-y-5">
           {schema.fields.map((f) => (
             <FieldRow
               key={f.name}

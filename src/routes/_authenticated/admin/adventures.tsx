@@ -79,7 +79,7 @@ function AdminAdventures() {
   }
 
   return (
-    <div className="max-w-5xl space-y-10">
+    <div className="space-y-10">
       <div className="flex items-start justify-between gap-4 sticky top-0 bg-cream py-4 z-10 border-b border-border/40">
         <div>
           <h1 className="font-serif text-3xl">Adventures page</h1>

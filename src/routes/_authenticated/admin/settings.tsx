@@ -35,7 +35,7 @@ type RoleChoice = "admin" | "editor" | "customer";
 
 function SettingsPage() {
   return (
-    <div className="max-w-6xl">
+    <div>
       <header className="mb-8">
         <p className="text-[11px] tracking-[0.3em] uppercase text-foreground/60 mb-2">Admin</p>
         <h1 className="font-serif text-3xl text-foreground">Site Settings</h1>

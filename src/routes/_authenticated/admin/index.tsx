@@ -61,7 +61,7 @@ function Dashboard() {
   ];
 
   return (
-    <div className="space-y-8 max-w-7xl">
+    <div className="space-y-8">
       <div>
         <h1 className="font-serif text-3xl md:text-4xl text-foreground">Admin Dashboard</h1>
         <p className="text-foreground/60 mt-1">Manage your luxury safari content and operations.</p>

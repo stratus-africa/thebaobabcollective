@@ -2,7 +2,7 @@ import { createFileRoute, Outlet, Link, useRouterState, redirect } from "@tansta
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import {
-  LayoutDashboard, Calendar, Mail, MessageSquare, Users, Globe, Building, MapPin, Star, HelpCircle, FileText, Plane,
+  LayoutDashboard, Calendar, Mail, MessageSquare, Globe, Building, MapPin, Star, HelpCircle, FileText, Plane, Compass, BookOpen,
 } from "lucide-react";
 
 const nav = [
@@ -10,8 +10,10 @@ const nav = [
   { to: "/admin/bookings", label: "Bookings", icon: Calendar },
   { to: "/admin/enquiries", label: "Enquiries", icon: MessageSquare },
   { to: "/admin/private-travel", label: "Private Travel", icon: Plane },
+  { to: "/admin/planning-guide", label: "Planning Guide", icon: BookOpen },
   { to: "/admin/subscribers", label: "Subscribers", icon: Mail },
   { type: "divider" as const },
+  { to: "/admin/adventures", label: "Adventures Page", icon: Compass },
   { to: "/admin/content/journey_categories", label: "Journey Categories", icon: Globe },
   { to: "/admin/content/itineraries", label: "Itineraries", icon: Calendar },
   { to: "/admin/content/journal_articles", label: "Articles", icon: FileText },

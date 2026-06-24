@@ -1,71 +1,82 @@
-# Plan — CMS, Admin Panel, Bookings & 5 New Pages
+# /adventures: Filters, CMS, Prefilled Enquire, Planning Guide
 
-This is a large piece of work. I'll break it into clear phases so you can confirm before I build.
+Four tightly scoped additions to the Adventures page.
 
-## Phase 1 — Auth & Admin Foundation
-- Enable email/password + Google sign-in on Lovable Cloud
-- `profiles` table (auto-created on signup) + `user_roles` table with `app_role` enum (`admin`, `editor`, `user`) and `has_role()` security-definer function
-- Integration-managed `/_authenticated` gate
-- `/auth` sign-in page
-- `/admin` protected area, gated by `has_role(uid, 'admin')`
-- Seed: first admin set via migration using your email (you'll provide it)
+## 1. Search & filters (Region / Terrain / Difficulty)
 
-## Phase 2 — CMS (move content from `src/lib/content.ts` into DB)
-New tables (all with RLS — public SELECT for published rows, admin write):
-- `journey_categories` (slug, title, tagline, intro, hero_image, sort_order, published)
-- `itineraries` (category_id FK, name, nights, description, highlights[], image, sort_order)
-- `journal_articles` (slug, title, excerpt, image, date, read_time, category, content[], published)
-- `lodges` (slug, name, location, description, gallery[], price_from, published)
-- `destinations` (slug, name, region, description, image, featured_trips[], lat, lng, published)
-- `testimonials` (name, location, quote, rating, image, published, sort_order)
-- `faqs` (category enum: planning|conservation|logistics, question, answer, sort_order, published)
-- `site_settings` (key/value for hero text, contact info, etc.)
+Add a sticky filter bar above the Signature Adventures grid with:
+- Text search (matches name + description)
+- Region dropdown (Botswana, Namibia, Tanzania & Kenya, Rwanda & Uganda, Zambia, Ethiopia, …)
+- Terrain dropdown (Delta, Desert, Savannah, Forest, Mountain, Coastal)
+- Difficulty dropdown (Easy, Moderate, Active, Challenging)
+- "Clear all" pill, and a result count ("Showing 4 of 6 adventures").
 
-Server functions (`*.functions.ts`) for public reads (admin client, published-only) and admin CRUD (auth + has_role check).
+Filters live in URL search params (`?region=…&terrain=…&difficulty=…&q=…`) using TanStack `validateSearch` + `fallback()` so links stay shareable and refreshable. Empty/no-match state shows a "No adventures match" panel with a Clear-filters action and a "Design your own" link to `/private-travel`.
 
-Home, Journeys, Journal pages refactored to load from DB instead of `content.ts`.
+## 2. Signature adventures → itinerary detail pages
 
-## Phase 3 — Admin Panel UI (`/admin/*`)
-Sidebar layout with sections:
-- Dashboard (counts: enquiries, bookings, subscribers)
-- Journeys & Itineraries (CRUD)
-- Journal Articles (CRUD with multi-paragraph editor)
-- Lodges, Destinations, Testimonials, FAQs (CRUD)
-- Enquiries inbox (list + mark read/archived)
-- Bookings management (see Phase 4)
-- Newsletter subscribers (list/export CSV)
-- Site settings
+Each signature card gets a stable `slug` (e.g. `okavango-on-foot`) and:
+- A "View itinerary" button → `/itineraries/$slug`
+- An "Enquire" button → `/itineraries/$slug` with `hash="enquire"` and `search={{ itinerary: '<name>' }}`
 
-Image uploads via Lovable Cloud storage bucket (`cms-media`, public read).
+`/itineraries/$slug` already loads itinerary detail; it'll read the optional `itinerary` search param and prefill the Enquire form's destination field (falls back to the itinerary's own name when the param is absent). Signature itineraries that don't yet exist in the `itineraries` table are seeded via migration so the detail route resolves them.
 
-## Phase 4 — Tours Booking System
-Tables:
-- `bookings` (user_id, itinerary_id, travel_date, party_size, guest_name, guest_email, guest_phone, special_requests, total_estimate, status enum: pending|confirmed|cancelled|completed, created_at)
-- `booking_notes` (admin-only notes per booking)
+## 3. Admin CMS editor for the Adventures page
 
-Flow:
-- Each itinerary page gets a "Book this journey" button → booking form (date picker, party size, contact)
-- Authenticated users: prefilled, booking attached to account, visible at `/my-bookings`
-- Guests: can book with email; receive confirmation
-- Admin: full bookings table with status updates, filtering, search
+New DB table `adventures_page_blocks` (single source of truth for the page) storing four section arrays as JSONB, plus editable hero/intro/CTA copy. Tables already have admin/editor RLS; new table follows the same pattern.
 
-## Phase 5 — 5 New Public Pages
-1. **`/lodges`** — gallery card grid from `lodges` table; each card → enquiry CTA (prefills contact form with lodge name)
-2. **`/destinations`** — searchable grid (client filter by name/region); map-style layout using CSS grid + region badges; featured trip links
-3. **`/testimonials`** — quote cards with star ratings, trust-bar (years / journeys / partners), CTA
-4. **`/faq`** — shadcn Accordion grouped by category (Planning, Conservation, Logistics) with search filter
-5. **`/private-travel`** — bespoke itinerary request form (destinations, dates, budget, party, interests, notes) → `private_travel_requests` table + confirmation email via Lovable Emails (requires email domain setup; I'll prompt you when ready)
+Sections editable from `/admin/adventures`:
+- **Page copy**: hero eyebrow, headline, subhead, philosophy statement, CTA copy
+- **Terrain tiles**: label, note, icon name
+- **Adventure styles**: title, body, icon name
+- **Signature itineraries**: slug, name, region, nights, difficulty, image URL, description, highlights[]
 
-Navbar updated with new links (grouped under a "Explore" mega menu on desktop to avoid clutter).
+Admin UI uses existing shadcn Card/Input/Textarea patterns from `admin/content.$table.tsx`, with add/remove row controls per section and a single "Save" per section. Public `/adventures` reads via a public server fn (publishable-key client + anon SELECT policy); falls back to current hardcoded defaults if no row exists, so the page never blanks.
 
-## Technical notes
-- Stack: TanStack Start server functions for all CRUD, RLS-enforced, admin client only inside handlers
-- Image storage: Supabase storage bucket `cms-media` (public read, admin write)
-- Email confirmations: Lovable Emails (will trigger email-setup dialog when we reach Phase 5)
-- Forms: react-hook-form + zod, consistent with existing contact form
-- All admin mutations re-check `has_role(uid, 'admin')` server-side
+A new "Adventures" link is added to the admin sidebar.
 
-## What I need from you
-1. **Admin email** to seed as the first admin account
-2. **Confirm scope** — this is ~3–4 substantial build turns. OK to proceed end-to-end, or want to start with Phase 1+2 only and review?
-3. **Bookings depth** — simple inquiry-style (no payment, admin confirms manually) or do you want Stripe payment capture too?
+## 4. Planning Guide request form + PDF email
+
+New `planning_guide_requests` table (name, email, travelling_party, interests[], earliest_date, message, created_at) with admin-only read, anon insert (rate-limit via simple unique-on-email-per-24h trigger).
+
+New `/adventures` section "Request the Planning Guide" with form (name, email, travel window, interests checkboxes, optional message). On submit:
+1. Insert row via public server fn.
+2. Generate a branded PDF on the server using `@react-pdf/renderer` (Stratus / Baobab branding, sections: how we plan, when to go, sample budgets, packing, conservation note, contact).
+3. Send two emails through the existing Lovable Emails infra:
+   - To requester: app-email template `planning-guide-delivery` with the PDF link (PDF stored in a public Supabase Storage bucket `planning-guides`, signed URL valid 30 days). Attachments aren't supported by Lovable Emails per platform rules, so the email links to the PDF.
+   - To `hello@stratus.africa`: app-email template `planning-guide-notification` with the requester's details.
+4. Show success state with inline download link.
+
+Admin view `/admin/planning-guide` lists requests + CSV export.
+
+## Technical details
+
+### Files
+- `src/routes/adventures.tsx` — refactored to consume CMS data + render filters + add planning-guide section. Filters use `validateSearch` + `useSearch` + `useNavigate` (function-form search updates).
+- `src/lib/adventures.functions.ts` — `getAdventuresPage()` (public, publishable-key client), `upsertAdventuresPage()` (admin).
+- `src/lib/planning-guide.functions.ts` — `requestPlanningGuide()` (public, generates PDF + enqueues emails), admin-only `listPlanningGuideRequests()`.
+- `src/lib/email-templates/planning-guide-delivery.tsx` + `planning-guide-notification.tsx` (React Email).
+- `src/lib/pdf/planning-guide.tsx` — `@react-pdf/renderer` document.
+- `src/routes/_authenticated/admin/adventures.tsx` — section editors.
+- `src/routes/_authenticated/admin/planning-guide.tsx` — request inbox.
+- `src/routes/itineraries.$slug.tsx` — read `?itinerary=` and prefill Enquire form.
+- Admin sidebar gets 2 new entries.
+
+### Database
+- `adventures_page_blocks (id PK, hero JSONB, philosophy JSONB, cta JSONB, terrains JSONB[], styles JSONB[], signatures JSONB[], updated_at, updated_by)` — single row, RLS: SELECT anon/auth; INSERT/UPDATE admin only.
+- `planning_guide_requests (id, name, email, travelling_party, interests TEXT[], earliest_date, message, pdf_url, created_at)` — RLS: INSERT anon (with simple per-email rate guard); SELECT admin only.
+- Storage bucket `planning-guides` (public read).
+- Seed `adventures_page_blocks` row with current hardcoded content.
+- Seed `itineraries` rows for the six signature adventures so `/itineraries/$slug` resolves.
+
+### Infra
+- If Lovable Emails domain is not yet configured, I'll prompt the user to set it up before wiring the planning-guide sends — the form still saves to DB in the meantime.
+- PDF generated server-side per request, uploaded to Storage, signed URL returned + embedded in email.
+
+## Deliverable order
+1. Migrations (tables, RLS, storage bucket, itinerary seeds).
+2. Server fns + CMS data layer.
+3. Refactor `/adventures` to use CMS data + filters + linked signatures + planning-guide form.
+4. Itinerary detail prefill.
+5. Admin editors + sidebar links.
+6. Planning-guide PDF + email templates + wiring.

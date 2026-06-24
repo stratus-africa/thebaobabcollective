@@ -1,6 +1,8 @@
 import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
+import { z } from "zod";
+import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import { ArrowRight, Check, Calendar, MapPin, Users, Sparkles, Loader2 } from "lucide-react";
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
@@ -11,7 +13,12 @@ import { toast } from "sonner";
 import { getItineraryBySlug } from "@/lib/cms.functions";
 import { submitEnquiry } from "@/lib/submissions.functions";
 
+const itinerarySearchSchema = z.object({
+  itinerary: fallback(z.string(), "").default(""),
+});
+
 export const Route = createFileRoute("/itineraries/$slug")({
+  validateSearch: zodValidator(itinerarySearchSchema),
   loader: async ({ params }) => {
     const itinerary = await getItineraryBySlug({ data: { slug: params.slug } });
     if (!itinerary) throw notFound();
@@ -64,7 +71,9 @@ export const Route = createFileRoute("/itineraries/$slug")({
 
 function ItineraryPage() {
   const { itinerary } = Route.useLoaderData();
+  const { itinerary: prefillFromQuery } = Route.useSearch();
   const cat = (itinerary as any).category;
+  const enquiryName = prefillFromQuery || itinerary.name;
 
   return (
     <div className="bg-background min-h-screen">
@@ -194,10 +203,10 @@ function ItineraryPage() {
               <p className="text-[11px] tracking-[0.3em] uppercase text-terracotta mb-4">Enquire</p>
               <h2 className="font-serif text-4xl md:text-5xl text-foreground mb-4">Speak with a Journey Designer</h2>
               <p className="text-foreground/70">
-                Share a few details about your dream {itinerary.name} experience — we'll respond within 24 hours.
+                Share a few details about your dream {enquiryName} experience — we'll respond within 24 hours.
               </p>
             </div>
-            <EnquireForm itineraryName={itinerary.name} />
+            <EnquireForm itineraryName={enquiryName} />
           </div>
         </section>
       </main>

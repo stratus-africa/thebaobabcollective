@@ -14,6 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      adventures_page_blocks: {
+        Row: {
+          created_at: string
+          cta: Json
+          hero: Json
+          id: string
+          philosophy: Json
+          signatures: Json
+          singleton: boolean
+          styles: Json
+          terrains: Json
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          created_at?: string
+          cta?: Json
+          hero?: Json
+          id?: string
+          philosophy?: Json
+          signatures?: Json
+          singleton?: boolean
+          styles?: Json
+          terrains?: Json
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          created_at?: string
+          cta?: Json
+          hero?: Json
+          id?: string
+          philosophy?: Json
+          signatures?: Json
+          singleton?: boolean
+          styles?: Json
+          terrains?: Json
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       booking_notes: {
         Row: {
           author_id: string | null
@@ -440,6 +482,45 @@ export type Database = {
           created_at?: string
           email?: string
           id?: string
+        }
+        Relationships: []
+      }
+      planning_guide_requests: {
+        Row: {
+          created_at: string
+          earliest_date: string | null
+          email: string
+          email_sent: boolean
+          id: string
+          interests: string[]
+          message: string | null
+          name: string
+          pdf_url: string | null
+          travelling_party: string | null
+        }
+        Insert: {
+          created_at?: string
+          earliest_date?: string | null
+          email: string
+          email_sent?: boolean
+          id?: string
+          interests?: string[]
+          message?: string | null
+          name: string
+          pdf_url?: string | null
+          travelling_party?: string | null
+        }
+        Update: {
+          created_at?: string
+          earliest_date?: string | null
+          email?: string
+          email_sent?: boolean
+          id?: string
+          interests?: string[]
+          message?: string | null
+          name?: string
+          pdf_url?: string | null
+          travelling_party?: string | null
         }
         Relationships: []
       }

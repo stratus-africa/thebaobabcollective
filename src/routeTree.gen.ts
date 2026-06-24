@@ -32,8 +32,10 @@ import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
 import { Route as AuthenticatedAdminSubscribersRouteImport } from './routes/_authenticated/admin/subscribers'
 import { Route as AuthenticatedAdminPrivateTravelRouteImport } from './routes/_authenticated/admin/private-travel'
+import { Route as AuthenticatedAdminPlanningGuideRouteImport } from './routes/_authenticated/admin/planning-guide'
 import { Route as AuthenticatedAdminEnquiriesRouteImport } from './routes/_authenticated/admin/enquiries'
 import { Route as AuthenticatedAdminBookingsRouteImport } from './routes/_authenticated/admin/bookings'
+import { Route as AuthenticatedAdminAdventuresRouteImport } from './routes/_authenticated/admin/adventures'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as AuthenticatedAdminContentTableRouteImport } from './routes/_authenticated/admin/content.$table'
 
@@ -153,6 +155,12 @@ const AuthenticatedAdminPrivateTravelRoute =
     path: '/private-travel',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
+const AuthenticatedAdminPlanningGuideRoute =
+  AuthenticatedAdminPlanningGuideRouteImport.update({
+    id: '/planning-guide',
+    path: '/planning-guide',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const AuthenticatedAdminEnquiriesRoute =
   AuthenticatedAdminEnquiriesRouteImport.update({
     id: '/enquiries',
@@ -163,6 +171,12 @@ const AuthenticatedAdminBookingsRoute =
   AuthenticatedAdminBookingsRouteImport.update({
     id: '/bookings',
     path: '/bookings',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminAdventuresRoute =
+  AuthenticatedAdminAdventuresRouteImport.update({
+    id: '/adventures',
+    path: '/adventures',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
 const ApiPublicPaymentsWebhookRoute =
@@ -198,8 +212,10 @@ export interface FileRoutesByFullPath {
   '/itineraries/$slug': typeof ItinerariesSlugRoute
   '/journal/$slug': typeof JournalSlugRoute
   '/journeys/$slug': typeof JourneysSlugRoute
+  '/admin/adventures': typeof AuthenticatedAdminAdventuresRoute
   '/admin/bookings': typeof AuthenticatedAdminBookingsRoute
   '/admin/enquiries': typeof AuthenticatedAdminEnquiriesRoute
+  '/admin/planning-guide': typeof AuthenticatedAdminPlanningGuideRoute
   '/admin/private-travel': typeof AuthenticatedAdminPrivateTravelRoute
   '/admin/subscribers': typeof AuthenticatedAdminSubscribersRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
@@ -225,8 +241,10 @@ export interface FileRoutesByTo {
   '/itineraries/$slug': typeof ItinerariesSlugRoute
   '/journal/$slug': typeof JournalSlugRoute
   '/journeys/$slug': typeof JourneysSlugRoute
+  '/admin/adventures': typeof AuthenticatedAdminAdventuresRoute
   '/admin/bookings': typeof AuthenticatedAdminBookingsRoute
   '/admin/enquiries': typeof AuthenticatedAdminEnquiriesRoute
+  '/admin/planning-guide': typeof AuthenticatedAdminPlanningGuideRoute
   '/admin/private-travel': typeof AuthenticatedAdminPrivateTravelRoute
   '/admin/subscribers': typeof AuthenticatedAdminSubscribersRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
@@ -255,8 +273,10 @@ export interface FileRoutesById {
   '/itineraries/$slug': typeof ItinerariesSlugRoute
   '/journal/$slug': typeof JournalSlugRoute
   '/journeys/$slug': typeof JourneysSlugRoute
+  '/_authenticated/admin/adventures': typeof AuthenticatedAdminAdventuresRoute
   '/_authenticated/admin/bookings': typeof AuthenticatedAdminBookingsRoute
   '/_authenticated/admin/enquiries': typeof AuthenticatedAdminEnquiriesRoute
+  '/_authenticated/admin/planning-guide': typeof AuthenticatedAdminPlanningGuideRoute
   '/_authenticated/admin/private-travel': typeof AuthenticatedAdminPrivateTravelRoute
   '/_authenticated/admin/subscribers': typeof AuthenticatedAdminSubscribersRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
@@ -285,8 +305,10 @@ export interface FileRouteTypes {
     | '/itineraries/$slug'
     | '/journal/$slug'
     | '/journeys/$slug'
+    | '/admin/adventures'
     | '/admin/bookings'
     | '/admin/enquiries'
+    | '/admin/planning-guide'
     | '/admin/private-travel'
     | '/admin/subscribers'
     | '/admin/'
@@ -312,8 +334,10 @@ export interface FileRouteTypes {
     | '/itineraries/$slug'
     | '/journal/$slug'
     | '/journeys/$slug'
+    | '/admin/adventures'
     | '/admin/bookings'
     | '/admin/enquiries'
+    | '/admin/planning-guide'
     | '/admin/private-travel'
     | '/admin/subscribers'
     | '/admin'
@@ -341,8 +365,10 @@ export interface FileRouteTypes {
     | '/itineraries/$slug'
     | '/journal/$slug'
     | '/journeys/$slug'
+    | '/_authenticated/admin/adventures'
     | '/_authenticated/admin/bookings'
     | '/_authenticated/admin/enquiries'
+    | '/_authenticated/admin/planning-guide'
     | '/_authenticated/admin/private-travel'
     | '/_authenticated/admin/subscribers'
     | '/_authenticated/admin/'
@@ -534,6 +560,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminPrivateTravelRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/planning-guide': {
+      id: '/_authenticated/admin/planning-guide'
+      path: '/planning-guide'
+      fullPath: '/admin/planning-guide'
+      preLoaderRoute: typeof AuthenticatedAdminPlanningGuideRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/admin/enquiries': {
       id: '/_authenticated/admin/enquiries'
       path: '/enquiries'
@@ -546,6 +579,13 @@ declare module '@tanstack/react-router' {
       path: '/bookings'
       fullPath: '/admin/bookings'
       preLoaderRoute: typeof AuthenticatedAdminBookingsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/adventures': {
+      id: '/_authenticated/admin/adventures'
+      path: '/adventures'
+      fullPath: '/admin/adventures'
+      preLoaderRoute: typeof AuthenticatedAdminAdventuresRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
     '/api/public/payments/webhook': {
@@ -566,8 +606,10 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedAdminRouteRouteChildren {
+  AuthenticatedAdminAdventuresRoute: typeof AuthenticatedAdminAdventuresRoute
   AuthenticatedAdminBookingsRoute: typeof AuthenticatedAdminBookingsRoute
   AuthenticatedAdminEnquiriesRoute: typeof AuthenticatedAdminEnquiriesRoute
+  AuthenticatedAdminPlanningGuideRoute: typeof AuthenticatedAdminPlanningGuideRoute
   AuthenticatedAdminPrivateTravelRoute: typeof AuthenticatedAdminPrivateTravelRoute
   AuthenticatedAdminSubscribersRoute: typeof AuthenticatedAdminSubscribersRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
@@ -576,8 +618,10 @@ interface AuthenticatedAdminRouteRouteChildren {
 
 const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren =
   {
+    AuthenticatedAdminAdventuresRoute: AuthenticatedAdminAdventuresRoute,
     AuthenticatedAdminBookingsRoute: AuthenticatedAdminBookingsRoute,
     AuthenticatedAdminEnquiriesRoute: AuthenticatedAdminEnquiriesRoute,
+    AuthenticatedAdminPlanningGuideRoute: AuthenticatedAdminPlanningGuideRoute,
     AuthenticatedAdminPrivateTravelRoute: AuthenticatedAdminPrivateTravelRoute,
     AuthenticatedAdminSubscribersRoute: AuthenticatedAdminSubscribersRoute,
     AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,

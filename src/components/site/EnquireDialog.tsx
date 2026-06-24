@@ -115,18 +115,18 @@ export function EnquireDialog({
           </DialogDescription>
           <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2 text-xs text-foreground/75">
             <a
-              href={`mailto:${CONTACT_EMAIL}`}
+              href={`mailto:${contactEmail}`}
               className="inline-flex items-center gap-2 hover:text-gold transition-colors"
             >
               <Mail className="w-3.5 h-3.5 text-gold" aria-hidden="true" />
-              {CONTACT_EMAIL}
+              {contactEmail}
             </a>
             <a
-              href={`tel:${CONTACT_PHONE_TEL}`}
+              href={`tel:${contactPhoneTel}`}
               className="inline-flex items-center gap-2 hover:text-gold transition-colors"
             >
               <Phone className="w-3.5 h-3.5 text-gold" aria-hidden="true" />
-              {CONTACT_PHONE}
+              {contactPhone}
             </a>
           </div>
         </DialogHeader>

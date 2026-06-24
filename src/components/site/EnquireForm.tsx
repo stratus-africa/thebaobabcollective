@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { Loader2, CheckCircle2, ArrowRight, Save, X } from "lucide-react";
+import { Loader2, CheckCircle2, ArrowRight, Save, X, ChevronDown, ChevronUp } from "lucide-react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";

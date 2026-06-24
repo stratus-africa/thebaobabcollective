@@ -272,8 +272,6 @@ export function BookDialog({
                     <ArrowRight className="w-3 h-3" aria-hidden="true" />
                   </>
                 )}
-                  </>
-                )}
               </button>
               <p className="text-[11px] text-foreground/50 text-center">
                 Secure checkout · Draft autosaves as you type.

@@ -173,12 +173,19 @@ function ItineraryPage() {
                 >
                   Book This Journey <ArrowRight className="w-3 h-3" />
                 </Link>
-                <a
-                  href="#enquire"
-                  className="w-full inline-flex items-center justify-center gap-2 border border-gold text-gold uppercase tracking-[0.25em] text-[11px] px-6 py-4 hover:bg-gold hover:text-gold-foreground transition-colors"
-                >
-                  Enquire First
-                </a>
+                <EnquireDialog
+                  defaultSubject={enquiryName}
+                  defaultDestination={enquiryName}
+                  openOnHash="enquire"
+                  trigger={
+                    <button
+                      type="button"
+                      className="w-full inline-flex items-center justify-center gap-2 border border-gold text-gold uppercase tracking-[0.25em] text-[11px] px-6 py-4 hover:bg-gold hover:text-gold-foreground transition-colors"
+                    >
+                      Enquire First
+                    </button>
+                  }
+                />
                 <p className="text-[11px] text-foreground/60 mt-4 text-center">
                   Deposit ${Number(itinerary.deposit_usd).toLocaleString()} secures your dates
                 </p>

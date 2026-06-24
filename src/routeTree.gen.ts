@@ -27,7 +27,6 @@ import { Route as JournalSlugRouteImport } from './routes/journal.$slug'
 import { Route as ItinerariesSlugRouteImport } from './routes/itineraries.$slug'
 import { Route as BookingSuccessRouteImport } from './routes/booking.success'
 import { Route as BookSlugRouteImport } from './routes/book.$slug'
-import { Route as AuthenticatedMyBookingsRouteImport } from './routes/_authenticated/my-bookings'
 import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin/route'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
 import { Route as AuthenticatedAdminSubscribersRouteImport } from './routes/_authenticated/admin/subscribers'
@@ -126,11 +125,6 @@ const BookSlugRoute = BookSlugRouteImport.update({
   path: '/book/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedMyBookingsRoute = AuthenticatedMyBookingsRouteImport.update({
-  id: '/my-bookings',
-  path: '/my-bookings',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const AuthenticatedAdminRouteRoute = AuthenticatedAdminRouteRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -192,7 +186,6 @@ export interface FileRoutesByFullPath {
   '/private-travel': typeof PrivateTravelRoute
   '/testimonials': typeof TestimonialsRoute
   '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
-  '/my-bookings': typeof AuthenticatedMyBookingsRoute
   '/book/$slug': typeof BookSlugRoute
   '/booking/success': typeof BookingSuccessRoute
   '/itineraries/$slug': typeof ItinerariesSlugRoute
@@ -219,7 +212,6 @@ export interface FileRoutesByTo {
   '/lodges': typeof LodgesRoute
   '/private-travel': typeof PrivateTravelRoute
   '/testimonials': typeof TestimonialsRoute
-  '/my-bookings': typeof AuthenticatedMyBookingsRoute
   '/book/$slug': typeof BookSlugRoute
   '/booking/success': typeof BookingSuccessRoute
   '/itineraries/$slug': typeof ItinerariesSlugRoute
@@ -249,7 +241,6 @@ export interface FileRoutesById {
   '/private-travel': typeof PrivateTravelRoute
   '/testimonials': typeof TestimonialsRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
-  '/_authenticated/my-bookings': typeof AuthenticatedMyBookingsRoute
   '/book/$slug': typeof BookSlugRoute
   '/booking/success': typeof BookingSuccessRoute
   '/itineraries/$slug': typeof ItinerariesSlugRoute
@@ -279,7 +270,6 @@ export interface FileRouteTypes {
     | '/private-travel'
     | '/testimonials'
     | '/admin'
-    | '/my-bookings'
     | '/book/$slug'
     | '/booking/success'
     | '/itineraries/$slug'
@@ -306,7 +296,6 @@ export interface FileRouteTypes {
     | '/lodges'
     | '/private-travel'
     | '/testimonials'
-    | '/my-bookings'
     | '/book/$slug'
     | '/booking/success'
     | '/itineraries/$slug'
@@ -335,7 +324,6 @@ export interface FileRouteTypes {
     | '/private-travel'
     | '/testimonials'
     | '/_authenticated/admin'
-    | '/_authenticated/my-bookings'
     | '/book/$slug'
     | '/booking/success'
     | '/itineraries/$slug'
@@ -498,13 +486,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BookSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/my-bookings': {
-      id: '/_authenticated/my-bookings'
-      path: '/my-bookings'
-      fullPath: '/my-bookings'
-      preLoaderRoute: typeof AuthenticatedMyBookingsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/admin': {
       id: '/_authenticated/admin'
       path: '/admin'
@@ -590,12 +571,10 @@ const AuthenticatedAdminRouteRouteWithChildren =
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRouteRoute: typeof AuthenticatedAdminRouteRouteWithChildren
-  AuthenticatedMyBookingsRoute: typeof AuthenticatedMyBookingsRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRouteRoute: AuthenticatedAdminRouteRouteWithChildren,
-  AuthenticatedMyBookingsRoute: AuthenticatedMyBookingsRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
@@ -646,3 +625,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

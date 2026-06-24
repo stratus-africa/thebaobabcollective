@@ -15,7 +15,7 @@ const searchSchema = z.object({
   sort: z.enum(["featured", "name-asc", "name-desc"]).optional().catch("featured"),
 });
 
-export const Route = createFileRoute("/journeys")({
+export const Route = createFileRoute("/journeys/")({
   validateSearch: zodValidator(searchSchema),
   head: () => ({
     meta: [

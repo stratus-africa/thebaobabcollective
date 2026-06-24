@@ -1,10 +1,13 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useQuery, queryOptions } from "@tanstack/react-query";
+import { useState } from "react";
 import { ArrowRight, Check, MapPin } from "lucide-react";
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
 import { ShareButtons } from "@/components/site/ShareButtons";
 import { EnquireDialog } from "@/components/site/EnquireDialog";
+import { Breadcrumbs } from "@/components/site/Breadcrumbs";
+import { Lightbox } from "@/components/site/Lightbox";
 import { getJourney, journeys, type Itinerary } from "@/lib/content";
 import { getDestinations } from "@/lib/cms.functions";
 
@@ -24,6 +27,31 @@ export const Route = createFileRoute("/journeys/$slug")({
     const title = j ? `${j.title} Journeys — The Baobab Collective` : "Journey";
     const desc = j?.intro?.slice(0, 160) ?? "Curated safari journey";
     const url = `https://thebaobabcollective.co.uk/journeys/${params.slug}`;
+    const ldTrip = j
+      ? {
+          "@context": "https://schema.org",
+          "@type": "TouristTrip",
+          name: j.title,
+          description: j.intro ?? j.tagline,
+          image: j.heroImage ?? undefined,
+          url,
+          itinerary: (j.itineraries as Itinerary[])?.map((it, idx) => ({
+            "@type": "ListItem",
+            position: idx + 1,
+            name: it.name,
+            description: it.description,
+          })),
+        }
+      : null;
+    const ldCrumbs = {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: "https://thebaobabcollective.co.uk/" },
+        { "@type": "ListItem", position: 2, name: "Journeys", item: "https://thebaobabcollective.co.uk/journeys" },
+        { "@type": "ListItem", position: 3, name: j?.title ?? params.slug, item: url },
+      ],
+    };
     return {
       meta: [
         { title },
@@ -39,6 +67,10 @@ export const Route = createFileRoute("/journeys/$slug")({
         ...(j?.heroImage ? [{ name: "twitter:image", content: j.heroImage }] : []),
       ],
       links: [{ rel: "canonical", href: url }],
+      scripts: [
+        ...(ldTrip ? [{ type: "application/ld+json", children: JSON.stringify(ldTrip) }] : []),
+        { type: "application/ld+json", children: JSON.stringify(ldCrumbs) },
+      ],
     };
   },
   notFoundComponent: () => (

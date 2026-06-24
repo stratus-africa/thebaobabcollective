@@ -149,16 +149,51 @@ export const adminDashboard = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     await assertAdmin(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const [b, e, p, n] = await Promise.all([
+    const [b, e, p, n, pending, revenue, recentB, recentE, recentP] = await Promise.all([
       supabaseAdmin.from("bookings").select("*", { count: "exact", head: true }),
       supabaseAdmin.from("enquiries").select("*", { count: "exact", head: true }),
       supabaseAdmin.from("private_travel_requests").select("*", { count: "exact", head: true }),
       supabaseAdmin.from("newsletter_subscribers").select("*", { count: "exact", head: true }),
+      supabaseAdmin.from("bookings").select("*", { count: "exact", head: true }).eq("status", "pending"),
+      supabaseAdmin.from("bookings").select("total_estimate_usd").in("status", ["confirmed", "completed"]),
+      supabaseAdmin.from("bookings").select("id, itinerary_name, guest_name, status, created_at").order("created_at", { ascending: false }).limit(4),
+      supabaseAdmin.from("enquiries").select("id, name, subject, created_at").order("created_at", { ascending: false }).limit(4),
+      supabaseAdmin.from("private_travel_requests").select("id, name, created_at").order("created_at", { ascending: false }).limit(2),
     ]);
+    const total_revenue = (revenue.data ?? []).reduce(
+      (sum: number, r: { total_estimate_usd: number | null }) => sum + (r.total_estimate_usd ?? 0),
+      0,
+    );
+    type Activity = { kind: "booking" | "enquiry" | "private"; title: string; subtitle: string; at: string };
+    const activity: Activity[] = [
+      ...(recentB.data ?? []).map((r: any) => ({
+        kind: "booking" as const,
+        title: `Booking: ${r.itinerary_name}`,
+        subtitle: `${r.guest_name} • ${r.status}`,
+        at: r.created_at as string,
+      })),
+      ...(recentE.data ?? []).map((r: any) => ({
+        kind: "enquiry" as const,
+        title: `Enquiry: ${r.subject ?? "General"}`,
+        subtitle: r.name as string,
+        at: r.created_at as string,
+      })),
+      ...(recentP.data ?? []).map((r: any) => ({
+        kind: "private" as const,
+        title: "Private travel request",
+        subtitle: r.name as string,
+        at: r.created_at as string,
+      })),
+    ]
+      .sort((a, b) => new Date(b.at).getTime() - new Date(a.at).getTime())
+      .slice(0, 6);
     return {
       bookings: b.count ?? 0,
       enquiries: e.count ?? 0,
       private_travel: p.count ?? 0,
       subscribers: n.count ?? 0,
+      pending_bookings: pending.count ?? 0,
+      total_revenue,
+      activity,
     };
   });

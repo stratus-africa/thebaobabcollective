@@ -1,0 +1,74 @@
+import { createServerFn } from "@tanstack/react-start";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { createClient } from "@supabase/supabase-js";
+import { z } from "zod";
+
+export type ContactSettings = {
+  email?: string;
+  phone?: string;
+  phone_tel?: string;
+  address?: string;
+};
+
+export type BrandingSettings = {
+  logo_url?: string;
+};
+
+export type SiteSettings = {
+  contact: ContactSettings;
+  branding: BrandingSettings;
+};
+
+const SaveSchema = z.object({
+  contact: z.object({
+    email: z.string().email().or(z.literal("")).optional(),
+    phone: z.string().max(40).optional(),
+    phone_tel: z.string().max(40).optional(),
+    address: z.string().max(200).optional(),
+  }),
+  branding: z.object({
+    logo_url: z.string().url().or(z.literal("")).optional(),
+  }),
+});
+
+function publicClient() {
+  return createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_PUBLISHABLE_KEY!, {
+    auth: { storage: undefined, persistSession: false, autoRefreshToken: false },
+  });
+}
+
+export const getSiteSettings = createServerFn({ method: "GET" }).handler(async () => {
+  const supabase = publicClient();
+  const { data } = await supabase
+    .from("site_settings")
+    .select("key,value")
+    .in("key", ["contact", "branding"]);
+  const map = new Map<string, any>((data ?? []).map((r: any) => [r.key, r.value]));
+  return {
+    contact: (map.get("contact") ?? {}) as ContactSettings,
+    branding: (map.get("branding") ?? {}) as BrandingSettings,
+  } satisfies SiteSettings;
+});
+
+async function assertAdmin(context: { supabase: any; userId: string }) {
+  const { data } = await context.supabase.rpc("has_role", {
+    _user_id: context.userId,
+    _role: "admin",
+  });
+  if (!data) throw new Error("Forbidden");
+}
+
+export const saveSiteSettings = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => SaveSchema.parse(d))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const now = new Date().toISOString();
+    const { error } = await supabaseAdmin.from("site_settings").upsert([
+      { key: "contact", value: data.contact, updated_at: now },
+      { key: "branding", value: data.branding, updated_at: now },
+    ]);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });

@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import {
   LayoutDashboard, Calendar, Mail, MessageSquare, Globe, Building, MapPin, Star,
-  HelpCircle, FileText, Plane, Compass, BookOpen, Bell, Menu, LogOut, ArrowLeft,
+  HelpCircle, FileText, Plane, Compass, BookOpen, Bell, Menu, LogOut, ArrowLeft, Settings,
 } from "lucide-react";
 
 type NavItem = { to: string; label: string; icon: any; exact?: boolean };
@@ -46,6 +46,12 @@ const groups: NavGroup[] = [
       { to: "/admin/journal", label: "Journal", icon: FileText },
       { to: "/admin/content/testimonials", label: "Testimonials", icon: Star },
       { to: "/admin/content/faqs", label: "FAQs", icon: HelpCircle },
+    ],
+  },
+  {
+    label: "System",
+    items: [
+      { to: "/admin/settings", label: "Settings", icon: Settings },
     ],
   },
 ];

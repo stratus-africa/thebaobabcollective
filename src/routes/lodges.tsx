@@ -155,7 +155,12 @@ function LodgesGrid() {
                   aria-labelledby={titleId}
                   className="group flex flex-col h-full bg-background border border-border rounded-xl overflow-hidden motion-safe:transition-all motion-safe:duration-500 motion-safe:hover:-translate-y-1 hover:shadow-2xl hover:shadow-foreground/10 hover:border-gold/40 focus-within:ring-2 focus-within:ring-gold focus-within:ring-offset-2 focus-within:ring-offset-background"
                 >
-                  <div className="relative aspect-[4/3] overflow-hidden">
+                  <Link
+                    to="/lodges/$slug"
+                    params={{ slug: l.slug }}
+                    aria-label={`View ${l.name}`}
+                    className="relative aspect-[4/3] overflow-hidden block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+                  >
                     <img
                       src={l.hero_image}
                       alt={`${l.name}, ${l.location ?? "lodge"}`}
@@ -171,7 +176,7 @@ function LodgesGrid() {
                         From ${l.price_from_usd.toLocaleString()}
                       </span>
                     ) : null}
-                  </div>
+                  </Link>
                   <div className="p-6 md:p-7 flex flex-col flex-1">
                     <h2
                       id={titleId}

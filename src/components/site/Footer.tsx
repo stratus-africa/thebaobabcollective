@@ -2,12 +2,24 @@ import { useState } from "react";
 import { Instagram, Facebook, ArrowRight, Loader2 } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
+import { useQuery } from "@tanstack/react-query";
 import { BaobabLogo } from "./Logo";
 import { subscribeNewsletter } from "@/lib/submissions.functions";
+import { getSiteSettings, type SiteSettings } from "@/lib/site-settings.functions";
 import { toast } from "sonner";
 
 export function Footer() {
   const subscribe = useServerFn(subscribeNewsletter);
+  const fetchSettings = useServerFn(getSiteSettings);
+  const { data: settings } = useQuery<SiteSettings>({
+    queryKey: ["site-settings"],
+    queryFn: () => fetchSettings(),
+    staleTime: 5 * 60_000,
+  });
+  const contactEmail = settings?.contact?.email || "info@thebaobabcollective.co.uk";
+  const contactPhone = settings?.contact?.phone || "+44 (0) 20 0000 0000";
+  const contactPhoneTel = settings?.contact?.phone_tel || contactPhone.replace(/[^\d+]/g, "");
+  const logoUrl = settings?.branding?.logo_url;
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -34,7 +46,11 @@ export function Footer() {
       <div className="max-w-7xl mx-auto px-6 lg:px-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
         <div className="lg:col-span-1">
           <Link to="/" className="flex items-start gap-3 mb-4" aria-label="The Baobab Collective home">
-            <BaobabLogo className="w-12 h-12" />
+            {logoUrl ? (
+              <img src={logoUrl} alt="The Baobab Collective" className="w-12 h-12 object-contain" />
+            ) : (
+              <BaobabLogo className="w-12 h-12" />
+            )}
             <div className="font-serif text-foreground leading-[1.05] text-[14px] tracking-[0.18em]">
               <div>THE</div>
               <div>BAOBAB</div>
@@ -71,10 +87,10 @@ export function Footer() {
         <address className="not-italic">
           <h4 className="text-[11px] tracking-[0.25em] uppercase text-foreground mb-5">Get in Touch</h4>
           <p className="text-sm text-foreground/75 mb-1">
-            <a href="mailto:hello@thebaobabcollective.com" className="hover:text-gold">hello@thebaobabcollective.com</a>
+            <a href={`mailto:${contactEmail}`} className="hover:text-gold">{contactEmail}</a>
           </p>
           <p className="text-sm text-foreground/75 mb-5">
-            <a href="tel:+270000000000" className="hover:text-gold">+27 00 000 0000</a>
+            <a href={`tel:${contactPhoneTel}`} className="hover:text-gold">{contactPhone}</a>
           </p>
           <div className="flex items-center gap-4 text-foreground/70">
             <a href="https://instagram.com" aria-label="Instagram" className="hover:text-gold"><Instagram className="w-4 h-4" /></a>

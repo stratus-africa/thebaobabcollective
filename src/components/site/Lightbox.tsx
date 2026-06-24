@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 
@@ -21,6 +21,7 @@ export function Lightbox({
 }) {
   const count = images.length;
   const current = images[index];
+  const closeRef = useRef<HTMLButtonElement | null>(null);
 
   const next = useCallback(() => {
     if (count === 0) return;
@@ -35,54 +36,87 @@ export function Lightbox({
   useEffect(() => {
     if (!open) return;
     function onKey(e: KeyboardEvent) {
-      if (e.key === "ArrowRight") next();
-      else if (e.key === "ArrowLeft") prev();
+      switch (e.key) {
+        case "ArrowRight":
+          e.preventDefault();
+          next();
+          break;
+        case "ArrowLeft":
+          e.preventDefault();
+          prev();
+          break;
+        case "Home":
+          e.preventDefault();
+          onIndexChange(0);
+          break;
+        case "End":
+          e.preventDefault();
+          onIndexChange(count - 1);
+          break;
+      }
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [open, next, prev]);
+  }, [open, next, prev, onIndexChange, count]);
 
   if (!current) return null;
+  const captionId = "lightbox-caption";
+  const liveId = "lightbox-live";
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         className="p-0 gap-0 border-0 bg-black/95 max-w-[100vw] w-screen h-[100dvh] sm:max-w-[100vw] rounded-none flex flex-col [&>button]:hidden"
-        aria-describedby="lightbox-desc"
+        aria-describedby={current.caption ? captionId : "lightbox-desc"}
+        aria-roledescription="image carousel"
+        onOpenAutoFocus={(e) => {
+          e.preventDefault();
+          closeRef.current?.focus();
+        }}
       >
         <DialogTitle className="sr-only">{title ?? "Gallery"}</DialogTitle>
         <DialogDescription id="lightbox-desc" className="sr-only">
-          Image {index + 1} of {count}
+          Use left and right arrow keys to navigate. Press Escape to close.
         </DialogDescription>
+        <div id={liveId} aria-live="polite" aria-atomic="true" className="sr-only">
+          Image {index + 1} of {count}
+          {current.caption ? `: ${current.caption}` : ""}
+        </div>
 
         <div className="absolute top-3 right-3 z-20 flex items-center gap-3 text-white/90 text-xs">
-          <span className="tabular-nums tracking-wider">
+          <span aria-hidden="true" className="tabular-nums tracking-wider">
             {index + 1} / {count}
           </span>
           <button
+            ref={closeRef}
             type="button"
             onClick={() => onOpenChange(false)}
-            aria-label="Close"
-            className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+            aria-label="Close gallery"
+            className="p-2 rounded-full bg-white/10 hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white transition-colors"
           >
-            <X className="w-5 h-5" />
+            <X className="w-5 h-5" aria-hidden="true" />
           </button>
         </div>
 
-        <div className="relative flex-1 flex items-center justify-center px-2 sm:px-12">
+        <div
+          className="relative flex-1 flex items-center justify-center px-2 sm:px-12"
+          role="group"
+          aria-label={`Image ${index + 1} of ${count}`}
+        >
           {count > 1 && (
             <button
               type="button"
               onClick={prev}
-              aria-label="Previous image"
-              className="absolute left-2 sm:left-4 z-10 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+              aria-label={`Previous image (${((index - 1 + count) % count) + 1} of ${count})`}
+              className="absolute left-2 sm:left-4 z-10 p-3 rounded-full bg-white/10 hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white text-white transition-colors"
             >
-              <ChevronLeft className="w-6 h-6" />
+              <ChevronLeft className="w-6 h-6" aria-hidden="true" />
             </button>
           )}
           <img
             src={current.src}
-            alt={current.alt ?? current.caption ?? `Image ${index + 1}`}
+            alt={current.alt ?? current.caption ?? `Image ${index + 1} of ${count}`}
+            aria-describedby={current.caption ? captionId : undefined}
             className="max-h-[85vh] max-w-full object-contain select-none"
             draggable={false}
           />
@@ -90,18 +124,21 @@ export function Lightbox({
             <button
               type="button"
               onClick={next}
-              aria-label="Next image"
-              className="absolute right-2 sm:right-4 z-10 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+              aria-label={`Next image (${((index + 1) % count) + 1} of ${count})`}
+              className="absolute right-2 sm:right-4 z-10 p-3 rounded-full bg-white/10 hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white text-white transition-colors"
             >
-              <ChevronRight className="w-6 h-6" />
+              <ChevronRight className="w-6 h-6" aria-hidden="true" />
             </button>
           )}
         </div>
 
         {current.caption && (
-          <div className="px-6 py-4 text-center text-white/80 text-sm">
+          <figcaption
+            id={captionId}
+            className="px-6 py-4 text-center text-white/85 text-sm"
+          >
             {current.caption}
-          </div>
+          </figcaption>
         )}
       </DialogContent>
     </Dialog>

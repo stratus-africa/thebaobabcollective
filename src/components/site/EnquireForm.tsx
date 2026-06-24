@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { Loader2, CheckCircle2, ArrowRight, Save, X, ChevronDown, ChevronUp } from "lucide-react";
+import { Loader2, CheckCircle2, ArrowRight, Save, X } from "lucide-react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,10 +9,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { submitEnquiry } from "@/lib/submissions.functions";
 import { useFormAutosave } from "@/hooks/use-form-autosave";
 
-const TRIP_TYPES = ["Honeymoon", "Family safari", "Solo expedition", "Friends / group", "Anniversary", "Corporate / incentive"];
-const BUDGETS = ["Under $5k pp", "$5k – $10k pp", "$10k – $20k pp", "$20k – $40k pp", "$40k+ pp", "Open to advice"];
-const STYLES = ["Classic luxury lodges", "Tented camps", "Mobile expeditions", "Eco / conservation camps", "Private villas", "Mix it up"];
-const EXPERIENCES = ["Big Five game viewing", "Walking safaris", "Gorilla / primate trekking", "Birding", "Cultural encounters", "Beach extension", "Helicopter / fly camping", "Photography focus"];
 
 
 export type EnquireFormProps = {
@@ -97,8 +93,7 @@ export function EnquireForm({
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [errors, setErrors] = useState<Partial<Record<keyof Draft | "form", string>>>({});
-  const [tripOpen, setTripOpen] = useState(false);
-  const [experiencesOpen, setExperiencesOpen] = useState(false);
+
 
   const storageKey = useMemo(() => {
     if (autosaveKey === null) return null;
@@ -142,14 +137,8 @@ export function EnquireForm({
     setValues((prev) => ({ ...prev, [k]: v }));
   }
 
-  function toggleExperience(name: string) {
-    setValues((prev) => ({
-      ...prev,
-      experiences: prev.experiences.includes(name)
-        ? prev.experiences.filter((p) => p !== name)
-        : [...prev.experiences, name],
-    }));
-  }
+
+
 
   function blurValidate(name: keyof Draft) {
     const v = String(values[name] ?? "");
@@ -330,126 +319,8 @@ export function EnquireForm({
         </div>
       </fieldset>
 
-      {!compact && (
-        <>
-          <div className="border border-border">
-            <button
-              type="button"
-              onClick={() => setTripOpen((s) => !s)}
-              className="w-full flex items-center justify-between px-4 py-3 text-left"
-              aria-expanded={tripOpen}
-            >
-              <span className="font-serif text-xl text-foreground">Your trip</span>
-              {tripOpen ? (
-                <ChevronUp className="w-5 h-5 text-foreground/60" aria-hidden="true" />
-              ) : (
-                <ChevronDown className="w-5 h-5 text-foreground/60" aria-hidden="true" />
-              )}
-            </button>
-            {tripOpen && (
-              <div className="px-4 pb-5 space-y-5 border-t border-border">
-                <div className="grid md:grid-cols-2 gap-4 pt-5">
-                  <Field
-                    label="Where would you like to go?"
-                    name="destination"
-                    value={values.destination}
-                    onChange={(v) => setField("destination", v)}
-                  />
-                  <Field
-                    label="Approximate travel dates"
-                    name="travel_dates"
-                    placeholder="e.g. May 2027, 10 nights"
-                    value={values.travel_dates}
-                    onChange={(v) => setField("travel_dates", v)}
-                  />
-                  <Field
-                    label="Adults"
-                    name="adults"
-                    type="number"
-                    min={0}
-                    value={values.adults}
-                    onChange={(v) => setField("adults", v)}
-                  />
-                  <Field
-                    label="Children"
-                    name="children"
-                    type="number"
-                    min={0}
-                    value={values.children}
-                    onChange={(v) => setField("children", v)}
-                  />
-                  <Field
-                    label="Trip type"
-                    name="trip_type"
-                    as="select"
-                    options={TRIP_TYPES}
-                    value={values.trip_type}
-                    onChange={(v) => setField("trip_type", v)}
-                  />
-                  <Field
-                    label="Budget per person (excl. flights)"
-                    name="budget"
-                    as="select"
-                    options={BUDGETS}
-                    value={values.budget}
-                    onChange={(v) => setField("budget", v)}
-                  />
-                  <div className="md:col-span-2">
-                    <Field
-                      label="Accommodation style"
-                      name="accommodation_style"
-                      as="select"
-                      options={STYLES}
-                      value={values.accommodation_style}
-                      onChange={(v) => setField("accommodation_style", v)}
-                    />
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
 
-          <div className="border border-border">
-            <button
-              type="button"
-              onClick={() => setExperiencesOpen((s) => !s)}
-              className="w-full flex items-center justify-between px-4 py-3 text-left"
-              aria-expanded={experiencesOpen}
-            >
-              <span className="font-serif text-xl text-foreground">Experiences of interest</span>
-              {experiencesOpen ? (
-                <ChevronUp className="w-5 h-5 text-foreground/60" aria-hidden="true" />
-              ) : (
-                <ChevronDown className="w-5 h-5 text-foreground/60" aria-hidden="true" />
-              )}
-            </button>
-            {experiencesOpen && (
-              <div className="px-4 pb-5 border-t border-border">
-                <div className="pt-5 grid grid-cols-2 md:grid-cols-3 gap-2">
-                  {EXPERIENCES.map((exp) => {
-                    const active = values.experiences.includes(exp);
-                    return (
-                      <button
-                        key={exp}
-                        type="button"
-                        onClick={() => toggleExperience(exp)}
-                        aria-pressed={active}
-                        className={`text-left text-xs px-3 py-2 border transition-colors ${
-                          active
-                            ? "bg-forest text-forest-foreground border-forest"
-                            : "border-border text-foreground/75 hover:border-gold hover:text-gold"
-                        }`}
-                      >
-                        {exp}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-          </div>
-        </>
-      )}
+
 
       <div>
         <Label htmlFor="message" className="text-sm text-foreground">

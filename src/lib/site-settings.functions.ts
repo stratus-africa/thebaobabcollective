@@ -78,7 +78,7 @@ export const saveSiteSettings = createServerFn({ method: "POST" })
     await assertAdmin(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const now = new Date().toISOString();
-    const rows: { key: string; value: unknown; updated_at: string }[] = [
+    const rows: { key: string; value: any; updated_at: string }[] = [
       { key: "contact", value: data.contact, updated_at: now },
       { key: "branding", value: data.branding, updated_at: now },
     ];

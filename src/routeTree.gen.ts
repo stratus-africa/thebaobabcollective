@@ -39,6 +39,7 @@ import { Route as AuthenticatedAdminEnquiriesRouteImport } from './routes/_authe
 import { Route as AuthenticatedAdminBookingsRouteImport } from './routes/_authenticated/admin/bookings'
 import { Route as AuthenticatedAdminAdventuresRouteImport } from './routes/_authenticated/admin/adventures'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
+import { Route as AuthenticatedAdminPagesPageRouteImport } from './routes/_authenticated/admin/pages.$page'
 import { Route as AuthenticatedAdminContentTableRouteImport } from './routes/_authenticated/admin/content.$table'
 
 const TestimonialsRoute = TestimonialsRouteImport.update({
@@ -198,6 +199,12 @@ const ApiPublicPaymentsWebhookRoute =
     path: '/api/public/payments/webhook',
     getParentRoute: () => rootRouteImport,
   } as any)
+const AuthenticatedAdminPagesPageRoute =
+  AuthenticatedAdminPagesPageRouteImport.update({
+    id: '/pages/$page',
+    path: '/pages/$page',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const AuthenticatedAdminContentTableRoute =
   AuthenticatedAdminContentTableRouteImport.update({
     id: '/content/$table',
@@ -235,6 +242,7 @@ export interface FileRoutesByFullPath {
   '/admin/subscribers': typeof AuthenticatedAdminSubscribersRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/content/$table': typeof AuthenticatedAdminContentTableRoute
+  '/admin/pages/$page': typeof AuthenticatedAdminPagesPageRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRoutesByTo {
@@ -266,6 +274,7 @@ export interface FileRoutesByTo {
   '/admin/subscribers': typeof AuthenticatedAdminSubscribersRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/content/$table': typeof AuthenticatedAdminContentTableRoute
+  '/admin/pages/$page': typeof AuthenticatedAdminPagesPageRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRoutesById {
@@ -300,6 +309,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/subscribers': typeof AuthenticatedAdminSubscribersRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/content/$table': typeof AuthenticatedAdminContentTableRoute
+  '/_authenticated/admin/pages/$page': typeof AuthenticatedAdminPagesPageRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRouteTypes {
@@ -334,6 +344,7 @@ export interface FileRouteTypes {
     | '/admin/subscribers'
     | '/admin/'
     | '/admin/content/$table'
+    | '/admin/pages/$page'
     | '/api/public/payments/webhook'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -365,6 +376,7 @@ export interface FileRouteTypes {
     | '/admin/subscribers'
     | '/admin'
     | '/admin/content/$table'
+    | '/admin/pages/$page'
     | '/api/public/payments/webhook'
   id:
     | '__root__'
@@ -398,6 +410,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/subscribers'
     | '/_authenticated/admin/'
     | '/_authenticated/admin/content/$table'
+    | '/_authenticated/admin/pages/$page'
     | '/api/public/payments/webhook'
   fileRoutesById: FileRoutesById
 }
@@ -634,6 +647,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicPaymentsWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/admin/pages/$page': {
+      id: '/_authenticated/admin/pages/$page'
+      path: '/pages/$page'
+      fullPath: '/admin/pages/$page'
+      preLoaderRoute: typeof AuthenticatedAdminPagesPageRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/admin/content/$table': {
       id: '/_authenticated/admin/content/$table'
       path: '/content/$table'
@@ -654,6 +674,7 @@ interface AuthenticatedAdminRouteRouteChildren {
   AuthenticatedAdminSubscribersRoute: typeof AuthenticatedAdminSubscribersRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
   AuthenticatedAdminContentTableRoute: typeof AuthenticatedAdminContentTableRoute
+  AuthenticatedAdminPagesPageRoute: typeof AuthenticatedAdminPagesPageRoute
 }
 
 const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren =
@@ -667,6 +688,7 @@ const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren
     AuthenticatedAdminSubscribersRoute: AuthenticatedAdminSubscribersRoute,
     AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
     AuthenticatedAdminContentTableRoute: AuthenticatedAdminContentTableRoute,
+    AuthenticatedAdminPagesPageRoute: AuthenticatedAdminPagesPageRoute,
   }
 
 const AuthenticatedAdminRouteRouteWithChildren =

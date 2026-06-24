@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Compass, MapPin, Mountain, Tent } from "lucide-react";
 import heroImg from "@/assets/hero-baobab.jpg";
+import { PAGE_DEFAULTS } from "@/lib/page-content.defaults";
 
 const proofAvatars = [
   "https://randomuser.me/api/portraits/women/68.jpg",
@@ -17,7 +18,11 @@ const quickLinks = [
   { to: "/lodges", label: "Lodges", icon: Tent },
 ] as const;
 
-export function Hero() {
+type HeroContent = Partial<typeof PAGE_DEFAULTS.home>;
+
+export function Hero({ content }: { content?: HeroContent | null } = {}) {
+  const c = { ...PAGE_DEFAULTS.home, ...(content ?? {}) };
+  const heroSrc = c.hero_image_url || heroImg;
   return (
     <section className="relative w-full overflow-hidden pb-28 md:pb-36">
       <div className="relative h-[640px] md:h-[720px] w-full">

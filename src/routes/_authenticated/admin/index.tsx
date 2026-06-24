@@ -30,6 +30,7 @@ function Skeleton({ className = "" }: { className?: string }) {
 function Dashboard() {
   const fn = useServerFn(adminDashboard);
   const { data, isLoading } = useQuery({ queryKey: ["admin-dashboard"], queryFn: () => fn() });
+  const { formatPrice } = useSiteSettings();
 
   const stats = [
     {
@@ -40,7 +41,7 @@ function Dashboard() {
     },
     {
       label: "Total Revenue",
-      value: data?.total_revenue != null ? `$${data.total_revenue.toLocaleString()}` : undefined,
+      value: data?.total_revenue != null ? formatPrice(data.total_revenue) : undefined,
       icon: DollarSign,
       tone: "bg-terracotta/15 text-terracotta",
     },

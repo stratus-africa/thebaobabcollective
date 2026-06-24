@@ -106,12 +106,25 @@ function LodgePage() {
   const { slug } = Route.useParams();
   const { data: l } = useSuspenseQuery(lodgeQuery(slug));
   const { data: all } = useSuspenseQuery(allLodgesQuery);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
   if (!l) return null;
   const others = (all ?? []).filter((x: any) => x.slug !== l.slug).slice(0, 3);
+  const gallery = (l.gallery ?? []).map((src: string, i: number) => ({
+    src,
+    alt: `${l.name} — image ${i + 1}`,
+    caption: `${l.name} · ${l.location}`,
+  }));
 
   return (
     <div className="bg-background min-h-screen">
       <Navbar />
+      <Breadcrumbs
+        items={[
+          { label: "Lodges", to: "/lodges" },
+          { label: l.name },
+        ]}
+      />
       <main>
         <section className="relative h-[60vh] min-h-[420px] flex items-end">
           {l.hero_image && (
@@ -165,20 +178,29 @@ function LodgePage() {
           </section>
         ) : null}
 
-        {l.gallery?.length ? (
+        {gallery.length ? (
           <section className="pb-20">
             <div className="max-w-7xl mx-auto px-6 lg:px-10">
               <h2 className="font-serif text-3xl text-foreground mb-8 text-center">Gallery</h2>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
-                {l.gallery.map((src: string, i: number) => (
-                  <div key={`${src}-${i}`} className="aspect-[4/3] overflow-hidden">
+                {gallery.map((g: { src: string; alt: string }, i: number) => (
+                  <button
+                    type="button"
+                    key={`${g.src}-${i}`}
+                    onClick={() => {
+                      setLightboxIndex(i);
+                      setLightboxOpen(true);
+                    }}
+                    className="aspect-[4/3] overflow-hidden group block"
+                    aria-label={`Open image ${i + 1} in lightbox`}
+                  >
                     <img
-                      src={src}
-                      alt={`${l.name} — image ${i + 1}`}
+                      src={g.src}
+                      alt={g.alt}
                       loading="lazy"
-                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                     />
-                  </div>
+                  </button>
                 ))}
               </div>
             </div>

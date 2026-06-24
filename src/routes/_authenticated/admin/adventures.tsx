@@ -1,9 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { Loader2, Plus, Trash2, Save } from "lucide-react";
+import { Loader2, Plus, Trash2, Save, Upload, X } from "lucide-react";
 import {
   getAdventuresPage,
   saveAdventuresPage,
@@ -13,6 +13,7 @@ import {
   type AdventuresTerrain,
   adventuresDefaults,
 } from "@/lib/adventures.functions";
+import { adminUploadImage } from "@/lib/admin.functions";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";

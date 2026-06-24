@@ -3,6 +3,7 @@ import { Menu, X, ChevronDown } from "lucide-react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { BaobabLogo } from "./Logo";
 import { EnquireDialog } from "@/components/site/EnquireDialog";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { supabase } from "@/integrations/supabase/client";
 import type { User } from "@supabase/supabase-js";
 
@@ -29,6 +30,7 @@ export function Navbar() {
   const [user, setUser] = useState<User | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const navigate = useNavigate();
+  const { logoUrl } = useSiteSettings();
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setUser(data.user));
@@ -66,7 +68,11 @@ export function Navbar() {
       <div className="bg-background border-b border-border/40">
         <div className="max-w-7xl mx-auto px-6 lg:px-10 py-4 flex items-center justify-between gap-6">
           <Link to="/" className="flex items-center gap-3 shrink-0" aria-label="The Baobab Collective home">
-            <BaobabLogo className="w-12 h-12" />
+            {logoUrl ? (
+              <img src={logoUrl} alt="" className="w-12 h-12 object-contain" />
+            ) : (
+              <BaobabLogo className="w-12 h-12" />
+            )}
             <div className="font-serif text-foreground leading-[1.05] text-[15px] tracking-[0.18em]">
               <div>THE</div>
               <div>BAOBAB</div>

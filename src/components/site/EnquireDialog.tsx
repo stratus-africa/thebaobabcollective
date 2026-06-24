@@ -1,6 +1,4 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
-import { useServerFn } from "@tanstack/react-start";
-import { useQuery } from "@tanstack/react-query";
 import { Mail, Phone } from "lucide-react";
 import {
   Dialog,
@@ -11,10 +9,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { EnquireForm, type EnquireFormProps } from "@/components/site/EnquireForm";
-import { getSiteSettings, type SiteSettings } from "@/lib/site-settings.functions";
-
-const FALLBACK_EMAIL = "info@thebaobabcollective.co.uk";
-const FALLBACK_PHONE = "+44 (0) 20 0000 0000";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 export type EnquireDialogProps = EnquireFormProps & {
   trigger?: ReactNode;
@@ -45,15 +40,7 @@ export function EnquireDialog({
   const open = isControlled ? openProp! : internalOpen;
   const lastSyncedHash = useRef<string | null>(null);
 
-  const fetchSettings = useServerFn(getSiteSettings);
-  const { data: settings } = useQuery<SiteSettings>({
-    queryKey: ["site-settings"],
-    queryFn: () => fetchSettings(),
-    staleTime: 5 * 60_000,
-  });
-  const contactEmail = settings?.contact?.email || FALLBACK_EMAIL;
-  const contactPhone = settings?.contact?.phone || FALLBACK_PHONE;
-  const contactPhoneTel = settings?.contact?.phone_tel || contactPhone.replace(/[^\d+]/g, "");
+  const { email: contactEmail, phone: contactPhone, phoneTel: contactPhoneTel } = useSiteSettings();
 
   const setOpen = useCallback(
     (v: boolean) => {

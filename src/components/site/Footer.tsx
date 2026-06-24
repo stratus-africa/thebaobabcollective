@@ -2,24 +2,14 @@ import { useState } from "react";
 import { Instagram, Facebook, ArrowRight, Loader2 } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { useQuery } from "@tanstack/react-query";
 import { BaobabLogo } from "./Logo";
 import { subscribeNewsletter } from "@/lib/submissions.functions";
-import { getSiteSettings, type SiteSettings } from "@/lib/site-settings.functions";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { toast } from "sonner";
 
 export function Footer() {
   const subscribe = useServerFn(subscribeNewsletter);
-  const fetchSettings = useServerFn(getSiteSettings);
-  const { data: settings } = useQuery<SiteSettings>({
-    queryKey: ["site-settings"],
-    queryFn: () => fetchSettings(),
-    staleTime: 5 * 60_000,
-  });
-  const contactEmail = settings?.contact?.email || "info@thebaobabcollective.co.uk";
-  const contactPhone = settings?.contact?.phone || "+44 (0) 20 0000 0000";
-  const contactPhoneTel = settings?.contact?.phone_tel || contactPhone.replace(/[^\d+]/g, "");
-  const logoUrl = settings?.branding?.logo_url;
+  const { email: contactEmail, phone: contactPhone, phoneTel: contactPhoneTel, logoUrl } = useSiteSettings();
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
 

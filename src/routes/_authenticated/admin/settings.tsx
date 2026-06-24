@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { Loader2, Save, Image as ImageIcon } from "lucide-react";
 import { toast } from "sonner";
@@ -11,6 +11,7 @@ import {
   saveSiteSettings,
   type SiteSettings,
 } from "@/lib/site-settings.functions";
+import { SITE_SETTINGS_QUERY_KEY } from "@/hooks/useSiteSettings";
 
 export const Route = createFileRoute("/_authenticated/admin/settings")({
   component: SettingsPage,
@@ -19,8 +20,9 @@ export const Route = createFileRoute("/_authenticated/admin/settings")({
 function SettingsPage() {
   const fetchSettings = useServerFn(getSiteSettings);
   const save = useServerFn(saveSiteSettings);
+  const queryClient = useQueryClient();
   const { data, isLoading } = useQuery<SiteSettings>({
-    queryKey: ["site-settings"],
+    queryKey: SITE_SETTINGS_QUERY_KEY,
     queryFn: () => fetchSettings(),
   });
 
@@ -77,6 +79,7 @@ function SettingsPage() {
           branding: { logo_url: logoUrl.trim() },
         },
       });
+      await queryClient.invalidateQueries({ queryKey: SITE_SETTINGS_QUERY_KEY });
       toast.success("Site settings saved.");
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Failed to save");

@@ -32,6 +32,7 @@ import { Route as BookSlugRouteImport } from './routes/book.$slug'
 import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin/route'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
 import { Route as AuthenticatedAdminSubscribersRouteImport } from './routes/_authenticated/admin/subscribers'
+import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin/settings'
 import { Route as AuthenticatedAdminPrivateTravelRouteImport } from './routes/_authenticated/admin/private-travel'
 import { Route as AuthenticatedAdminPlanningGuideRouteImport } from './routes/_authenticated/admin/planning-guide'
 import { Route as AuthenticatedAdminJournalRouteImport } from './routes/_authenticated/admin/journal'
@@ -157,6 +158,12 @@ const AuthenticatedAdminSubscribersRoute =
     path: '/subscribers',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
+const AuthenticatedAdminSettingsRoute =
+  AuthenticatedAdminSettingsRouteImport.update({
+    id: '/settings',
+    path: '/settings',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const AuthenticatedAdminPrivateTravelRoute =
   AuthenticatedAdminPrivateTravelRouteImport.update({
     id: '/private-travel',
@@ -239,6 +246,7 @@ export interface FileRoutesByFullPath {
   '/admin/journal': typeof AuthenticatedAdminJournalRoute
   '/admin/planning-guide': typeof AuthenticatedAdminPlanningGuideRoute
   '/admin/private-travel': typeof AuthenticatedAdminPrivateTravelRoute
+  '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/subscribers': typeof AuthenticatedAdminSubscribersRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/content/$table': typeof AuthenticatedAdminContentTableRoute
@@ -271,6 +279,7 @@ export interface FileRoutesByTo {
   '/admin/journal': typeof AuthenticatedAdminJournalRoute
   '/admin/planning-guide': typeof AuthenticatedAdminPlanningGuideRoute
   '/admin/private-travel': typeof AuthenticatedAdminPrivateTravelRoute
+  '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/subscribers': typeof AuthenticatedAdminSubscribersRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/content/$table': typeof AuthenticatedAdminContentTableRoute
@@ -306,6 +315,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/journal': typeof AuthenticatedAdminJournalRoute
   '/_authenticated/admin/planning-guide': typeof AuthenticatedAdminPlanningGuideRoute
   '/_authenticated/admin/private-travel': typeof AuthenticatedAdminPrivateTravelRoute
+  '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/_authenticated/admin/subscribers': typeof AuthenticatedAdminSubscribersRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/content/$table': typeof AuthenticatedAdminContentTableRoute
@@ -341,6 +351,7 @@ export interface FileRouteTypes {
     | '/admin/journal'
     | '/admin/planning-guide'
     | '/admin/private-travel'
+    | '/admin/settings'
     | '/admin/subscribers'
     | '/admin/'
     | '/admin/content/$table'
@@ -373,6 +384,7 @@ export interface FileRouteTypes {
     | '/admin/journal'
     | '/admin/planning-guide'
     | '/admin/private-travel'
+    | '/admin/settings'
     | '/admin/subscribers'
     | '/admin'
     | '/admin/content/$table'
@@ -407,6 +419,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/journal'
     | '/_authenticated/admin/planning-guide'
     | '/_authenticated/admin/private-travel'
+    | '/_authenticated/admin/settings'
     | '/_authenticated/admin/subscribers'
     | '/_authenticated/admin/'
     | '/_authenticated/admin/content/$table'
@@ -597,6 +610,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminSubscribersRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/settings': {
+      id: '/_authenticated/admin/settings'
+      path: '/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AuthenticatedAdminSettingsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/admin/private-travel': {
       id: '/_authenticated/admin/private-travel'
       path: '/private-travel'
@@ -670,6 +690,7 @@ interface AuthenticatedAdminRouteRouteChildren {
   AuthenticatedAdminJournalRoute: typeof AuthenticatedAdminJournalRoute
   AuthenticatedAdminPlanningGuideRoute: typeof AuthenticatedAdminPlanningGuideRoute
   AuthenticatedAdminPrivateTravelRoute: typeof AuthenticatedAdminPrivateTravelRoute
+  AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
   AuthenticatedAdminSubscribersRoute: typeof AuthenticatedAdminSubscribersRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
   AuthenticatedAdminContentTableRoute: typeof AuthenticatedAdminContentTableRoute
@@ -684,6 +705,7 @@ const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren
     AuthenticatedAdminJournalRoute: AuthenticatedAdminJournalRoute,
     AuthenticatedAdminPlanningGuideRoute: AuthenticatedAdminPlanningGuideRoute,
     AuthenticatedAdminPrivateTravelRoute: AuthenticatedAdminPrivateTravelRoute,
+    AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
     AuthenticatedAdminSubscribersRoute: AuthenticatedAdminSubscribersRoute,
     AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
     AuthenticatedAdminContentTableRoute: AuthenticatedAdminContentTableRoute,

@@ -44,7 +44,6 @@ type Draft = {
   budget: string;
   trip_type: string;
   accommodation_style: string;
-  referral_source: string;
   message: string;
   experiences: string[];
   subscribe: boolean;

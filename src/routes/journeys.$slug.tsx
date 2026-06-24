@@ -19,10 +19,11 @@ export const Route = createFileRoute("/journeys/$slug")({
     if (!journey) throw notFound();
     return { journey };
   },
-  head: ({ loaderData }) => {
+  head: ({ loaderData, params }) => {
     const j = loaderData?.journey;
     const title = j ? `${j.title} Journeys — The Baobab Collective` : "Journey";
-    const desc = j?.intro ?? "Curated safari journey";
+    const desc = j?.intro?.slice(0, 160) ?? "Curated safari journey";
+    const url = `https://thebaobabcollective.co.uk/journeys/${params.slug}`;
     return {
       meta: [
         { title },
@@ -30,9 +31,14 @@ export const Route = createFileRoute("/journeys/$slug")({
         { property: "og:title", content: title },
         { property: "og:description", content: desc },
         { property: "og:type", content: "article" },
-        { property: "og:url", content: j ? `/journeys/${j.slug}` : "/journeys" },
+        { property: "og:url", content: url },
+        ...(j?.heroImage ? [{ property: "og:image", content: j.heroImage }] : []),
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: title },
+        { name: "twitter:description", content: desc },
+        ...(j?.heroImage ? [{ name: "twitter:image", content: j.heroImage }] : []),
       ],
-      links: j ? [{ rel: "canonical", href: `/journeys/${j.slug}` }] : [],
+      links: [{ rel: "canonical", href: url }],
     };
   },
   notFoundComponent: () => (

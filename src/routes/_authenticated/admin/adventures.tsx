@@ -1,9 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { Loader2, Plus, Trash2, Save } from "lucide-react";
+import { Loader2, Plus, Trash2, Save, Upload, X } from "lucide-react";
 import {
   getAdventuresPage,
   saveAdventuresPage,
@@ -13,6 +13,7 @@ import {
   type AdventuresTerrain,
   adventuresDefaults,
 } from "@/lib/adventures.functions";
+import { adminUploadImage } from "@/lib/admin.functions";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -223,8 +224,8 @@ function AdminAdventures() {
                 {DIFFICULTIES.map((d) => <option key={d}>{d}</option>)}
               </select>
             </Field>
-            <Field label="Image URL">
-              <Input value={s.image} onChange={(e) => set({ ...s, image: e.target.value })} />
+            <Field label="Image">
+              <ImageUpload value={s.image} onChange={(url) => set({ ...s, image: url })} />
             </Field>
             <Field label="Description">
               <Textarea rows={3} value={s.description} onChange={(e) => set({ ...s, description: e.target.value })} />
@@ -321,6 +322,82 @@ function ListCard<T extends object>({
         )}
       </div>
     </section>
+  );
+}
+
+function ImageUpload({ value, onChange }: { value: string; onChange: (url: string) => void }) {
+  const upload = useServerFn(adminUploadImage);
+  const fileRef = useRef<HTMLInputElement>(null);
+  const [busy, setBusy] = useState(false);
+
+  async function pick(file: File) {
+    if (!file) return;
+    if (!/^image\/(png|jpe?g|webp|gif|avif)/i.test(file.type)) {
+      toast.error("Choose a PNG, JPG, WEBP, GIF, or AVIF image.");
+      return;
+    }
+    if (file.size > 8 * 1024 * 1024) {
+      toast.error("Image must be smaller than 8MB");
+      return;
+    }
+    setBusy(true);
+    try {
+      const buf = new Uint8Array(await file.arrayBuffer());
+      let binary = "";
+      for (let i = 0; i < buf.length; i++) binary += String.fromCharCode(buf[i]);
+      const res = await upload({
+        data: {
+          filename: file.name,
+          contentType: file.type || "image/jpeg",
+          base64: btoa(binary),
+        },
+      });
+      onChange(res.url);
+      toast.success("Image uploaded");
+    } catch (e: any) {
+      toast.error(e?.message ?? "Upload failed");
+    } finally {
+      setBusy(false);
+      if (fileRef.current) fileRef.current.value = "";
+    }
+  }
+
+  return (
+    <div className="flex items-start gap-4">
+      <div className="w-28 h-20 border border-border rounded-md bg-cream overflow-hidden flex items-center justify-center shrink-0">
+        {value ? <img src={value} alt="" className="w-full h-full object-cover" /> : <span className="text-xs text-foreground/40">No image</span>}
+      </div>
+      <div className="flex flex-col gap-2">
+        <input
+          ref={fileRef}
+          type="file"
+          accept="image/png,image/jpeg,image/webp,image/gif,image/avif"
+          className="hidden"
+          onChange={(e) => e.target.files?.[0] && pick(e.target.files[0])}
+        />
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={() => fileRef.current?.click()}
+            disabled={busy}
+            className="inline-flex items-center gap-2 text-xs px-3 py-2 rounded-md border border-border hover:bg-muted disabled:opacity-50"
+          >
+            {busy ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Upload className="w-3.5 h-3.5" />}
+            {value ? "Replace" : "Upload"}
+          </button>
+          {value && (
+            <button
+              type="button"
+              onClick={() => onChange("")}
+              className="inline-flex items-center gap-1.5 text-xs px-3 py-2 rounded-md border border-border text-foreground/70 hover:bg-muted"
+            >
+              <X className="w-3.5 h-3.5" /> Clear
+            </button>
+          )}
+        </div>
+        <p className="text-xs text-foreground/55">Stored privately and served via signed URL.</p>
+      </div>
+    </div>
   );
 }
 

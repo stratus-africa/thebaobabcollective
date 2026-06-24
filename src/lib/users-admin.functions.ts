@@ -103,3 +103,35 @@ export const deleteAdminUser = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
+const InviteInput = z.object({
+  email: z.string().email(),
+  role: z.enum(["admin", "editor", "customer"]).default("customer"),
+  redirectTo: z.string().url().optional(),
+});
+
+export const inviteUser = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => InviteInput.parse(d))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const { data: invited, error } = await supabaseAdmin.auth.admin.inviteUserByEmail(
+      data.email,
+      data.redirectTo ? { redirectTo: data.redirectTo } : undefined,
+    );
+    if (error) throw new Error(error.message);
+    const newId = invited?.user?.id;
+    if (newId) {
+      await supabaseAdmin
+        .from("user_roles")
+        .upsert({ user_id: newId, role: "customer" }, { onConflict: "user_id,role" });
+      if (data.role !== "customer") {
+        await supabaseAdmin
+          .from("user_roles")
+          .upsert({ user_id: newId, role: data.role }, { onConflict: "user_id,role" });
+      }
+    }
+    return { ok: true, user_id: newId ?? null };
+  });

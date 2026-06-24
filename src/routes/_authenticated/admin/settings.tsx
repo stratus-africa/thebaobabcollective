@@ -1,11 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useMemo, useState } from "react";
-import { Loader2, Save, Image as ImageIcon, Shield, ShieldOff, Trash2, UserCog, Search } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  Loader2, Save, Image as ImageIcon, Shield, ShieldOff, Trash2, UserCog, Search,
+  Upload, Mail, Palette, Users as UsersIcon, X, Send,
+} from "lucide-react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
@@ -16,8 +20,9 @@ import {
   saveSiteSettings,
   type SiteSettings,
 } from "@/lib/site-settings.functions";
+import { adminUploadImage } from "@/lib/admin.functions";
 import {
-  listAdminUsers, setUserRole, deleteAdminUser, type AdminUserRow,
+  listAdminUsers, setUserRole, deleteAdminUser, inviteUser, type AdminUserRow,
 } from "@/lib/users-admin.functions";
 import { SITE_SETTINGS_QUERY_KEY } from "@/hooks/useSiteSettings";
 import { supabase } from "@/integrations/supabase/client";
@@ -26,9 +31,63 @@ export const Route = createFileRoute("/_authenticated/admin/settings")({
   component: SettingsPage,
 });
 
+type RoleChoice = "admin" | "editor" | "customer";
+
 function SettingsPage() {
+  return (
+    <div className="max-w-6xl">
+      <header className="mb-8">
+        <p className="text-[11px] tracking-[0.3em] uppercase text-foreground/60 mb-2">Admin</p>
+        <h1 className="font-serif text-3xl text-foreground">Site Settings</h1>
+        <p className="text-sm text-foreground/65 mt-1">
+          Update branding, contact details, and team access. Changes apply across the site immediately.
+        </p>
+      </header>
+
+      <Tabs defaultValue="branding" orientation="vertical" className="flex flex-col md:flex-row gap-8">
+        <TabsList className="h-auto md:w-56 shrink-0 flex md:flex-col bg-transparent p-0 gap-1 justify-start">
+          <TabsTrigger
+            value="branding"
+            className="w-full justify-start gap-2 data-[state=active]:bg-cream data-[state=active]:text-foreground data-[state=active]:shadow-none border border-transparent data-[state=active]:border-border px-4 py-2.5"
+          >
+            <Palette className="w-4 h-4" /> Branding
+          </TabsTrigger>
+          <TabsTrigger
+            value="contact"
+            className="w-full justify-start gap-2 data-[state=active]:bg-cream data-[state=active]:text-foreground data-[state=active]:shadow-none border border-transparent data-[state=active]:border-border px-4 py-2.5"
+          >
+            <Mail className="w-4 h-4" /> Contact
+          </TabsTrigger>
+          <TabsTrigger
+            value="users"
+            className="w-full justify-start gap-2 data-[state=active]:bg-cream data-[state=active]:text-foreground data-[state=active]:shadow-none border border-transparent data-[state=active]:border-border px-4 py-2.5"
+          >
+            <UsersIcon className="w-4 h-4" /> Users
+          </TabsTrigger>
+        </TabsList>
+
+        <div className="flex-1 min-w-0">
+          <TabsContent value="branding" className="mt-0">
+            <SiteSettingsForm tab="branding" />
+          </TabsContent>
+          <TabsContent value="contact" className="mt-0">
+            <SiteSettingsForm tab="contact" />
+          </TabsContent>
+          <TabsContent value="users" className="mt-0 space-y-8">
+            <InvitePanel />
+            <UsersManagement />
+          </TabsContent>
+        </div>
+      </Tabs>
+    </div>
+  );
+}
+
+// ─── Branding / Contact shared form ──────────────────────────────────
+function SiteSettingsForm({ tab }: { tab: "branding" | "contact" }) {
   const fetchSettings = useServerFn(getSiteSettings);
   const save = useServerFn(saveSiteSettings);
+  const upload = useServerFn(adminUploadImage);
   const queryClient = useQueryClient();
   const { data, isLoading } = useQuery<SiteSettings>({
     queryKey: SITE_SETTINGS_QUERY_KEY,
@@ -41,8 +100,9 @@ function SettingsPage() {
   const [phoneTel, setPhoneTel] = useState("");
   const [address, setAddress] = useState("");
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [emailError, setEmailError] = useState<string | null>(null);
-  const [logoError, setLogoError] = useState<string | null>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!data) return;
@@ -53,28 +113,45 @@ function SettingsPage() {
     setAddress(data.contact?.address ?? "");
   }, [data]);
 
-  function validate(): boolean {
-    let ok = true;
-    setEmailError(null);
-    setLogoError(null);
-    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setEmailError("Enter a valid email address.");
-      ok = false;
+  async function pickLogo(file: File) {
+    if (!file) return;
+    if (!/^image\/(png|jpe?g|webp|gif|avif|svg\+xml)/i.test(file.type)) {
+      toast.error("Choose a PNG, JPG, WEBP, GIF, AVIF, or SVG image.");
+      return;
     }
-    if (logoUrl) {
-      try {
-        new URL(logoUrl);
-      } catch {
-        setLogoError("Logo must be a valid URL (https://…).");
-        ok = false;
-      }
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Logo must be smaller than 5MB");
+      return;
     }
-    return ok;
+    setUploading(true);
+    try {
+      const buf = new Uint8Array(await file.arrayBuffer());
+      let binary = "";
+      for (let i = 0; i < buf.length; i++) binary += String.fromCharCode(buf[i]);
+      const res = await upload({
+        data: {
+          filename: file.name,
+          contentType: file.type || "image/png",
+          base64: btoa(binary),
+        },
+      });
+      setLogoUrl(res.url);
+      toast.success("Logo uploaded");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Upload failed");
+    } finally {
+      setUploading(false);
+      if (fileRef.current) fileRef.current.value = "";
+    }
   }
 
   async function onSave(e: React.FormEvent) {
     e.preventDefault();
-    if (!validate()) return;
+    setEmailError(null);
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setEmailError("Enter a valid email address.");
+      return;
+    }
     setSaving(true);
     try {
       await save({
@@ -97,133 +174,217 @@ function SettingsPage() {
     }
   }
 
+  if (isLoading) {
+    return (
+      <div className="flex items-center gap-2 text-foreground/60 text-sm">
+        <Loader2 className="w-4 h-4 animate-spin" /> Loading…
+      </div>
+    );
+  }
+
   return (
-    <div className="max-w-3xl">
-      <header className="mb-8">
-        <p className="text-[11px] tracking-[0.3em] uppercase text-foreground/60 mb-2">Admin</p>
-        <h1 className="font-serif text-3xl text-foreground">Site Settings</h1>
-        <p className="text-sm text-foreground/65 mt-1">
-          Update the site logo and primary contact details. Changes apply across the site immediately.
-        </p>
-      </header>
-
-      {isLoading ? (
-        <div className="flex items-center gap-2 text-foreground/60 text-sm">
-          <Loader2 className="w-4 h-4 animate-spin" /> Loading…
-        </div>
-      ) : (
-        <form onSubmit={onSave} className="space-y-10" noValidate>
-          <section className="bg-background border border-border rounded-lg p-6 md:p-8 space-y-5">
-            <div className="flex items-center gap-3 mb-2">
-              <ImageIcon className="w-5 h-5 text-gold" aria-hidden="true" />
-              <h2 className="font-serif text-xl text-foreground">Branding</h2>
-            </div>
-            <div>
-              <Label htmlFor="logo_url" className="text-sm">Site Logo URL</Label>
-              <Input
-                id="logo_url"
-                type="url"
-                placeholder="https://…/logo.png"
-                value={logoUrl}
-                onChange={(e) => setLogoUrl(e.target.value)}
-                aria-invalid={!!logoError}
-                aria-describedby={logoError ? "logo_url-error" : "logo_url-help"}
-                className="mt-2"
-              />
-              {logoError ? (
-                <p id="logo_url-error" role="alert" className="mt-1 text-xs text-destructive">{logoError}</p>
-              ) : (
-                <p id="logo_url-help" className="mt-1 text-xs text-foreground/55">
-                  Paste a publicly accessible image URL. Leave empty to use the default logo mark.
-                </p>
-              )}
-              {logoUrl && !logoError && (
-                <div className="mt-3 inline-flex items-center gap-3 p-3 border border-border rounded-md bg-cream">
-                  <img src={logoUrl} alt="Logo preview" className="h-10 w-10 object-contain" />
-                  <span className="text-xs text-foreground/70">Live preview</span>
-                </div>
-              )}
-            </div>
-          </section>
-
-          <section className="bg-background border border-border rounded-lg p-6 md:p-8 space-y-5">
-            <h2 className="font-serif text-xl text-foreground">Contact</h2>
-            <div className="grid md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="email" className="text-sm">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="info@thebaobabcollective.co.uk"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  aria-invalid={!!emailError}
-                  aria-describedby={emailError ? "email-error" : undefined}
-                  className="mt-2"
-                />
-                {emailError && (
-                  <p id="email-error" role="alert" className="mt-1 text-xs text-destructive">{emailError}</p>
+    <form onSubmit={onSave} noValidate className="space-y-6">
+      {tab === "branding" ? (
+        <section className="bg-background border border-border rounded-lg p-6 md:p-8 space-y-5">
+          <div className="flex items-center gap-3 mb-2">
+            <ImageIcon className="w-5 h-5 text-gold" aria-hidden="true" />
+            <h2 className="font-serif text-xl text-foreground">Branding</h2>
+          </div>
+          <div>
+            <Label className="text-sm">Site Logo</Label>
+            <div className="mt-3 flex flex-wrap items-center gap-4">
+              <div className="w-24 h-24 border border-border rounded-md bg-cream flex items-center justify-center overflow-hidden">
+                {logoUrl ? (
+                  <img src={logoUrl} alt="Logo preview" className="w-full h-full object-contain" />
+                ) : (
+                  <ImageIcon className="w-8 h-8 text-foreground/30" aria-hidden="true" />
                 )}
               </div>
-              <div>
-                <Label htmlFor="phone" className="text-sm">Phone (display)</Label>
-                <Input
-                  id="phone"
-                  type="tel"
-                  placeholder="+44 (0) 20 0000 0000"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  className="mt-2"
+              <div className="flex flex-col gap-2">
+                <input
+                  ref={fileRef}
+                  type="file"
+                  accept="image/png,image/jpeg,image/webp,image/gif,image/avif,image/svg+xml"
+                  className="hidden"
+                  onChange={(e) => e.target.files?.[0] && pickLogo(e.target.files[0])}
                 />
-              </div>
-              <div className="md:col-span-2">
-                <Label htmlFor="phone_tel" className="text-sm">Phone (tel link, optional)</Label>
-                <Input
-                  id="phone_tel"
-                  placeholder="+442000000000"
-                  value={phoneTel}
-                  onChange={(e) => setPhoneTel(e.target.value)}
-                  className="mt-2"
-                />
-                <p className="mt-1 text-xs text-foreground/55">
-                  Used as <code>tel:</code> link. Defaults to digits from display phone.
-                </p>
-              </div>
-              <div className="md:col-span-2">
-                <Label htmlFor="address" className="text-sm">Address</Label>
-                <Input
-                  id="address"
-                  placeholder="London · Cape Town · Nairobi"
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
-                  className="mt-2"
-                />
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => fileRef.current?.click()}
+                    disabled={uploading}
+                    className="inline-flex items-center gap-2 text-xs px-3 py-2 rounded-md border border-border hover:bg-muted disabled:opacity-50"
+                  >
+                    {uploading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Upload className="w-3.5 h-3.5" />}
+                    {logoUrl ? "Replace logo" : "Upload logo"}
+                  </button>
+                  {logoUrl && (
+                    <button
+                      type="button"
+                      onClick={() => setLogoUrl("")}
+                      className="inline-flex items-center gap-1.5 text-xs px-3 py-2 rounded-md border border-border text-foreground/70 hover:bg-muted"
+                    >
+                      <X className="w-3.5 h-3.5" /> Clear
+                    </button>
+                  )}
+                </div>
+                <p className="text-xs text-foreground/55">PNG, JPG, WEBP, or SVG. Stored privately and served via signed URL.</p>
               </div>
             </div>
-          </section>
-
-          <div className="flex justify-end">
-            <button
-              type="submit"
-              disabled={saving}
-              className="inline-flex items-center gap-2 bg-gold text-gold-foreground uppercase tracking-[0.25em] text-[11px] px-6 py-3 hover:bg-gold/90 transition-colors disabled:opacity-60"
-            >
-              {saving ? (
-                <>
-                  <Loader2 className="w-3.5 h-3.5 animate-spin" /> Saving…
-                </>
-              ) : (
-                <>
-                  <Save className="w-3.5 h-3.5" /> Save Settings
-                </>
-              )}
-            </button>
           </div>
-        </form>
+        </section>
+      ) : (
+        <section className="bg-background border border-border rounded-lg p-6 md:p-8 space-y-5">
+          <div className="flex items-center gap-3 mb-2">
+            <Mail className="w-5 h-5 text-gold" aria-hidden="true" />
+            <h2 className="font-serif text-xl text-foreground">Contact</h2>
+          </div>
+          <div className="grid md:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="email" className="text-sm">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="info@thebaobabcollective.co.uk"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                aria-invalid={!!emailError}
+                aria-describedby={emailError ? "email-error" : undefined}
+                className="mt-2"
+              />
+              {emailError && (
+                <p id="email-error" role="alert" className="mt-1 text-xs text-destructive">{emailError}</p>
+              )}
+            </div>
+            <div>
+              <Label htmlFor="phone" className="text-sm">Phone (display)</Label>
+              <Input
+                id="phone"
+                type="tel"
+                placeholder="+44 (0) 20 0000 0000"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                className="mt-2"
+              />
+            </div>
+            <div className="md:col-span-2">
+              <Label htmlFor="phone_tel" className="text-sm">Phone (tel link, optional)</Label>
+              <Input
+                id="phone_tel"
+                placeholder="+442000000000"
+                value={phoneTel}
+                onChange={(e) => setPhoneTel(e.target.value)}
+                className="mt-2"
+              />
+              <p className="mt-1 text-xs text-foreground/55">
+                Used as <code>tel:</code> link. Defaults to digits from display phone.
+              </p>
+            </div>
+            <div className="md:col-span-2">
+              <Label htmlFor="address" className="text-sm">Address</Label>
+              <Input
+                id="address"
+                placeholder="London · Cape Town · Nairobi"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                className="mt-2"
+              />
+            </div>
+          </div>
+        </section>
       )}
 
-      <UsersManagement />
-    </div>
+      <div className="flex justify-end">
+        <button
+          type="submit"
+          disabled={saving}
+          className="inline-flex items-center gap-2 bg-gold text-gold-foreground uppercase tracking-[0.25em] text-[11px] px-6 py-3 hover:bg-gold/90 transition-colors disabled:opacity-60"
+        >
+          {saving ? (
+            <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Saving…</>
+          ) : (
+            <><Save className="w-3.5 h-3.5" /> Save Settings</>
+          )}
+        </button>
+      </div>
+    </form>
+  );
+}
+
+// ─── Invite ──────────────────────────────────────────────────────────
+function InvitePanel() {
+  const queryClient = useQueryClient();
+  const invite = useServerFn(inviteUser);
+  const [email, setEmail] = useState("");
+  const [role, setRole] = useState<RoleChoice>("customer");
+  const [sending, setSending] = useState(false);
+
+  async function send(e: React.FormEvent) {
+    e.preventDefault();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      toast.error("Enter a valid email address.");
+      return;
+    }
+    setSending(true);
+    try {
+      const redirectTo = typeof window !== "undefined" ? `${window.location.origin}/auth` : undefined;
+      await invite({ data: { email: email.trim(), role, redirectTo } });
+      toast.success(`Invite sent to ${email}`);
+      setEmail("");
+      setRole("customer");
+      await queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to send invite");
+    } finally {
+      setSending(false);
+    }
+  }
+
+  return (
+    <section className="bg-background border border-border rounded-lg p-6 md:p-8 space-y-5">
+      <div className="flex items-center gap-3">
+        <Send className="w-5 h-5 text-gold" aria-hidden="true" />
+        <h2 className="font-serif text-xl text-foreground">Invite a user</h2>
+      </div>
+      <p className="text-sm text-foreground/65">
+        Send an email invitation. The recipient sets their own password from the link. Assign an initial role below.
+      </p>
+      <form onSubmit={send} className="grid md:grid-cols-[1fr_180px_auto] gap-3 items-end">
+        <div>
+          <Label htmlFor="invite-email" className="text-sm">Email</Label>
+          <Input
+            id="invite-email"
+            type="email"
+            placeholder="name@example.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            className="mt-2"
+          />
+        </div>
+        <div>
+          <Label htmlFor="invite-role" className="text-sm">Initial role</Label>
+          <select
+            id="invite-role"
+            value={role}
+            onChange={(e) => setRole(e.target.value as RoleChoice)}
+            className="mt-2 h-10 w-full bg-background border border-border rounded-md px-3 text-sm"
+          >
+            <option value="customer">Customer</option>
+            <option value="editor">Editor</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+        <button
+          type="submit"
+          disabled={sending}
+          className="h-10 inline-flex items-center gap-2 bg-gold text-gold-foreground uppercase tracking-[0.25em] text-[11px] px-5 hover:bg-gold/90 transition-colors disabled:opacity-60"
+        >
+          {sending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
+          Send invite
+        </button>
+      </form>
+    </section>
   );
 }
 
@@ -285,7 +446,7 @@ function UsersManagement() {
   }
 
   return (
-    <section className="mt-10 bg-background border border-border rounded-lg p-6 md:p-8 space-y-5">
+    <section className="bg-background border border-border rounded-lg p-6 md:p-8 space-y-5">
       <div className="flex items-center gap-3">
         <UserCog className="w-5 h-5 text-gold" aria-hidden="true" />
         <h2 className="font-serif text-xl text-foreground">Users</h2>

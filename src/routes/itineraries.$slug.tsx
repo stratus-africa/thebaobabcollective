@@ -8,6 +8,7 @@ import { EnquireDialog } from "@/components/site/EnquireDialog";
 
 import { ShareButtons } from "@/components/site/ShareButtons";
 import { getItineraryBySlug } from "@/lib/cms.functions";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 
 const itinerarySearchSchema = z.object({
@@ -68,6 +69,7 @@ export const Route = createFileRoute("/itineraries/$slug")({
 
 function ItineraryPage() {
   const { itinerary } = Route.useLoaderData();
+  const { formatPrice } = useSiteSettings();
   const { itinerary: prefillFromQuery } = Route.useSearch();
   const cat = (itinerary as any).category;
   const enquiryName = prefillFromQuery || itinerary.name;
@@ -94,7 +96,7 @@ function ItineraryPage() {
             <div className="flex flex-wrap gap-6 text-sm text-background/90">
               <span className="flex items-center gap-2"><Calendar className="w-4 h-4 text-gold" /> {itinerary.nights}</span>
               {itinerary.price_from_usd && (
-                <span className="flex items-center gap-2"><Sparkles className="w-4 h-4 text-gold" /> From ${Number(itinerary.price_from_usd).toLocaleString()} pp</span>
+                <span className="flex items-center gap-2"><Sparkles className="w-4 h-4 text-gold" /> From {formatPrice(Number(itinerary.price_from_usd))} pp</span>
               )}
               <span className="flex items-center gap-2"><Users className="w-4 h-4 text-gold" /> Private guided</span>
             </div>
@@ -164,7 +166,7 @@ function ItineraryPage() {
               <div className="bg-cream p-8">
                 <p className="text-[11px] tracking-[0.3em] uppercase text-terracotta mb-3">Reserve Your Journey</p>
                 <p className="font-serif text-3xl text-foreground mb-1">
-                  {itinerary.price_from_usd ? `$${Number(itinerary.price_from_usd).toLocaleString()}` : "On request"}
+                  {itinerary.price_from_usd ? formatPrice(Number(itinerary.price_from_usd)) : "On request"}
                 </p>
                 <p className="text-xs text-foreground/60 mb-6">per person, twin share · {itinerary.nights}</p>
                 <EnquireDialog

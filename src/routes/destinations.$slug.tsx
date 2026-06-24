@@ -110,12 +110,26 @@ function DestinationPage() {
   const { slug } = Route.useParams();
   const { data: d } = useSuspenseQuery(destQuery(slug));
   const { data: all } = useSuspenseQuery(allDestQuery);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
   if (!d) return null;
   const others = (all ?? []).filter((x: any) => x.slug !== d.slug).slice(0, 3);
+  const gallery = (d as any).gallery as string[] | undefined;
+  const galleryItems = (gallery ?? (d.image ? [d.image] : [])).map((src: string, i: number) => ({
+    src,
+    alt: `${d.name} — image ${i + 1}`,
+    caption: `${d.name}, ${d.country}`,
+  }));
 
   return (
     <div className="bg-background min-h-screen">
       <Navbar />
+      <Breadcrumbs
+        items={[
+          { label: "Destinations", to: "/destinations" },
+          { label: d.name },
+        ]}
+      />
       <main>
         <section className="relative h-[60vh] min-h-[420px] flex items-end">
           {d.image && (

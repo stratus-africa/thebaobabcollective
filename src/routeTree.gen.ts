@@ -26,6 +26,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as JourneysSlugRouteImport } from './routes/journeys.$slug'
 import { Route as JournalSlugRouteImport } from './routes/journal.$slug'
 import { Route as ItinerariesSlugRouteImport } from './routes/itineraries.$slug'
+import { Route as DestinationsSlugRouteImport } from './routes/destinations.$slug'
 import { Route as BookingSuccessRouteImport } from './routes/booking.success'
 import { Route as BookSlugRouteImport } from './routes/book.$slug'
 import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin/route'
@@ -33,6 +34,7 @@ import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAdminSubscribersRouteImport } from './routes/_authenticated/admin/subscribers'
 import { Route as AuthenticatedAdminPrivateTravelRouteImport } from './routes/_authenticated/admin/private-travel'
 import { Route as AuthenticatedAdminPlanningGuideRouteImport } from './routes/_authenticated/admin/planning-guide'
+import { Route as AuthenticatedAdminJournalRouteImport } from './routes/_authenticated/admin/journal'
 import { Route as AuthenticatedAdminEnquiriesRouteImport } from './routes/_authenticated/admin/enquiries'
 import { Route as AuthenticatedAdminBookingsRouteImport } from './routes/_authenticated/admin/bookings'
 import { Route as AuthenticatedAdminAdventuresRouteImport } from './routes/_authenticated/admin/adventures'
@@ -123,6 +125,11 @@ const ItinerariesSlugRoute = ItinerariesSlugRouteImport.update({
   path: '/itineraries/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DestinationsSlugRoute = DestinationsSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => DestinationsRoute,
+} as any)
 const BookingSuccessRoute = BookingSuccessRouteImport.update({
   id: '/booking/success',
   path: '/booking/success',
@@ -159,6 +166,12 @@ const AuthenticatedAdminPlanningGuideRoute =
   AuthenticatedAdminPlanningGuideRouteImport.update({
     id: '/planning-guide',
     path: '/planning-guide',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminJournalRoute =
+  AuthenticatedAdminJournalRouteImport.update({
+    id: '/journal',
+    path: '/journal',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
 const AuthenticatedAdminEnquiriesRoute =
@@ -199,7 +212,7 @@ export interface FileRoutesByFullPath {
   '/adventures': typeof AdventuresRoute
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
-  '/destinations': typeof DestinationsRoute
+  '/destinations': typeof DestinationsRouteWithChildren
   '/faq': typeof FaqRoute
   '/journal': typeof JournalRouteWithChildren
   '/journeys': typeof JourneysRouteWithChildren
@@ -209,12 +222,14 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/book/$slug': typeof BookSlugRoute
   '/booking/success': typeof BookingSuccessRoute
+  '/destinations/$slug': typeof DestinationsSlugRoute
   '/itineraries/$slug': typeof ItinerariesSlugRoute
   '/journal/$slug': typeof JournalSlugRoute
   '/journeys/$slug': typeof JourneysSlugRoute
   '/admin/adventures': typeof AuthenticatedAdminAdventuresRoute
   '/admin/bookings': typeof AuthenticatedAdminBookingsRoute
   '/admin/enquiries': typeof AuthenticatedAdminEnquiriesRoute
+  '/admin/journal': typeof AuthenticatedAdminJournalRoute
   '/admin/planning-guide': typeof AuthenticatedAdminPlanningGuideRoute
   '/admin/private-travel': typeof AuthenticatedAdminPrivateTravelRoute
   '/admin/subscribers': typeof AuthenticatedAdminSubscribersRoute
@@ -229,7 +244,7 @@ export interface FileRoutesByTo {
   '/adventures': typeof AdventuresRoute
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
-  '/destinations': typeof DestinationsRoute
+  '/destinations': typeof DestinationsRouteWithChildren
   '/faq': typeof FaqRoute
   '/journal': typeof JournalRouteWithChildren
   '/journeys': typeof JourneysRouteWithChildren
@@ -238,12 +253,14 @@ export interface FileRoutesByTo {
   '/testimonials': typeof TestimonialsRoute
   '/book/$slug': typeof BookSlugRoute
   '/booking/success': typeof BookingSuccessRoute
+  '/destinations/$slug': typeof DestinationsSlugRoute
   '/itineraries/$slug': typeof ItinerariesSlugRoute
   '/journal/$slug': typeof JournalSlugRoute
   '/journeys/$slug': typeof JourneysSlugRoute
   '/admin/adventures': typeof AuthenticatedAdminAdventuresRoute
   '/admin/bookings': typeof AuthenticatedAdminBookingsRoute
   '/admin/enquiries': typeof AuthenticatedAdminEnquiriesRoute
+  '/admin/journal': typeof AuthenticatedAdminJournalRoute
   '/admin/planning-guide': typeof AuthenticatedAdminPlanningGuideRoute
   '/admin/private-travel': typeof AuthenticatedAdminPrivateTravelRoute
   '/admin/subscribers': typeof AuthenticatedAdminSubscribersRoute
@@ -260,7 +277,7 @@ export interface FileRoutesById {
   '/adventures': typeof AdventuresRoute
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
-  '/destinations': typeof DestinationsRoute
+  '/destinations': typeof DestinationsRouteWithChildren
   '/faq': typeof FaqRoute
   '/journal': typeof JournalRouteWithChildren
   '/journeys': typeof JourneysRouteWithChildren
@@ -270,12 +287,14 @@ export interface FileRoutesById {
   '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/book/$slug': typeof BookSlugRoute
   '/booking/success': typeof BookingSuccessRoute
+  '/destinations/$slug': typeof DestinationsSlugRoute
   '/itineraries/$slug': typeof ItinerariesSlugRoute
   '/journal/$slug': typeof JournalSlugRoute
   '/journeys/$slug': typeof JourneysSlugRoute
   '/_authenticated/admin/adventures': typeof AuthenticatedAdminAdventuresRoute
   '/_authenticated/admin/bookings': typeof AuthenticatedAdminBookingsRoute
   '/_authenticated/admin/enquiries': typeof AuthenticatedAdminEnquiriesRoute
+  '/_authenticated/admin/journal': typeof AuthenticatedAdminJournalRoute
   '/_authenticated/admin/planning-guide': typeof AuthenticatedAdminPlanningGuideRoute
   '/_authenticated/admin/private-travel': typeof AuthenticatedAdminPrivateTravelRoute
   '/_authenticated/admin/subscribers': typeof AuthenticatedAdminSubscribersRoute
@@ -302,12 +321,14 @@ export interface FileRouteTypes {
     | '/admin'
     | '/book/$slug'
     | '/booking/success'
+    | '/destinations/$slug'
     | '/itineraries/$slug'
     | '/journal/$slug'
     | '/journeys/$slug'
     | '/admin/adventures'
     | '/admin/bookings'
     | '/admin/enquiries'
+    | '/admin/journal'
     | '/admin/planning-guide'
     | '/admin/private-travel'
     | '/admin/subscribers'
@@ -331,12 +352,14 @@ export interface FileRouteTypes {
     | '/testimonials'
     | '/book/$slug'
     | '/booking/success'
+    | '/destinations/$slug'
     | '/itineraries/$slug'
     | '/journal/$slug'
     | '/journeys/$slug'
     | '/admin/adventures'
     | '/admin/bookings'
     | '/admin/enquiries'
+    | '/admin/journal'
     | '/admin/planning-guide'
     | '/admin/private-travel'
     | '/admin/subscribers'
@@ -362,12 +385,14 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/book/$slug'
     | '/booking/success'
+    | '/destinations/$slug'
     | '/itineraries/$slug'
     | '/journal/$slug'
     | '/journeys/$slug'
     | '/_authenticated/admin/adventures'
     | '/_authenticated/admin/bookings'
     | '/_authenticated/admin/enquiries'
+    | '/_authenticated/admin/journal'
     | '/_authenticated/admin/planning-guide'
     | '/_authenticated/admin/private-travel'
     | '/_authenticated/admin/subscribers'
@@ -384,7 +409,7 @@ export interface RootRouteChildren {
   AdventuresRoute: typeof AdventuresRoute
   AuthRoute: typeof AuthRoute
   ContactRoute: typeof ContactRoute
-  DestinationsRoute: typeof DestinationsRoute
+  DestinationsRoute: typeof DestinationsRouteWithChildren
   FaqRoute: typeof FaqRoute
   JournalRoute: typeof JournalRouteWithChildren
   JourneysRoute: typeof JourneysRouteWithChildren
@@ -518,6 +543,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ItinerariesSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/destinations/$slug': {
+      id: '/destinations/$slug'
+      path: '/$slug'
+      fullPath: '/destinations/$slug'
+      preLoaderRoute: typeof DestinationsSlugRouteImport
+      parentRoute: typeof DestinationsRoute
+    }
     '/booking/success': {
       id: '/booking/success'
       path: '/booking/success'
@@ -567,6 +599,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminPlanningGuideRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/journal': {
+      id: '/_authenticated/admin/journal'
+      path: '/journal'
+      fullPath: '/admin/journal'
+      preLoaderRoute: typeof AuthenticatedAdminJournalRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/admin/enquiries': {
       id: '/_authenticated/admin/enquiries'
       path: '/enquiries'
@@ -609,6 +648,7 @@ interface AuthenticatedAdminRouteRouteChildren {
   AuthenticatedAdminAdventuresRoute: typeof AuthenticatedAdminAdventuresRoute
   AuthenticatedAdminBookingsRoute: typeof AuthenticatedAdminBookingsRoute
   AuthenticatedAdminEnquiriesRoute: typeof AuthenticatedAdminEnquiriesRoute
+  AuthenticatedAdminJournalRoute: typeof AuthenticatedAdminJournalRoute
   AuthenticatedAdminPlanningGuideRoute: typeof AuthenticatedAdminPlanningGuideRoute
   AuthenticatedAdminPrivateTravelRoute: typeof AuthenticatedAdminPrivateTravelRoute
   AuthenticatedAdminSubscribersRoute: typeof AuthenticatedAdminSubscribersRoute
@@ -621,6 +661,7 @@ const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren
     AuthenticatedAdminAdventuresRoute: AuthenticatedAdminAdventuresRoute,
     AuthenticatedAdminBookingsRoute: AuthenticatedAdminBookingsRoute,
     AuthenticatedAdminEnquiriesRoute: AuthenticatedAdminEnquiriesRoute,
+    AuthenticatedAdminJournalRoute: AuthenticatedAdminJournalRoute,
     AuthenticatedAdminPlanningGuideRoute: AuthenticatedAdminPlanningGuideRoute,
     AuthenticatedAdminPrivateTravelRoute: AuthenticatedAdminPrivateTravelRoute,
     AuthenticatedAdminSubscribersRoute: AuthenticatedAdminSubscribersRoute,
@@ -643,6 +684,18 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
+interface DestinationsRouteChildren {
+  DestinationsSlugRoute: typeof DestinationsSlugRoute
+}
+
+const DestinationsRouteChildren: DestinationsRouteChildren = {
+  DestinationsSlugRoute: DestinationsSlugRoute,
+}
+
+const DestinationsRouteWithChildren = DestinationsRoute._addFileChildren(
+  DestinationsRouteChildren,
+)
 
 interface JournalRouteChildren {
   JournalSlugRoute: typeof JournalSlugRoute
@@ -675,7 +728,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdventuresRoute: AdventuresRoute,
   AuthRoute: AuthRoute,
   ContactRoute: ContactRoute,
-  DestinationsRoute: DestinationsRoute,
+  DestinationsRoute: DestinationsRouteWithChildren,
   FaqRoute: FaqRoute,
   JournalRoute: JournalRouteWithChildren,
   JourneysRoute: JourneysRouteWithChildren,

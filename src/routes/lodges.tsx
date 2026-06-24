@@ -10,6 +10,7 @@ import { FilterBar, type FilterOption } from "@/components/site/FilterBar";
 import { CardGridSkeleton } from "@/components/site/CardSkeleton";
 import { getLodges } from "@/lib/cms.functions";
 import { MapPin, ArrowRight } from "lucide-react";
+import { EnquireDialog } from "@/components/site/EnquireDialog";
 
 const lodgesQuery = queryOptions({
   queryKey: ["lodges"],
@@ -203,18 +204,25 @@ function LodgesGrid() {
                           "On enquiry"
                         )}
                       </p>
-                      <Link
-                        to="/contact"
-                        search={{ subject: `Enquiry about ${l.name}` } as any}
-                        aria-label={`Enquire about ${l.name}`}
-                        className="inline-flex items-center gap-2 text-[11px] tracking-[0.25em] uppercase text-foreground hover:text-gold focus-visible:outline-none focus-visible:text-gold transition-colors min-h-11 px-1"
-                      >
-                        Enquire{" "}
-                        <ArrowRight
-                          aria-hidden="true"
-                          className="w-4 h-4 motion-safe:transition-transform motion-safe:duration-300 group-hover:translate-x-1"
-                        />
-                      </Link>
+                      <EnquireDialog
+                        defaultSubject={`Enquiry about ${l.name}`}
+                        defaultDestination={l.location}
+                        sourceUrl={`/lodges#${l.slug}`}
+                        autosaveKey={`enquire:lodge:${l.slug}`}
+                        trigger={
+                          <button
+                            type="button"
+                            aria-label={`Enquire about ${l.name}`}
+                            className="inline-flex items-center gap-2 text-[11px] tracking-[0.25em] uppercase text-foreground hover:text-gold focus-visible:outline-none focus-visible:text-gold transition-colors min-h-11 px-1"
+                          >
+                            Enquire{" "}
+                            <ArrowRight
+                              aria-hidden="true"
+                              className="w-4 h-4 motion-safe:transition-transform motion-safe:duration-300 group-hover:translate-x-1"
+                            />
+                          </button>
+                        }
+                      />
                     </div>
                     <div className="mt-4 pt-4 border-t border-border/40">
                       <ShareButtons

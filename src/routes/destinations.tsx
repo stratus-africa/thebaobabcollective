@@ -81,35 +81,49 @@ function DestinationsPage() {
         <section className="py-16">
           <div className="max-w-7xl mx-auto px-6 lg:px-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {filtered.map((d) => (
-              <article key={d.id} className="group bg-cream overflow-hidden">
-                <div className="aspect-[4/3] overflow-hidden">
-                  <img src={d.image} alt={d.name} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-                </div>
-                <div className="p-6">
-                  <div className="flex items-center gap-2 text-[11px] tracking-[0.2em] uppercase text-gold mb-2">
-                    <MapPin className="w-3 h-3" /> {d.country} · {d.region}
-                  </div>
-                  <h2 className="font-serif text-2xl text-foreground mb-2">{d.name}</h2>
-                  <p className="text-foreground/70 text-sm leading-relaxed mb-4 line-clamp-3">{d.description}</p>
-                  {d.best_season && (
-                    <p className="text-[11px] tracking-[0.15em] uppercase text-foreground/60 mb-3">Best: {d.best_season}</p>
-                  )}
-                  {d.featured_trips?.length ? (
-                    <div className="flex flex-wrap gap-2">
-                      {d.featured_trips.slice(0, 3).map((t) => (
-                        <span key={t} className="text-[10px] tracking-wider uppercase border border-border px-2 py-1 text-foreground/60">{t}</span>
-                      ))}
-                    </div>
-                  ) : null}
-                  <div className="mt-5 pt-4 border-t border-border/40">
-                    <ShareButtons
-                      title={`${d.name}, ${d.country} — The Baobab Collective`}
-                      description={d.description?.slice(0, 140)}
-                      label="Share"
+              <article
+                key={d.id}
+                className="group bg-cream overflow-hidden rounded-xl border border-border motion-safe:transition-all motion-safe:duration-500 motion-safe:hover:-translate-y-1 hover:shadow-2xl hover:shadow-foreground/10 hover:border-gold/40 focus-within:ring-2 focus-within:ring-gold focus-within:ring-offset-2 focus-within:ring-offset-background"
+              >
+                <Link
+                  to="/destinations/$slug"
+                  params={{ slug: d.slug }}
+                  aria-label={`View ${d.name}`}
+                  className="block focus:outline-none"
+                >
+                  <div className="aspect-[4/3] overflow-hidden">
+                    <img
+                      src={d.image}
+                      alt={d.name}
+                      loading="lazy"
+                      className="w-full h-full object-cover motion-safe:transition-transform motion-safe:duration-700 motion-safe:group-hover:scale-110"
                     />
                   </div>
+                  <div className="p-6">
+                    <div className="flex items-center gap-2 text-[11px] tracking-[0.2em] uppercase text-gold mb-2">
+                      <MapPin className="w-3 h-3" /> {d.country} · {d.region}
+                    </div>
+                    <h2 className="font-serif text-2xl text-foreground mb-2 group-hover:text-gold transition-colors">{d.name}</h2>
+                    <p className="text-foreground/70 text-sm leading-relaxed mb-4 line-clamp-3">{d.description}</p>
+                    {d.best_season && (
+                      <p className="text-[11px] tracking-[0.15em] uppercase text-foreground/60 mb-3">Best: {d.best_season}</p>
+                    )}
+                    {d.featured_trips?.length ? (
+                      <div className="flex flex-wrap gap-2">
+                        {d.featured_trips.slice(0, 3).map((t) => (
+                          <span key={t} className="text-[10px] tracking-wider uppercase border border-border px-2 py-1 text-foreground/60">{t}</span>
+                        ))}
+                      </div>
+                    ) : null}
+                  </div>
+                </Link>
+                <div className="px-6 pb-6 pt-2 border-t border-border/40 mt-2">
+                  <ShareButtons
+                    title={`${d.name}, ${d.country} — The Baobab Collective`}
+                    description={d.description?.slice(0, 140)}
+                    label="Share"
+                  />
                 </div>
-
               </article>
             ))}
             {filtered.length === 0 && (

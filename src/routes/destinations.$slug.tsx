@@ -204,6 +204,36 @@ function DestinationPage() {
           </section>
         ) : null}
 
+        {galleryItems.length > 1 && (
+          <section className="pb-20">
+            <div className="max-w-7xl mx-auto px-6 lg:px-10">
+              <h2 className="font-serif text-3xl text-foreground mb-8 text-center">Gallery</h2>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+                {galleryItems.map((g, i) => (
+                  <button
+                    type="button"
+                    key={`${g.src}-${i}`}
+                    onClick={() => {
+                      setLightboxIndex(i);
+                      setLightboxOpen(true);
+                    }}
+                    className="aspect-[4/3] overflow-hidden group block"
+                    aria-label={`Open image ${i + 1} in lightbox`}
+                  >
+                    <img
+                      src={g.src}
+                      alt={g.alt}
+                      loading="lazy"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                    />
+                  </button>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
+
 
         <section className="bg-forest text-forest-foreground py-20 text-center">
           <div className="max-w-2xl mx-auto px-6">
@@ -267,6 +297,14 @@ function DestinationPage() {
         )}
       </main>
       <Footer />
+      <Lightbox
+        images={galleryItems}
+        open={lightboxOpen}
+        onOpenChange={setLightboxOpen}
+        index={lightboxIndex}
+        onIndexChange={setLightboxIndex}
+        title={`${d.name} gallery`}
+      />
     </div>
   );
 }

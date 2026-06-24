@@ -113,24 +113,15 @@ export function Navbar() {
           </nav>
 
           <div className="hidden lg:flex items-center gap-4">
-            {user ? (
+            {user && isAdmin && (
               <>
-                {isAdmin && (
-                  <Link to="/admin" className="text-[11px] tracking-[0.2em] uppercase text-gold hover:underline">
-                    Admin
-                  </Link>
-                )}
-                <Link to="/my-bookings" className="text-[11px] tracking-[0.2em] uppercase text-foreground/70 hover:text-foreground">
-                  My Bookings
+                <Link to="/admin" className="text-[11px] tracking-[0.2em] uppercase text-gold hover:underline">
+                  Admin
                 </Link>
                 <button onClick={signOut} className="text-[11px] tracking-[0.2em] uppercase text-foreground/70 hover:text-foreground">
                   Sign out
                 </button>
               </>
-            ) : (
-              <Link to="/auth" className="text-[11px] tracking-[0.2em] uppercase text-foreground/70 hover:text-foreground">
-                Sign in
-              </Link>
             )}
             <Link
               to="/contact"
@@ -163,24 +154,15 @@ export function Navbar() {
               </Link>
             ))}
             <div className="pt-3 mt-2 border-t border-border/40 flex flex-col gap-3">
-              {user ? (
+              {user && isAdmin && (
                 <>
-                  {isAdmin && (
-                    <Link to="/admin" onClick={() => setOpen(false)} className="text-[11px] tracking-[0.2em] uppercase text-gold">
-                      Admin
-                    </Link>
-                  )}
-                  <Link to="/my-bookings" onClick={() => setOpen(false)} className="text-[11px] tracking-[0.2em] uppercase text-foreground/80">
-                    My Bookings
+                  <Link to="/admin" onClick={() => setOpen(false)} className="text-[11px] tracking-[0.2em] uppercase text-gold">
+                    Admin
                   </Link>
                   <button onClick={() => { setOpen(false); signOut(); }} className="text-left text-[11px] tracking-[0.2em] uppercase text-foreground/80">
                     Sign out
                   </button>
                 </>
-              ) : (
-                <Link to="/auth" onClick={() => setOpen(false)} className="text-[11px] tracking-[0.2em] uppercase text-foreground/80">
-                  Sign in
-                </Link>
               )}
               <Link
                 to="/contact"

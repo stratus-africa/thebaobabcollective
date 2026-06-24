@@ -28,11 +28,10 @@ function EnquiriesAdmin() {
   const [debounced, setDebounced] = useState("");
   const [expanded, setExpanded] = useState<string | null>(null);
 
-  // debounce search
-  useState(() => {
+  useEffect(() => {
     const t = setTimeout(() => setDebounced(search), 250);
     return () => clearTimeout(t);
-  });
+  }, [search]);
 
   const { data, isLoading, isFetching } = useQuery({
     queryKey: ["admin-enquiries", status, debounced],

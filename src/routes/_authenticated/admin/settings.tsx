@@ -320,6 +320,128 @@ function SiteSettingsForm({ tab }: { tab: "branding" | "contact" }) {
   );
 }
 
+// ─── Currency ────────────────────────────────────────────────────────
+const CURRENCY_OPTIONS: { code: string; symbol: string; label: string }[] = [
+  { code: "USD", symbol: "$", label: "US Dollar" },
+  { code: "GBP", symbol: "£", label: "British Pound" },
+  { code: "EUR", symbol: "€", label: "Euro" },
+  { code: "ZAR", symbol: "R", label: "South African Rand" },
+  { code: "KES", symbol: "KSh", label: "Kenyan Shilling" },
+  { code: "AUD", symbol: "A$", label: "Australian Dollar" },
+  { code: "CAD", symbol: "C$", label: "Canadian Dollar" },
+];
+
+function CurrencyForm() {
+  const fetchSettings = useServerFn(getSiteSettings);
+  const save = useServerFn(saveSiteSettings);
+  const queryClient = useQueryClient();
+  const { data, isLoading } = useQuery<SiteSettings>({
+    queryKey: SITE_SETTINGS_QUERY_KEY,
+    queryFn: () => fetchSettings(),
+  });
+
+  const [code, setCode] = useState("USD");
+  const [symbol, setSymbol] = useState("$");
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (!data) return;
+    setCode(data.currency?.code ?? "USD");
+    setSymbol(data.currency?.symbol ?? "$");
+  }, [data]);
+
+  function onSelect(nextCode: string) {
+    setCode(nextCode);
+    const match = CURRENCY_OPTIONS.find((o) => o.code === nextCode);
+    if (match) setSymbol(match.symbol);
+  }
+
+  async function onSave(e: React.FormEvent) {
+    e.preventDefault();
+    setSaving(true);
+    try {
+      await save({
+        data: {
+          contact: data?.contact ?? {},
+          branding: data?.branding ?? {},
+          currency: { code, symbol },
+        },
+      });
+      await queryClient.invalidateQueries({ queryKey: SITE_SETTINGS_QUERY_KEY });
+      toast.success("Currency updated.");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to save");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center gap-2 text-foreground/60 text-sm">
+        <Loader2 className="w-4 h-4 animate-spin" /> Loading…
+      </div>
+    );
+  }
+
+  return (
+    <form onSubmit={onSave} className="space-y-6">
+      <section className="bg-background border border-border rounded-lg p-6 md:p-8 space-y-5">
+        <div className="flex items-center gap-3 mb-2">
+          <Coins className="w-5 h-5 text-gold" aria-hidden="true" />
+          <h2 className="font-serif text-xl text-foreground">Currency</h2>
+        </div>
+        <p className="text-sm text-foreground/65">
+          The selected currency is used to display prices across the website (lodges, journeys, and booking pages).
+        </p>
+        <div className="grid md:grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="currency-code" className="text-sm">Currency</Label>
+            <select
+              id="currency-code"
+              value={code}
+              onChange={(e) => onSelect(e.target.value)}
+              className="mt-2 h-10 w-full bg-background border border-border rounded-md px-3 text-sm"
+            >
+              {CURRENCY_OPTIONS.map((o) => (
+                <option key={o.code} value={o.code}>{o.code} — {o.label}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <Label htmlFor="currency-symbol" className="text-sm">Symbol</Label>
+            <Input
+              id="currency-symbol"
+              value={symbol}
+              onChange={(e) => setSymbol(e.target.value)}
+              maxLength={4}
+              className="mt-2"
+            />
+            <p className="mt-1 text-xs text-foreground/55">
+              Preview: <span className="text-foreground/80">{symbol}1,250</span>
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <div className="flex justify-end">
+        <button
+          type="submit"
+          disabled={saving}
+          className="inline-flex items-center gap-2 bg-gold text-gold-foreground uppercase tracking-[0.25em] text-[11px] px-6 py-3 hover:bg-gold/90 transition-colors disabled:opacity-60"
+        >
+          {saving ? (
+            <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Saving…</>
+          ) : (
+            <><Save className="w-3.5 h-3.5" /> Save Settings</>
+          )}
+        </button>
+      </div>
+    </form>
+  );
+}
+
+
 // ─── Invite ──────────────────────────────────────────────────────────
 function InvitePanel() {
   const queryClient = useQueryClient();

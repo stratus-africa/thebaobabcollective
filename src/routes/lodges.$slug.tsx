@@ -268,6 +268,14 @@ function LodgePage() {
         )}
       </main>
       <Footer />
+      <Lightbox
+        images={gallery}
+        open={lightboxOpen}
+        onOpenChange={setLightboxOpen}
+        index={lightboxIndex}
+        onIndexChange={setLightboxIndex}
+        title={`${l.name} gallery`}
+      />
     </div>
   );
 }

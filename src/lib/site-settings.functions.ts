@@ -14,9 +14,15 @@ export type BrandingSettings = {
   logo_url?: string;
 };
 
+export type CurrencySettings = {
+  code?: string;   // ISO 4217, e.g. "USD"
+  symbol?: string; // Display symbol, e.g. "$"
+};
+
 export type SiteSettings = {
   contact: ContactSettings;
   branding: BrandingSettings;
+  currency: CurrencySettings;
 };
 
 const SaveSchema = z.object({
@@ -29,6 +35,12 @@ const SaveSchema = z.object({
   branding: z.object({
     logo_url: z.string().url().or(z.literal("")).optional(),
   }),
+  currency: z
+    .object({
+      code: z.string().min(3).max(3).optional(),
+      symbol: z.string().min(1).max(4).optional(),
+    })
+    .optional(),
 });
 
 function publicClient() {
@@ -42,11 +54,12 @@ export const getSiteSettings = createServerFn({ method: "GET" }).handler(async (
   const { data } = await supabase
     .from("site_settings")
     .select("key,value")
-    .in("key", ["contact", "branding"]);
+    .in("key", ["contact", "branding", "currency"]);
   const map = new Map<string, any>((data ?? []).map((r: any) => [r.key, r.value]));
   return {
     contact: (map.get("contact") ?? {}) as ContactSettings,
     branding: (map.get("branding") ?? {}) as BrandingSettings,
+    currency: (map.get("currency") ?? { code: "USD", symbol: "$" }) as CurrencySettings,
   } satisfies SiteSettings;
 });
 
@@ -65,10 +78,12 @@ export const saveSiteSettings = createServerFn({ method: "POST" })
     await assertAdmin(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const now = new Date().toISOString();
-    const { error } = await supabaseAdmin.from("site_settings").upsert([
+    const rows: { key: string; value: unknown; updated_at: string }[] = [
       { key: "contact", value: data.contact, updated_at: now },
       { key: "branding", value: data.branding, updated_at: now },
-    ]);
+    ];
+    if (data.currency) rows.push({ key: "currency", value: data.currency, updated_at: now });
+    const { error } = await supabaseAdmin.from("site_settings").upsert(rows);
     if (error) throw new Error(error.message);
     return { ok: true };
   });

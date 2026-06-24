@@ -101,7 +101,15 @@ function DestinationsPage() {
                       ))}
                     </div>
                   ) : null}
+                  <div className="mt-5 pt-4 border-t border-border/40">
+                    <ShareButtons
+                      title={`${d.name}, ${d.country} — The Baobab Collective`}
+                      description={d.description?.slice(0, 140)}
+                      label="Share"
+                    />
+                  </div>
                 </div>
+
               </article>
             ))}
             {filtered.length === 0 && (

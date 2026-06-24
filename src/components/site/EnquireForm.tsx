@@ -93,6 +93,8 @@ export function EnquireForm({
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [errors, setErrors] = useState<Partial<Record<keyof Draft | "form", string>>>({});
+  const [honeypot, setHoneypot] = useState("");
+  const mountedAt = useRef<number>(Date.now());
 
 
   const storageKey = useMemo(() => {

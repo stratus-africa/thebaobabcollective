@@ -139,6 +139,13 @@ function DestinationPage() {
               defaultDestination={`${d.name}, ${d.country}`}
               sourceUrl={`/destinations/${d.slug}`}
               autosaveKey={`enquire:destination:${d.slug}`}
+              context={{
+                kind: "Destination",
+                title: `${d.name}, ${d.country}`,
+                dates: d.best_season ?? undefined,
+                slug: d.slug,
+                image: d.image ?? undefined,
+              }}
               trigger={
                 <button
                   type="button"

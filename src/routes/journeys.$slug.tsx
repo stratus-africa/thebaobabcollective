@@ -101,10 +101,30 @@ function JourneyPage() {
   const others = journeys.filter((j) => j.slug !== journey.slug);
   const { data: destinations } = useQuery(featuredDestinationsQuery);
   const featuredDestinations = (destinations ?? []).slice(0, 3);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
+  const galleryImages = Array.from(
+    new Set([journey.heroImage, ...(journey.itineraries as Itinerary[]).map((i) => i.image)].filter(Boolean)),
+  );
+  const itineraryByImage = new Map<string, string>();
+  (journey.itineraries as Itinerary[]).forEach((it) => {
+    if (it.image && !itineraryByImage.has(it.image)) itineraryByImage.set(it.image, it.name);
+  });
+  const galleryItems = galleryImages.map((src, i) => ({
+    src,
+    alt: `${journey.title} — image ${i + 1}`,
+    caption: itineraryByImage.get(src) ?? journey.title,
+  }));
 
   return (
     <div className="bg-background min-h-screen">
       <Navbar />
+      <Breadcrumbs
+        items={[
+          { label: "Journeys", to: "/journeys" },
+          { label: journey.title },
+        ]}
+      />
       <main>
         <section className="relative h-[60vh] min-h-[420px] flex items-end">
           <img
@@ -200,31 +220,35 @@ function JourneyPage() {
           </div>
         </section>
 
-        {(() => {
-          const images = [journey.heroImage, ...(journey.itineraries as Itinerary[]).map((i) => i.image)].filter(Boolean);
-          const unique = Array.from(new Set(images));
-          if (unique.length < 2) return null;
-          return (
-            <section className="pb-20 bg-cream pt-16">
-              <div className="max-w-7xl mx-auto px-6 lg:px-10">
-                <p className="text-[11px] tracking-[0.3em] uppercase text-terracotta mb-3 text-center">Glimpses</p>
-                <h2 className="font-serif text-3xl md:text-4xl text-foreground mb-10 text-center">Gallery</h2>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
-                  {unique.map((src, i) => (
-                    <div key={`${src}-${i}`} className="aspect-[4/3] overflow-hidden">
-                      <img
-                        src={src}
-                        alt={`${journey.title} — image ${i + 1}`}
-                        loading="lazy"
-                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
-                      />
-                    </div>
-                  ))}
-                </div>
+        {galleryItems.length >= 2 && (
+          <section className="pb-20 bg-cream pt-16">
+            <div className="max-w-7xl mx-auto px-6 lg:px-10">
+              <p className="text-[11px] tracking-[0.3em] uppercase text-terracotta mb-3 text-center">Glimpses</p>
+              <h2 className="font-serif text-3xl md:text-4xl text-foreground mb-10 text-center">Gallery</h2>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+                {galleryItems.map((g, i) => (
+                  <button
+                    type="button"
+                    key={`${g.src}-${i}`}
+                    onClick={() => {
+                      setLightboxIndex(i);
+                      setLightboxOpen(true);
+                    }}
+                    className="aspect-[4/3] overflow-hidden group block"
+                    aria-label={`Open image ${i + 1} in lightbox`}
+                  >
+                    <img
+                      src={g.src}
+                      alt={g.alt}
+                      loading="lazy"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                    />
+                  </button>
+                ))}
               </div>
-            </section>
-          );
-        })()}
+            </div>
+          </section>
+        )}
 
 
         <section className="bg-forest text-forest-foreground py-20 text-center">

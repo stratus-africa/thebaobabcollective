@@ -31,6 +31,7 @@ export function EnquireDialog({
   sourceUrl,
   compact,
   autosaveKey,
+  context,
 }: EnquireDialogProps) {
   const isControlled = openProp !== undefined;
   const [internalOpen, setInternalOpen] = useState(false);
@@ -103,6 +104,7 @@ export function EnquireDialog({
             sourceUrl={sourceUrl}
             compact={compact}
             autosaveKey={autosaveKey}
+            context={context}
             className="!border-0 !bg-transparent !p-4 sm:!p-6"
           />
         </div>

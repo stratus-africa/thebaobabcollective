@@ -23,6 +23,14 @@ export type EnquireFormProps = {
   className?: string;
   /** localStorage key for autosave. Set null to disable. Defaults to a key per subject. */
   autosaveKey?: string | null;
+  /** Context card shown at the top of the form, prefilled from the page (journey/destination). */
+  context?: {
+    kind?: "Journey" | "Destination" | "Itinerary" | "Lodge";
+    title: string;
+    dates?: string;
+    slug?: string;
+    image?: string;
+  };
 };
 
 type Draft = {
@@ -85,6 +93,7 @@ export function EnquireForm({
   compact,
   className,
   autosaveKey,
+  context,
 }: EnquireFormProps) {
   const submit = useServerFn(submitEnquiry);
   const [loading, setLoading] = useState(false);
@@ -105,7 +114,8 @@ export function EnquireForm({
   // Single source of truth: a state-backed draft initialised from autosave on mount
   const [values, setValues] = useState<Draft>({
     ...EMPTY_DRAFT,
-    destination: defaultDestination ?? "",
+    destination: defaultDestination ?? context?.title ?? "",
+    travel_dates: context?.dates ?? "",
   });
   const hydratedRef = useRef(false);
 
@@ -232,6 +242,30 @@ export function EnquireForm({
     >
       {defaultSubject && (
         <p className="text-[11px] tracking-[0.25em] uppercase text-terracotta">Enquiry — {defaultSubject}</p>
+      )}
+
+      {context && (
+        <div className="flex items-center gap-4 border border-gold/30 bg-gold/5 p-3 sm:p-4 rounded-sm">
+          {context.image && (
+            <img
+              src={context.image}
+              alt=""
+              className="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-sm border border-border shrink-0"
+            />
+          )}
+          <div className="min-w-0 flex-1">
+            {context.kind && (
+              <p className="text-[10px] tracking-[0.25em] uppercase text-gold mb-1">
+                Enquiring about · {context.kind}
+              </p>
+            )}
+            <p className="font-serif text-lg text-foreground leading-tight truncate">{context.title}</p>
+            <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-xs text-foreground/65">
+              {context.dates && <span>Travel: {context.dates}</span>}
+              {context.slug && <span className="font-mono">/{context.slug}</span>}
+            </div>
+          </div>
+        </div>
       )}
 
       {autosave.showRestoredNotice && (

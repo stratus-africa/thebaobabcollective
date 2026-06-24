@@ -1,11 +1,17 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { ArrowRight, Check } from "lucide-react";
+import { useQuery, queryOptions } from "@tanstack/react-query";
+import { ArrowRight, Check, MapPin } from "lucide-react";
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
 import { ShareButtons } from "@/components/site/ShareButtons";
 import { EnquireDialog } from "@/components/site/EnquireDialog";
 import { getJourney, journeys, type Itinerary } from "@/lib/content";
+import { getDestinations } from "@/lib/cms.functions";
 
+const featuredDestinationsQuery = queryOptions({
+  queryKey: ["destinations", "featured"],
+  queryFn: () => getDestinations(),
+});
 
 export const Route = createFileRoute("/journeys/$slug")({
   loader: ({ params }) => {
@@ -55,6 +61,8 @@ export const Route = createFileRoute("/journeys/$slug")({
 function JourneyPage() {
   const { journey } = Route.useLoaderData();
   const others = journeys.filter((j) => j.slug !== journey.slug);
+  const { data: destinations } = useQuery(featuredDestinationsQuery);
+  const featuredDestinations = (destinations ?? []).slice(0, 3);
 
   return (
     <div className="bg-background min-h-screen">
@@ -130,6 +138,13 @@ function JourneyPage() {
                         defaultDestination={it.name}
                         sourceUrl={`/journeys/${journey.slug}`}
                         autosaveKey={`enquire:itinerary:${(it as any).slug ?? it.name}`}
+                        context={{
+                          kind: "Itinerary",
+                          title: it.name,
+                          dates: it.nights,
+                          slug: (it as any).slug ?? it.name.toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""),
+                          image: it.image,
+                        }}
                         trigger={
                           <button
                             type="button"
@@ -157,6 +172,12 @@ function JourneyPage() {
               defaultSubject={`Enquiry about ${journey.title}`}
               sourceUrl={`/journeys/${journey.slug}`}
               autosaveKey={`enquire:journey:${journey.slug}`}
+              context={{
+                kind: "Journey",
+                title: journey.title,
+                slug: journey.slug,
+                image: journey.heroImage,
+              }}
               trigger={
                 <button
                   type="button"
@@ -168,6 +189,42 @@ function JourneyPage() {
             />
           </div>
         </section>
+
+        {featuredDestinations.length > 0 && (
+          <section className="py-20">
+            <div className="max-w-7xl mx-auto px-6 lg:px-10">
+              <div className="text-center mb-12">
+                <p className="text-[11px] tracking-[0.3em] uppercase text-terracotta mb-3">Where it could take you</p>
+                <h2 className="font-serif text-3xl md:text-4xl text-foreground">Featured Destinations</h2>
+              </div>
+              <div className="grid md:grid-cols-3 gap-8">
+                {featuredDestinations.map((d: any) => (
+                  <Link
+                    key={d.slug}
+                    to="/destinations/$slug"
+                    params={{ slug: d.slug }}
+                    className="group block"
+                  >
+                    <div className="overflow-hidden aspect-[4/3] mb-4">
+                      <img
+                        src={d.image}
+                        alt={d.name}
+                        loading="lazy"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                      />
+                    </div>
+                    <p className="text-[10px] tracking-[0.25em] uppercase text-gold mb-1 inline-flex items-center gap-1.5">
+                      <MapPin className="w-3 h-3" /> {d.country}{d.region ? ` · ${d.region}` : ""}
+                    </p>
+                    <h3 className="font-serif text-2xl text-foreground group-hover:text-gold transition-colors">
+                      {d.name}
+                    </h3>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
 
         <section className="py-20 bg-cream">
           <div className="max-w-7xl mx-auto px-6 lg:px-10">

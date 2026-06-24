@@ -1,10 +1,13 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
+import { useState } from "react";
 import { ArrowRight, MapPin, Calendar } from "lucide-react";
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
 import { ShareButtons } from "@/components/site/ShareButtons";
 import { EnquireDialog } from "@/components/site/EnquireDialog";
+import { Breadcrumbs } from "@/components/site/Breadcrumbs";
+import { Lightbox } from "@/components/site/Lightbox";
 import { getDestinationBySlug, getDestinations } from "@/lib/cms.functions";
 
 const destQuery = (slug: string) =>
@@ -30,6 +33,35 @@ export const Route = createFileRoute("/destinations/$slug")({
     const title = d ? `${d.name}, ${d.country} — The Baobab Collective` : "Destination";
     const desc = d?.description?.slice(0, 160) ?? "Discover this destination.";
     const url = `https://thebaobabcollective.co.uk/destinations/${params.slug}`;
+    const ldDest = d
+      ? {
+          "@context": "https://schema.org",
+          "@type": "TouristDestination",
+          name: d.name,
+          description: d.description ?? undefined,
+          image: d.image ?? undefined,
+          url,
+          touristType: d.region ?? undefined,
+          address: {
+            "@type": "PostalAddress",
+            addressCountry: d.country,
+            addressRegion: d.region ?? undefined,
+          },
+          includesAttraction: d.featured_trips?.map((t: string) => ({
+            "@type": "TouristAttraction",
+            name: t,
+          })),
+        }
+      : null;
+    const ldCrumbs = {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: "https://thebaobabcollective.co.uk/" },
+        { "@type": "ListItem", position: 2, name: "Destinations", item: "https://thebaobabcollective.co.uk/destinations" },
+        { "@type": "ListItem", position: 3, name: d?.name ?? params.slug, item: url },
+      ],
+    };
     return {
       meta: [
         { title },
@@ -45,6 +77,10 @@ export const Route = createFileRoute("/destinations/$slug")({
         ...(d?.image ? [{ name: "twitter:image", content: d.image }] : []),
       ],
       links: [{ rel: "canonical", href: url }],
+      scripts: [
+        ...(ldDest ? [{ type: "application/ld+json", children: JSON.stringify(ldDest) }] : []),
+        { type: "application/ld+json", children: JSON.stringify(ldCrumbs) },
+      ],
     };
   },
   notFoundComponent: () => (

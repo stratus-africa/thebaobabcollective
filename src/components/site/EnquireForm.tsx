@@ -93,6 +93,8 @@ export function EnquireForm({
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [errors, setErrors] = useState<Partial<Record<keyof Draft | "form", string>>>({});
+  const [honeypot, setHoneypot] = useState("");
+  const mountedAt = useRef<number>(Date.now());
 
 
   const storageKey = useMemo(() => {
@@ -148,6 +150,15 @@ export function EnquireForm({
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (honeypot.trim() !== "") {
+      // Silent bot rejection — show success to avoid signaling
+      setSubmitted(true);
+      return;
+    }
+    if (Date.now() - mountedAt.current < 2000) {
+      setErrors({ form: "Please take a moment to review your details before submitting." });
+      return;
+    }
     const next: typeof errors = {};
     (["name", "email", "phone", "message"] as const).forEach((f) => {
       const err = validateField(f, String(values[f] ?? ""));
@@ -155,7 +166,6 @@ export function EnquireForm({
     });
     if (Object.keys(next).length) {
       setErrors(next);
-      // Focus first invalid field
       const first = Object.keys(next)[0];
       const el = document.getElementById(first);
       el?.focus();
@@ -166,6 +176,7 @@ export function EnquireForm({
     try {
       await submit({
         data: {
+          company: "",
           name: values.name.trim(),
           email: values.email.trim(),
           phone: values.phone.trim(),
@@ -231,6 +242,22 @@ export function EnquireForm({
       aria-busy={loading}
       className={`bg-background border border-border p-6 md:p-8 space-y-6 ${className ?? ""}`}
     >
+      {/* Honeypot — bots fill this; humans never see it */}
+      <div
+        aria-hidden="true"
+        style={{ position: "absolute", left: "-10000px", top: "auto", width: 1, height: 1, overflow: "hidden" }}
+      >
+        <label htmlFor="company">Company</label>
+        <input
+          id="company"
+          name="company"
+          type="text"
+          tabIndex={-1}
+          autoComplete="off"
+          value={honeypot}
+          onChange={(e) => setHoneypot(e.target.value)}
+        />
+      </div>
       {defaultSubject && (
         <p className="text-[11px] tracking-[0.25em] uppercase text-terracotta">Enquiry — {defaultSubject}</p>
       )}

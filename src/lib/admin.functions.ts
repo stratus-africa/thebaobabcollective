@@ -162,17 +162,80 @@ export const adminUpdateBooking = createServerFn({ method: "POST" })
   });
 
 // ---- Enquiries ----
-export const adminListEnquiries = createServerFn({ method: "GET" })
+const EnquiryListSchema = z.object({
+  status: z.enum(["all", "new", "handled", "spam"]).default("all"),
+  search: z.string().trim().max(120).optional(),
+  limit: z.number().int().min(1).max(200).default(100),
+});
+
+export const adminListEnquiries = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
+  .inputValidator((d: unknown) => EnquiryListSchema.parse(d ?? {}))
+  .handler(async ({ data, context }) => {
     await assertAdmin(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data } = await supabaseAdmin
+    let q = supabaseAdmin
       .from("enquiries")
       .select("*")
-      .order("created_at", { ascending: false });
-    return data ?? [];
+      .order("created_at", { ascending: false })
+      .limit(data.limit);
+    if (data.status !== "all") q = q.eq("status", data.status);
+    if (data.search) {
+      const s = `%${data.search}%`;
+      q = q.or(`name.ilike.${s},email.ilike.${s},message.ilike.${s},destination.ilike.${s},subject.ilike.${s}`);
+    }
+    const { data: rows, error } = await q;
+    if (error) throw new Error(error.message);
+
+    const messageIds = (rows ?? [])
+      .map((r: any) => r.message_id as string | null)
+      .filter((m): m is string => Boolean(m));
+    const emailMap: Record<string, { status: string; error_message: string | null; created_at: string }> = {};
+    if (messageIds.length) {
+      const { data: logs } = await supabaseAdmin
+        .from("email_send_log")
+        .select("message_id, status, error_message, created_at")
+        .in("message_id", messageIds)
+        .order("created_at", { ascending: false });
+      for (const l of (logs ?? []) as any[]) {
+        const mid = l.message_id as string | null;
+        if (mid && !emailMap[mid]) {
+          emailMap[mid] = {
+            status: l.status,
+            error_message: l.error_message,
+            created_at: l.created_at,
+          };
+        }
+      }
+    }
+    return (rows ?? []).map((r: any) => ({
+      ...r,
+      email_status: r.message_id ? emailMap[r.message_id] ?? null : null,
+    }));
   });
+
+const EnquiryUpdateSchema = z.object({
+  id: z.string().uuid(),
+  status: z.enum(["new", "handled", "spam"]),
+});
+
+export const adminUpdateEnquiry = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => EnquiryUpdateSchema.parse(d))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const patch = {
+      status: data.status,
+      handled_at: data.status === "handled" ? new Date().toISOString() : null,
+      handled_by: data.status === "handled" ? context.userId : null,
+    };
+    const { error } = await supabaseAdmin.from("enquiries").update(patch as any).eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+
 
 // ---- Private Travel ----
 export const adminListPrivateTravel = createServerFn({ method: "GET" })

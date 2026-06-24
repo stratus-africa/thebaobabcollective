@@ -68,7 +68,7 @@ function JourneysIndex() {
 
   const hasFilters = q !== "" || category !== "all" || sort !== "featured";
   const setSearch = (patch: Record<string, unknown>) =>
-    navigate({ search: (prev) => ({ ...prev, ...patch }), replace: true });
+    navigate({ search: (prev: Record<string, unknown>) => ({ ...prev, ...patch }), replace: true });
 
   return (
     <div className="bg-background min-h-screen">

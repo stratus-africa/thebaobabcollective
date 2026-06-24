@@ -144,7 +144,7 @@ function AdventureDetail() {
           <EnquireDialog
             defaultSubject={a.name}
             sourceUrl={url}
-            context={{ kind: "adventure", name: a.name, slug: a.slug }}
+            context={{ kind: "Itinerary", title: a.name, slug: a.slug, image: a.image }}
             trigger={
               <button className="inline-flex items-center gap-2 bg-gold text-gold-foreground uppercase tracking-[0.25em] text-[11px] px-6 py-3 hover:bg-gold/90">
                 Enquire about this adventure <ArrowRight className="w-3 h-3" />

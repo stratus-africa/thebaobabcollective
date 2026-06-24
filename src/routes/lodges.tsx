@@ -177,7 +177,9 @@ function LodgesGrid() {
                       id={titleId}
                       className="font-serif text-2xl md:text-3xl text-foreground mb-3 group-hover:text-gold group-focus-within:text-gold transition-colors"
                     >
-                      {l.name}
+                      <Link to="/lodges/$slug" params={{ slug: l.slug }} className="focus-visible:outline-none">
+                        {l.name}
+                      </Link>
                     </h2>
                     <p id={descId} className="text-foreground/70 text-sm leading-relaxed mb-5 line-clamp-3 flex-1">
                       {l.description}

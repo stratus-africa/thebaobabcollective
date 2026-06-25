@@ -37,15 +37,10 @@ export function Footer() {
         <div className="lg:col-span-1">
           <Link to="/" className="flex items-start gap-3 mb-4" aria-label="The Baobab Collective home">
             {logoUrl ? (
-              <img src={logoUrl} alt="The Baobab Collective" className="w-12 h-12 object-contain" />
+              <img src={logoUrl} alt="The Baobab Collective" className="w-14 h-14 object-contain" />
             ) : (
-              <BaobabLogo className="w-12 h-12" />
+              <BaobabLogo className="w-14 h-14" />
             )}
-            <div className="font-serif text-foreground leading-[1.05] text-[14px] tracking-[0.18em]">
-              <div>THE</div>
-              <div>BAOBAB</div>
-              <div>COLLECTIVE</div>
-            </div>
           </Link>
           <p className="text-[10px] tracking-[0.3em] uppercase text-foreground/60">
             Journeys That Connect

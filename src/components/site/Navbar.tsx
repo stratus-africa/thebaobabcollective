@@ -69,15 +69,10 @@ export function Navbar() {
         <div className="max-w-7xl mx-auto px-6 lg:px-10 py-4 flex items-center justify-between gap-6">
           <Link to="/" className="flex items-center gap-3 shrink-0" aria-label="The Baobab Collective home">
             {logoUrl ? (
-              <img src={logoUrl} alt="" className="w-12 h-12 object-contain" />
+              <img src={logoUrl} alt="" className="w-16 h-16 object-contain" />
             ) : (
-              <BaobabLogo className="w-12 h-12" />
+              <BaobabLogo className="w-16 h-16" />
             )}
-            <div className="font-serif text-foreground leading-[1.05] text-[15px] tracking-[0.18em]">
-              <div>THE</div>
-              <div>BAOBAB</div>
-              <div>COLLECTIVE</div>
-            </div>
           </Link>
 
           <nav aria-label="Primary" className="hidden lg:flex items-center gap-7">

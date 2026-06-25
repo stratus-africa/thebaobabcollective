@@ -69,9 +69,9 @@ export function Navbar() {
         <div className="max-w-7xl mx-auto px-6 lg:px-10 py-4 flex items-center justify-between gap-6">
           <Link to="/" className="flex items-center gap-3 shrink-0" aria-label="The Baobab Collective home">
             {logoUrl ? (
-              <img src={logoUrl} alt="" className="w-16 h-16 object-contain" />
+              <img src={logoUrl} alt="" className="w-28 h-28 object-contain" />
             ) : (
-              <BaobabLogo className="w-16 h-16" />
+              <BaobabLogo className="w-28 h-28" />
             )}
           </Link>
 

@@ -559,7 +559,7 @@ function ContentAdmin() {
 
       {/* Create / Edit dialog */}
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-3xl max-h-[92vh] overflow-y-auto">
+        <DialogContent className="max-w-5xl w-[95vw] max-h-[92vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="font-serif text-2xl">
               {editing?.id ? `Edit ${singular}` : `New ${singular}`}
@@ -758,33 +758,60 @@ function ImageField({
     }
   }
 
+  const [drag, setDrag] = useState(false);
+
   return (
     <div>
-      <Label className="mb-1.5 block">{label}</Label>
-      <div className="border border-border bg-background">
-        {value ? (
-          <div className="relative group">
-            <img src={value} alt="Preview" className="w-full max-h-72 object-cover" />
-            <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-              <UploadButton onPick={handleFile} disabled={uploading} variant="replace" />
-              <button
-                type="button"
-                onClick={() => onChange("")}
-                className="bg-background/95 border border-border px-2 py-1 text-xs inline-flex items-center gap-1 hover:bg-destructive hover:text-destructive-foreground"
-              >
-                <X className="w-3.5 h-3.5" /> Remove
-              </button>
-            </div>
+      <Label className="mb-2 block text-[11px] tracking-[0.2em] uppercase text-foreground/60">{label}</Label>
+      {value ? (
+        <div className="border-2 border-border rounded-md overflow-hidden bg-background">
+          <div className="relative bg-cream">
+            <img src={value} alt="Preview" className="w-full max-h-80 object-contain mx-auto" />
           </div>
-        ) : (
-          <div className="p-6 flex flex-col items-center justify-center gap-2 text-foreground/50">
-            <ImageIcon className="w-8 h-8" />
-            <UploadButton onPick={handleFile} disabled={uploading} variant="upload" />
-            <p className="text-[11px]">PNG, JPG, WEBP up to 8MB</p>
+          <div className="flex flex-wrap items-center gap-2 p-3 border-t border-border bg-cream/40">
+            <UploadButton onPick={handleFile} disabled={uploading} variant="replace" />
+            <button
+              type="button"
+              onClick={() => onChange("")}
+              className="inline-flex items-center gap-1 text-xs px-3 py-2 border border-border rounded-md hover:bg-destructive hover:text-destructive-foreground hover:border-destructive"
+            >
+              <X className="w-3.5 h-3.5" /> Remove
+            </button>
+            <span className="ml-auto text-[11px] text-foreground/50 truncate max-w-[60%]" title={value}>
+              {value.split("/").pop()}
+            </span>
           </div>
-        )}
-      </div>
-      <div className="mt-2 flex items-center gap-2">
+        </div>
+      ) : (
+        <label
+          onDragOver={(e) => { e.preventDefault(); setDrag(true); }}
+          onDragLeave={() => setDrag(false)}
+          onDrop={(e) => {
+            e.preventDefault();
+            setDrag(false);
+            handleFile(e.dataTransfer.files?.[0]);
+          }}
+          className={`flex flex-col items-center justify-center gap-3 cursor-pointer rounded-md border-2 border-dashed px-6 py-12 text-center transition-colors ${
+            drag ? "border-gold bg-gold/5" : "border-border bg-cream/40 hover:border-gold hover:bg-gold/5"
+          }`}
+        >
+          <div className="h-14 w-14 rounded-full bg-gold/10 text-gold flex items-center justify-center">
+            <Upload className="w-6 h-6" />
+          </div>
+          <div>
+            <p className="text-sm font-medium">Drop an image here or click to upload</p>
+            <p className="text-[11px] text-foreground/50 mt-1">PNG, JPG, WEBP, GIF, AVIF · up to 8MB</p>
+          </div>
+          <input
+            type="file"
+            accept="image/png,image/jpeg,image/webp,image/gif,image/avif"
+            className="hidden"
+            disabled={uploading}
+            onChange={(e) => handleFile(e.target.files?.[0])}
+          />
+        </label>
+      )}
+      <div className="mt-3">
         <Input
           value={value ?? ""}
           onChange={(e) => onChange(e.target.value)}
@@ -792,9 +819,9 @@ function ImageField({
           className="text-xs"
         />
       </div>
-      {error && <p className="text-xs text-destructive mt-1">{error}</p>}
+      {error && <p className="text-xs text-destructive mt-2">{error}</p>}
       {uploading && (
-        <p className="text-xs text-foreground/60 mt-1 flex items-center gap-1">
+        <p className="text-xs text-foreground/60 mt-2 flex items-center gap-1">
           <Loader2 className="w-3 h-3 animate-spin" /> Uploading…
         </p>
       )}

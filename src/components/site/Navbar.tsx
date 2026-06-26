@@ -10,7 +10,6 @@ import type { User } from "@supabase/supabase-js";
 const primaryItems = [
   { label: "Home", to: "/" as const },
   { label: "Adventures", to: "/adventures" as const },
-  { label: "Journeys", to: "/journeys" as const },
   { label: "Lodges", to: "/lodges" as const },
   { label: "Destinations", to: "/destinations" as const },
   { label: "Journal", to: "/journal" as const },
@@ -66,12 +65,12 @@ export function Navbar() {
       </div>
 
       <div className="bg-background border-b border-border/40">
-        <div className="max-w-7xl mx-auto px-6 lg:px-10 py-4 flex items-center justify-between gap-6">
-          <Link to="/" className="flex items-center gap-3 shrink-0" aria-label="The Baobab Collective home">
+        <div className="max-w-7xl mx-auto px-6 lg:px-10 py-1 flex items-center justify-between gap-6">
+          <Link to="/" className="flex items-center gap-3 shrink-0 -my-2" aria-label="The Baobab Collective home">
             {logoUrl ? (
-              <img src={logoUrl} alt="" className="w-28 h-28 object-contain" />
+              <img src={logoUrl} alt="" className="w-40 h-40 lg:w-44 lg:h-44 object-contain" />
             ) : (
-              <BaobabLogo className="w-28 h-28" />
+              <BaobabLogo className="w-40 h-40 lg:w-44 lg:h-44" />
             )}
           </Link>
 

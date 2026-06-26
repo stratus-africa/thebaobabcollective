@@ -3,7 +3,10 @@ import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { Loader2, Plus, Trash2, Save, Upload, X } from "lucide-react";
+import {
+  Loader2, Plus, Trash2, Save, Upload, X, Compass, Sparkles, Megaphone,
+  Mountain, Footprints, Map as MapIcon, Image as ImageIcon,
+} from "lucide-react";
 import {
   getAdventuresPage,
   saveAdventuresPage,
@@ -17,6 +20,7 @@ import { adminUploadImage } from "@/lib/admin.functions";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/_authenticated/admin/adventures")({
   component: AdminAdventures,
@@ -78,177 +82,246 @@ function AdminAdventures() {
     );
   }
 
+  const sections = [
+    { id: "hero", label: "Hero", icon: Sparkles },
+    { id: "philosophy", label: "Philosophy", icon: Compass },
+    { id: "cta", label: "Closing CTA", icon: Megaphone },
+    { id: "terrains", label: "Terrains", icon: Mountain, count: draft.terrains.length },
+    { id: "styles", label: "Styles", icon: Footprints, count: draft.styles.length },
+    { id: "signatures", label: "Signature itineraries", icon: MapIcon, count: draft.signatures.length },
+  ];
+
   return (
-    <div className="space-y-10">
-      <div className="flex items-start justify-between gap-4 sticky top-0 bg-cream py-4 z-10 border-b border-border/40">
+    <div>
+      {/* Page header */}
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
         <div>
           <h1 className="font-serif text-3xl">Adventures page</h1>
-          <p className="text-sm text-foreground/60">Live content for /adventures.</p>
+          <p className="text-sm text-foreground/60 mt-1">
+            Edit the live content for <code className="text-xs px-1 py-0.5 bg-cream rounded">/adventures</code>.
+          </p>
         </div>
-        <button
+        <Button
           onClick={save}
           disabled={saving}
-          className="inline-flex items-center gap-2 bg-gold text-gold-foreground uppercase tracking-[0.25em] text-[11px] px-6 py-3 disabled:opacity-60"
+          className="bg-gold text-gold-foreground hover:bg-gold/90"
         >
-          {saving ? <Loader2 className="w-3 h-3 animate-spin" /> : <Save className="w-3 h-3" />}
+          {saving ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Save className="w-4 h-4 mr-1" />}
           Save changes
-        </button>
+        </Button>
       </div>
 
-      {/* Hero */}
-      <Card title="Hero">
-        <Field label="Eyebrow">
-          <Input value={draft.hero.eyebrow} onChange={(e) => setDraft({ ...draft, hero: { ...draft.hero, eyebrow: e.target.value } })} />
-        </Field>
-        <Field label="Headline">
-          <Textarea rows={2} value={draft.hero.headline} onChange={(e) => setDraft({ ...draft, hero: { ...draft.hero, headline: e.target.value } })} />
-        </Field>
-        <Field label="Subhead">
-          <Textarea rows={3} value={draft.hero.subhead} onChange={(e) => setDraft({ ...draft, hero: { ...draft.hero, subhead: e.target.value } })} />
-        </Field>
-      </Card>
+      {/* Quick navigation */}
+      <div className="bg-background border border-border p-3 mb-6 flex flex-wrap gap-2 sticky top-16 z-10">
+        {sections.map((s) => {
+          const Icon = s.icon;
+          return (
+            <a
+              key={s.id}
+              href={`#${s.id}`}
+              className="inline-flex items-center gap-2 text-xs px-3 py-1.5 rounded-md border border-border hover:bg-cream hover:border-gold/40 transition-colors"
+            >
+              <Icon className="w-3.5 h-3.5 text-gold" />
+              {s.label}
+              {typeof s.count === "number" && (
+                <span className="ml-1 inline-flex items-center justify-center min-w-[20px] h-[18px] px-1 rounded-full bg-cream text-[10px] text-foreground/70">
+                  {s.count}
+                </span>
+              )}
+            </a>
+          );
+        })}
+      </div>
 
-      {/* Philosophy */}
-      <Card title="Philosophy">
-        <Field label="Eyebrow">
-          <Input value={draft.philosophy.eyebrow} onChange={(e) => setDraft({ ...draft, philosophy: { ...draft.philosophy, eyebrow: e.target.value } })} />
-        </Field>
-        <Field label="Body">
-          <Textarea rows={4} value={draft.philosophy.body} onChange={(e) => setDraft({ ...draft, philosophy: { ...draft.philosophy, body: e.target.value } })} />
-        </Field>
-      </Card>
+      <div className="space-y-8">
+        <Card id="hero" title="Hero" icon={Sparkles} description="Top of the Adventures page.">
+          <div className="grid md:grid-cols-2 gap-4">
+            <Field label="Eyebrow">
+              <Input value={draft.hero.eyebrow} onChange={(e) => setDraft({ ...draft, hero: { ...draft.hero, eyebrow: e.target.value } })} />
+            </Field>
+          </div>
+          <Field label="Headline">
+            <Textarea rows={2} value={draft.hero.headline} onChange={(e) => setDraft({ ...draft, hero: { ...draft.hero, headline: e.target.value } })} />
+          </Field>
+          <Field label="Subhead">
+            <Textarea rows={3} value={draft.hero.subhead} onChange={(e) => setDraft({ ...draft, hero: { ...draft.hero, subhead: e.target.value } })} />
+          </Field>
+        </Card>
 
-      {/* CTA */}
-      <Card title="Closing CTA">
-        <div className="grid md:grid-cols-2 gap-4">
+        <Card id="philosophy" title="Philosophy" icon={Compass} description="The values that shape every adventure.">
           <Field label="Eyebrow">
-            <Input value={draft.cta.eyebrow} onChange={(e) => setDraft({ ...draft, cta: { ...draft.cta, eyebrow: e.target.value } })} />
+            <Input value={draft.philosophy.eyebrow} onChange={(e) => setDraft({ ...draft, philosophy: { ...draft.philosophy, eyebrow: e.target.value } })} />
           </Field>
-          <Field label="Button label">
-            <Input value={draft.cta.buttonLabel} onChange={(e) => setDraft({ ...draft, cta: { ...draft.cta, buttonLabel: e.target.value } })} />
+          <Field label="Body">
+            <Textarea rows={4} value={draft.philosophy.body} onChange={(e) => setDraft({ ...draft, philosophy: { ...draft.philosophy, body: e.target.value } })} />
           </Field>
-        </div>
-        <Field label="Headline">
-          <Input value={draft.cta.headline} onChange={(e) => setDraft({ ...draft, cta: { ...draft.cta, headline: e.target.value } })} />
-        </Field>
-        <Field label="Body">
-          <Textarea rows={3} value={draft.cta.body} onChange={(e) => setDraft({ ...draft, cta: { ...draft.cta, body: e.target.value } })} />
-        </Field>
-      </Card>
+        </Card>
 
-      {/* Terrains */}
-      <ListCard
-        title="Terrain tiles"
-        items={draft.terrains}
-        onChange={(terrains) => setDraft({ ...draft, terrains })}
-        empty={{ icon: "Mountain", label: "", note: "" }}
-        render={(t, set) => (
-          <>
-            <Field label="Icon">
-              <IconSelect value={t.icon} onChange={(v) => set({ ...t, icon: v })} />
+        <Card id="cta" title="Closing CTA" icon={Megaphone} description="The final invitation at the bottom of the page.">
+          <div className="grid md:grid-cols-2 gap-4">
+            <Field label="Eyebrow">
+              <Input value={draft.cta.eyebrow} onChange={(e) => setDraft({ ...draft, cta: { ...draft.cta, eyebrow: e.target.value } })} />
             </Field>
-            <Field label="Label">
-              <Input value={t.label} onChange={(e) => set({ ...t, label: e.target.value })} />
+            <Field label="Button label">
+              <Input value={draft.cta.buttonLabel} onChange={(e) => setDraft({ ...draft, cta: { ...draft.cta, buttonLabel: e.target.value } })} />
             </Field>
-            <Field label="Note">
-              <Input value={t.note} onChange={(e) => set({ ...t, note: e.target.value })} />
-            </Field>
-          </>
-        )}
-      />
+          </div>
+          <Field label="Headline">
+            <Input value={draft.cta.headline} onChange={(e) => setDraft({ ...draft, cta: { ...draft.cta, headline: e.target.value } })} />
+          </Field>
+          <Field label="Body">
+            <Textarea rows={3} value={draft.cta.body} onChange={(e) => setDraft({ ...draft, cta: { ...draft.cta, body: e.target.value } })} />
+          </Field>
+        </Card>
 
-      {/* Styles */}
-      <ListCard
-        title="Adventure styles"
-        items={draft.styles}
-        onChange={(styles) => setDraft({ ...draft, styles })}
-        empty={{ icon: "Footprints", title: "", body: "" }}
-        render={(s, set) => (
-          <>
-            <Field label="Icon">
-              <IconSelect value={s.icon} onChange={(v) => set({ ...s, icon: v })} />
-            </Field>
-            <Field label="Title">
-              <Input value={s.title} onChange={(e) => set({ ...s, title: e.target.value })} />
-            </Field>
-            <Field label="Body">
-              <Textarea rows={2} value={s.body} onChange={(e) => set({ ...s, body: e.target.value })} />
-            </Field>
-          </>
-        )}
-      />
+        <ListCard
+          id="terrains"
+          title="Terrain tiles"
+          icon={Mountain}
+          description="Quick visual tiles introducing each terrain."
+          items={draft.terrains}
+          onChange={(terrains) => setDraft({ ...draft, terrains })}
+          empty={{ icon: "Mountain", label: "", note: "" }}
+          previewLabel={(t) => t.label || "Untitled tile"}
+          render={(t, set) => (
+            <>
+              <div className="grid md:grid-cols-3 gap-4">
+                <Field label="Icon">
+                  <IconSelect value={t.icon} onChange={(v) => set({ ...t, icon: v })} />
+                </Field>
+                <Field label="Label">
+                  <Input value={t.label} onChange={(e) => set({ ...t, label: e.target.value })} />
+                </Field>
+                <Field label="Note">
+                  <Input value={t.note} onChange={(e) => set({ ...t, note: e.target.value })} />
+                </Field>
+              </div>
+            </>
+          )}
+        />
 
-      {/* Signature itineraries */}
-      <ListCard
-        title="Signature itineraries"
-        items={draft.signatures}
-        onChange={(signatures) => setDraft({ ...draft, signatures })}
-        empty={{
-          slug: "",
-          name: "",
-          region: "",
-          terrain: "",
-          nights: "",
-          difficulty: "Moderate",
-          image: "",
-          description: "",
-          highlights: [],
-        }}
-        render={(s, set) => (
-          <>
-            <div className="grid md:grid-cols-2 gap-4">
-              <Field label="Name">
-                <Input value={s.name} onChange={(e) => set({ ...s, name: e.target.value, slug: s.slug || slugify(e.target.value) })} />
+        <ListCard
+          id="styles"
+          title="Adventure styles"
+          icon={Footprints}
+          description="How travellers can experience the wild."
+          items={draft.styles}
+          onChange={(styles) => setDraft({ ...draft, styles })}
+          empty={{ icon: "Footprints", title: "", body: "" }}
+          previewLabel={(s) => s.title || "Untitled style"}
+          render={(s, set) => (
+            <>
+              <div className="grid md:grid-cols-[180px_1fr] gap-4">
+                <Field label="Icon">
+                  <IconSelect value={s.icon} onChange={(v) => set({ ...s, icon: v })} />
+                </Field>
+                <Field label="Title">
+                  <Input value={s.title} onChange={(e) => set({ ...s, title: e.target.value })} />
+                </Field>
+              </div>
+              <Field label="Body">
+                <Textarea rows={2} value={s.body} onChange={(e) => set({ ...s, body: e.target.value })} />
               </Field>
-              <Field label="Slug (matches /itineraries/$slug)">
-                <Input value={s.slug} onChange={(e) => set({ ...s, slug: e.target.value })} />
+            </>
+          )}
+        />
+
+        <ListCard
+          id="signatures"
+          title="Signature itineraries"
+          icon={MapIcon}
+          description="Hero adventures featured at the bottom of the page."
+          items={draft.signatures}
+          onChange={(signatures) => setDraft({ ...draft, signatures })}
+          empty={{
+            slug: "",
+            name: "",
+            region: "",
+            terrain: "",
+            nights: "",
+            difficulty: "Moderate",
+            image: "",
+            description: "",
+            highlights: [],
+          }}
+          previewLabel={(s) => s.name || "New itinerary"}
+          previewImage={(s) => s.image}
+          render={(s, set) => (
+            <>
+              <div className="grid md:grid-cols-2 gap-4">
+                <Field label="Name">
+                  <Input value={s.name} onChange={(e) => set({ ...s, name: e.target.value, slug: s.slug || slugify(e.target.value) })} />
+                </Field>
+                <Field label="Slug (matches /itineraries/$slug)">
+                  <Input value={s.slug} onChange={(e) => set({ ...s, slug: e.target.value })} />
+                </Field>
+              </div>
+              <div className="grid md:grid-cols-3 gap-4">
+                <Field label="Region">
+                  <Input value={s.region} onChange={(e) => set({ ...s, region: e.target.value })} />
+                </Field>
+                <Field label="Terrain">
+                  <Input value={s.terrain} onChange={(e) => set({ ...s, terrain: e.target.value })} />
+                </Field>
+                <Field label="Nights">
+                  <Input value={s.nights} onChange={(e) => set({ ...s, nights: e.target.value })} placeholder="8 nights" />
+                </Field>
+              </div>
+              <div className="grid md:grid-cols-[220px_1fr] gap-4">
+                <Field label="Difficulty">
+                  <select
+                    value={s.difficulty}
+                    onChange={(e) => set({ ...s, difficulty: e.target.value })}
+                    className="h-10 bg-background border border-border rounded-md px-3 text-sm w-full"
+                  >
+                    {DIFFICULTIES.map((d) => <option key={d}>{d}</option>)}
+                  </select>
+                </Field>
+                <Field label="Description">
+                  <Textarea rows={2} value={s.description} onChange={(e) => set({ ...s, description: e.target.value })} />
+                </Field>
+              </div>
+              <Field label="Hero image">
+                <ImageUpload value={s.image} onChange={(url) => set({ ...s, image: url })} />
               </Field>
-            </div>
-            <div className="grid md:grid-cols-3 gap-4">
-              <Field label="Region">
-                <Input value={s.region} onChange={(e) => set({ ...s, region: e.target.value })} />
+              <Field label="Highlights (one per line)">
+                <Textarea
+                  rows={4}
+                  value={(s.highlights ?? []).join("\n")}
+                  onChange={(e) => set({ ...s, highlights: e.target.value.split("\n").map((x) => x.trim()).filter(Boolean) })}
+                />
               </Field>
-              <Field label="Terrain">
-                <Input value={s.terrain} onChange={(e) => set({ ...s, terrain: e.target.value })} />
-              </Field>
-              <Field label="Nights">
-                <Input value={s.nights} onChange={(e) => set({ ...s, nights: e.target.value })} placeholder="8 nights" />
-              </Field>
-            </div>
-            <Field label="Difficulty">
-              <select
-                value={s.difficulty}
-                onChange={(e) => set({ ...s, difficulty: e.target.value })}
-                className="h-10 bg-background border border-border px-3 text-sm w-full"
-              >
-                {DIFFICULTIES.map((d) => <option key={d}>{d}</option>)}
-              </select>
-            </Field>
-            <Field label="Image">
-              <ImageUpload value={s.image} onChange={(url) => set({ ...s, image: url })} />
-            </Field>
-            <Field label="Description">
-              <Textarea rows={3} value={s.description} onChange={(e) => set({ ...s, description: e.target.value })} />
-            </Field>
-            <Field label="Highlights (one per line)">
-              <Textarea
-                rows={4}
-                value={(s.highlights ?? []).join("\n")}
-                onChange={(e) => set({ ...s, highlights: e.target.value.split("\n").map((x) => x.trim()).filter(Boolean) })}
-              />
-            </Field>
-          </>
-        )}
-      />
+            </>
+          )}
+        />
+      </div>
+
+      {/* Sticky save footer */}
+      <div className="sticky bottom-0 mt-10 -mx-4 md:-mx-8 lg:-mx-10 px-4 md:px-8 lg:px-10 py-4 bg-background/95 backdrop-blur border-t border-border flex justify-end">
+        <Button onClick={save} disabled={saving} className="bg-gold text-gold-foreground hover:bg-gold/90">
+          {saving ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Save className="w-4 h-4 mr-1" />}
+          Save changes
+        </Button>
+      </div>
     </div>
   );
 }
 
-function Card({ title, children }: { title: string; children: React.ReactNode }) {
+function Card({
+  id, title, icon: Icon, description, children,
+}: { id?: string; title: string; icon: any; description?: string; children: React.ReactNode }) {
   return (
-    <section className="bg-background border border-border/50 p-6 md:p-8 space-y-4">
-      <h2 className="font-serif text-2xl">{title}</h2>
-      {children}
+    <section id={id} className="bg-background border border-border rounded-md overflow-hidden scroll-mt-32">
+      <header className="flex items-start gap-3 px-6 py-4 border-b border-border bg-cream/40">
+        <div className="h-9 w-9 rounded-md bg-gold/10 text-gold flex items-center justify-center shrink-0">
+          <Icon className="w-4 h-4" />
+        </div>
+        <div>
+          <h2 className="font-serif text-xl leading-tight">{title}</h2>
+          {description && <p className="text-xs text-foreground/55 mt-0.5">{description}</p>}
+        </div>
+      </header>
+      <div className="p-6 space-y-4">{children}</div>
     </section>
   );
 }
@@ -267,7 +340,7 @@ function IconSelect({ value, onChange }: { value: string; onChange: (v: string) 
     <select
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="h-10 bg-background border border-border px-3 text-sm w-full"
+      className="h-10 bg-background border border-border rounded-md px-3 text-sm w-full"
     >
       {ICONS.map((i) => <option key={i}>{i}</option>)}
     </select>
@@ -275,51 +348,97 @@ function IconSelect({ value, onChange }: { value: string; onChange: (v: string) 
 }
 
 function ListCard<T extends object>({
-  title,
-  items,
-  onChange,
-  empty,
-  render,
+  id, title, icon: Icon, description, items, onChange, empty, render, previewLabel, previewImage,
 }: {
+  id?: string;
   title: string;
+  icon: any;
+  description?: string;
   items: T[];
   onChange: (items: T[]) => void;
   empty: T;
   render: (item: T, set: (next: T) => void) => React.ReactNode;
+  previewLabel?: (item: T) => string;
+  previewImage?: (item: T) => string | undefined;
 }) {
+  const [openIdx, setOpenIdx] = useState<number | null>(null);
   const setAt = (idx: number, next: T) => {
     const copy = items.slice();
     copy[idx] = next;
     onChange(copy);
   };
-  const removeAt = (idx: number) => onChange(items.filter((_, i) => i !== idx));
+  const removeAt = (idx: number) => {
+    onChange(items.filter((_, i) => i !== idx));
+    if (openIdx === idx) setOpenIdx(null);
+  };
+  const addNew = () => {
+    onChange([...items, structuredClone(empty)]);
+    setOpenIdx(items.length);
+  };
 
   return (
-    <section className="bg-background border border-border/50 p-6 md:p-8 space-y-5">
-      <div className="flex items-center justify-between">
-        <h2 className="font-serif text-2xl">{title}</h2>
-        <button
-          onClick={() => onChange([...items, structuredClone(empty)])}
-          className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.2em] border border-gold text-gold px-4 py-2 hover:bg-gold hover:text-gold-foreground"
-        >
-          <Plus className="w-3 h-3" /> Add
-        </button>
-      </div>
-      <div className="space-y-6">
-        {items.map((item, idx) => (
-          <div key={idx} className="border border-border/40 p-5 space-y-3 bg-cream/40">
-            <div className="flex justify-between items-center">
-              <span className="text-[11px] uppercase tracking-[0.2em] text-foreground/60">Item {idx + 1}</span>
-              <button onClick={() => removeAt(idx)} className="text-foreground/60 hover:text-terracotta">
-                <Trash2 className="w-4 h-4" />
-              </button>
-            </div>
-            {render(item, (next) => setAt(idx, next))}
+    <section id={id} className="bg-background border border-border rounded-md overflow-hidden scroll-mt-32">
+      <header className="flex items-center justify-between gap-3 px-6 py-4 border-b border-border bg-cream/40">
+        <div className="flex items-start gap-3">
+          <div className="h-9 w-9 rounded-md bg-gold/10 text-gold flex items-center justify-center shrink-0">
+            <Icon className="w-4 h-4" />
           </div>
-        ))}
+          <div>
+            <h2 className="font-serif text-xl leading-tight">
+              {title}
+              <span className="ml-2 text-xs text-foreground/50 font-sans">({items.length})</span>
+            </h2>
+            {description && <p className="text-xs text-foreground/55 mt-0.5">{description}</p>}
+          </div>
+        </div>
+        <Button onClick={addNew} size="sm" variant="outline" className="border-gold text-gold hover:bg-gold hover:text-gold-foreground">
+          <Plus className="w-3.5 h-3.5 mr-1" /> Add
+        </Button>
+      </header>
+
+      <div className="p-4 space-y-2">
         {items.length === 0 && (
-          <p className="text-sm text-foreground/60 italic">No items yet.</p>
+          <p className="text-sm text-foreground/60 italic p-4 text-center border border-dashed border-border rounded-md">
+            No items yet. Click <span className="font-medium">Add</span> to create one.
+          </p>
         )}
+        {items.map((item, idx) => {
+          const isOpen = openIdx === idx;
+          const label = previewLabel?.(item) ?? `Item ${idx + 1}`;
+          const img = previewImage?.(item);
+          return (
+            <div key={idx} className="border border-border rounded-md bg-background overflow-hidden">
+              <div
+                className="flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-cream/50"
+                onClick={() => setOpenIdx(isOpen ? null : idx)}
+              >
+                <div className="h-10 w-14 rounded bg-cream overflow-hidden flex items-center justify-center shrink-0">
+                  {img ? (
+                    <img src={img} alt="" className="w-full h-full object-cover" />
+                  ) : (
+                    <ImageIcon className="w-4 h-4 text-foreground/30" />
+                  )}
+                </div>
+                <span className="text-[10px] tracking-[0.2em] uppercase text-foreground/40 w-6">#{idx + 1}</span>
+                <span className="font-medium text-sm flex-1 truncate">{label}</span>
+                <button
+                  type="button"
+                  onClick={(e) => { e.stopPropagation(); removeAt(idx); }}
+                  className="text-foreground/50 hover:text-destructive p-1.5"
+                  aria-label="Delete"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+                <span className="text-xs text-foreground/50">{isOpen ? "Hide" : "Edit"}</span>
+              </div>
+              {isOpen && (
+                <div className="px-4 pb-5 pt-2 space-y-4 border-t border-border bg-cream/30">
+                  {render(item, (next) => setAt(idx, next))}
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
     </section>
   );
@@ -329,8 +448,9 @@ function ImageUpload({ value, onChange }: { value: string; onChange: (url: strin
   const upload = useServerFn(adminUploadImage);
   const fileRef = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
+  const [drag, setDrag] = useState(false);
 
-  async function pick(file: File) {
+  async function pick(file: File | undefined) {
     if (!file) return;
     if (!/^image\/(png|jpe?g|webp|gif|avif)/i.test(file.type)) {
       toast.error("Choose a PNG, JPG, WEBP, GIF, or AVIF image.");
@@ -363,40 +483,67 @@ function ImageUpload({ value, onChange }: { value: string; onChange: (url: strin
   }
 
   return (
-    <div className="flex items-start gap-4">
-      <div className="w-28 h-20 border border-border rounded-md bg-cream overflow-hidden flex items-center justify-center shrink-0">
-        {value ? <img src={value} alt="" className="w-full h-full object-cover" /> : <span className="text-xs text-foreground/40">No image</span>}
-      </div>
-      <div className="flex flex-col gap-2">
-        <input
-          ref={fileRef}
-          type="file"
-          accept="image/png,image/jpeg,image/webp,image/gif,image/avif"
-          className="hidden"
-          onChange={(e) => e.target.files?.[0] && pick(e.target.files[0])}
-        />
-        <div className="flex gap-2">
-          <button
-            type="button"
-            onClick={() => fileRef.current?.click()}
-            disabled={busy}
-            className="inline-flex items-center gap-2 text-xs px-3 py-2 rounded-md border border-border hover:bg-muted disabled:opacity-50"
-          >
-            {busy ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Upload className="w-3.5 h-3.5" />}
-            {value ? "Replace" : "Upload"}
-          </button>
-          {value && (
-            <button
-              type="button"
+    <div className="space-y-3">
+      <input
+        ref={fileRef}
+        type="file"
+        accept="image/png,image/jpeg,image/webp,image/gif,image/avif"
+        className="hidden"
+        onChange={(e) => pick(e.target.files?.[0])}
+      />
+      {value ? (
+        <div className="border-2 border-border rounded-md overflow-hidden bg-background">
+          <div className="bg-cream">
+            <img src={value} alt="" className="w-full max-h-72 object-contain mx-auto" />
+          </div>
+          <div className="flex flex-wrap items-center gap-2 p-3 border-t border-border bg-cream/40">
+            <Button type="button" size="sm" variant="outline" onClick={() => fileRef.current?.click()} disabled={busy}>
+              {busy ? <Loader2 className="w-3.5 h-3.5 mr-1 animate-spin" /> : <Upload className="w-3.5 h-3.5 mr-1" />}
+              Replace
+            </Button>
+            <Button
+              type="button" size="sm" variant="outline"
               onClick={() => onChange("")}
-              className="inline-flex items-center gap-1.5 text-xs px-3 py-2 rounded-md border border-border text-foreground/70 hover:bg-muted"
+              className="text-destructive border-destructive/30 hover:bg-destructive hover:text-destructive-foreground"
             >
-              <X className="w-3.5 h-3.5" /> Clear
-            </button>
-          )}
+              <X className="w-3.5 h-3.5 mr-1" /> Remove
+            </Button>
+            <span className="ml-auto text-[11px] text-foreground/50 truncate max-w-[60%]" title={value}>
+              {value.split("/").pop()}
+            </span>
+          </div>
         </div>
-        <p className="text-xs text-foreground/55">Stored privately and served via signed URL.</p>
-      </div>
+      ) : (
+        <button
+          type="button"
+          onClick={() => fileRef.current?.click()}
+          onDragOver={(e) => { e.preventDefault(); setDrag(true); }}
+          onDragLeave={() => setDrag(false)}
+          onDrop={(e) => {
+            e.preventDefault();
+            setDrag(false);
+            pick(e.dataTransfer.files?.[0]);
+          }}
+          disabled={busy}
+          className={`w-full flex flex-col items-center justify-center gap-3 rounded-md border-2 border-dashed px-6 py-12 text-center transition-colors ${
+            drag ? "border-gold bg-gold/5" : "border-border bg-cream/40 hover:border-gold hover:bg-gold/5"
+          }`}
+        >
+          <div className="h-14 w-14 rounded-full bg-gold/10 text-gold flex items-center justify-center">
+            {busy ? <Loader2 className="w-6 h-6 animate-spin" /> : <Upload className="w-6 h-6" />}
+          </div>
+          <div>
+            <p className="text-sm font-medium">Drop an image here or click to upload</p>
+            <p className="text-[11px] text-foreground/50 mt-1">PNG, JPG, WEBP, GIF, AVIF · up to 8MB</p>
+          </div>
+        </button>
+      )}
+      <Input
+        value={value ?? ""}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder="…or paste an image URL"
+        className="text-xs"
+      />
     </div>
   );
 }

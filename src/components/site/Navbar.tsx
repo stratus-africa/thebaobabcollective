@@ -191,3 +191,34 @@ export function Navbar() {
     </header>
   );
 }
+
+function PrimaryWithSubmenu({ item }: { item: { label: string; to: string; children: { label: string; to: string }[] } }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="relative" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
+      <Link
+        to={item.to as any}
+        className="text-[12px] tracking-[0.2em] uppercase text-foreground/70 hover:text-foreground inline-flex items-center gap-1"
+        activeProps={{ className: "text-foreground" }}
+      >
+        {item.label} <ChevronDown className="w-3 h-3" />
+      </Link>
+      {open && (
+        <div className="absolute left-0 top-full pt-2">
+          <div className="bg-background border border-border shadow-lg py-2 min-w-[200px]">
+            {item.children.map((c) => (
+              <Link
+                key={c.to}
+                to={c.to as any}
+                onClick={() => setOpen(false)}
+                className="block px-5 py-2 text-[12px] tracking-[0.15em] uppercase text-foreground/75 hover:text-foreground hover:bg-cream"
+              >
+                {c.label}
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

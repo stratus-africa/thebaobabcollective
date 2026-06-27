@@ -73,15 +73,19 @@ export function Navbar() {
 
           <nav aria-label="Primary" className="hidden lg:flex items-center gap-7">
             {primaryItems.map((item) => (
-              <Link
-                key={item.to}
-                to={item.to}
-                activeOptions={{ exact: item.to === "/" }}
-                className="text-[12px] tracking-[0.2em] uppercase text-foreground/70 hover:text-foreground"
-                activeProps={{ className: "text-foreground" }}
-              >
-                {item.label}
-              </Link>
+              "children" in item && item.children ? (
+                <PrimaryWithSubmenu key={item.to} item={item} />
+              ) : (
+                <Link
+                  key={item.to}
+                  to={item.to}
+                  activeOptions={{ exact: item.to === "/" }}
+                  className="text-[12px] tracking-[0.2em] uppercase text-foreground/70 hover:text-foreground"
+                  activeProps={{ className: "text-foreground" }}
+                >
+                  {item.label}
+                </Link>
+              )
             ))}
 
             <div className="relative" onMouseLeave={() => setMoreOpen(false)}>

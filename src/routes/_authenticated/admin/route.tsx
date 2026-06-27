@@ -16,7 +16,6 @@ const groups: NavGroup[] = [
     items: [
       { to: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
       { to: "/admin/enquiries", label: "Enquiries", icon: MessageSquare },
-      { to: "/admin/private-travel", label: "Private Travel", icon: Plane },
       { to: "/admin/planning-guide", label: "Planning Guide", icon: BookOpen },
       { to: "/admin/subscribers", label: "Subscribers", icon: Mail },
     ],
@@ -26,7 +25,6 @@ const groups: NavGroup[] = [
     items: [
       { to: "/admin/adventures", label: "Adventures", icon: Compass },
       { to: "/admin/content/lodges", label: "Lodges", icon: Building },
-      { to: "/admin/content/itineraries", label: "Journeys", icon: Calendar },
       { to: "/admin/content/destinations", label: "Destinations", icon: MapPin },
     ],
   },
@@ -35,13 +33,11 @@ const groups: NavGroup[] = [
     items: [
       { to: "/admin/pages/home", label: "Home Page", icon: LayoutDashboard },
       { to: "/admin/pages/about", label: "About", icon: BookOpen },
-      { to: "/admin/pages/private_travel", label: "Private Travel", icon: Plane },
     ],
   },
   {
     label: "Content",
     items: [
-      { to: "/admin/content/journey_categories", label: "Journey Categories", icon: Globe },
       { to: "/admin/journal", label: "Journal", icon: FileText },
       { to: "/admin/content/testimonials", label: "Testimonials", icon: Star },
       { to: "/admin/content/faqs", label: "FAQs", icon: HelpCircle },

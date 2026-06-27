@@ -9,18 +9,15 @@ import type { User } from "@supabase/supabase-js";
 
 const primaryItems = [
   { label: "Home", to: "/" as const },
-  { label: "Adventures", to: "/adventures" as const },
+  { label: "Adventures", to: "/adventures" as const, children: [{ label: "Destinations", to: "/destinations" as const }] },
   { label: "Lodges", to: "/lodges" as const },
-  { label: "Destinations", to: "/destinations" as const },
   { label: "Journal", to: "/journal" as const },
 ];
 
 const moreItems = [
   { label: "About", to: "/about" as const },
-  
   { label: "Testimonials", to: "/testimonials" as const },
   { label: "FAQ", to: "/faq" as const },
-  { label: "Private Travel", to: "/private-travel" as const },
 ];
 
 export function Navbar() {

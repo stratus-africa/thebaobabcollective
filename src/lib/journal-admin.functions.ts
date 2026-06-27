@@ -120,11 +120,7 @@ export const adminUploadJournalImage = createServerFn({ method: "POST" })
       .upload(path, bytes, { contentType: data.contentType, upsert: false });
     if (upErr) throw new Error(upErr.message);
 
-    // Private bucket — generate a long-lived signed URL (10 years)
-    const { data: signed, error: signErr } = await supabaseAdmin.storage
-      .from("journal-images")
-      .createSignedUrl(path, 60 * 60 * 24 * 365 * 10);
-    if (signErr) throw new Error(signErr.message);
-
-    return { url: signed.signedUrl, path };
+    // Serve via our public media proxy so the URL is stable and never expires.
+    const url = `/api/public/media/${path}`;
+    return { url, path };
   });

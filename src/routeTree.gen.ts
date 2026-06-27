@@ -47,6 +47,7 @@ import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/e
 import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
+import { Route as ApiPublicMediaSplatRouteImport } from './routes/api/public/media/$'
 import { Route as AuthenticatedAdminPagesPageRouteImport } from './routes/_authenticated/admin/pages.$page'
 import { Route as AuthenticatedAdminContentTableRouteImport } from './routes/_authenticated/admin/content.$table'
 
@@ -250,6 +251,11 @@ const ApiPublicPaymentsWebhookRoute =
     path: '/api/public/payments/webhook',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicMediaSplatRoute = ApiPublicMediaSplatRouteImport.update({
+  id: '/api/public/media/$',
+  path: '/api/public/media/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAdminPagesPageRoute =
   AuthenticatedAdminPagesPageRouteImport.update({
     id: '/pages/$page',
@@ -297,6 +303,7 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/content/$table': typeof AuthenticatedAdminContentTableRoute
   '/admin/pages/$page': typeof AuthenticatedAdminPagesPageRoute
+  '/api/public/media/$': typeof ApiPublicMediaSplatRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
@@ -337,6 +344,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/content/$table': typeof AuthenticatedAdminContentTableRoute
   '/admin/pages/$page': typeof AuthenticatedAdminPagesPageRoute
+  '/api/public/media/$': typeof ApiPublicMediaSplatRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
@@ -380,6 +388,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/content/$table': typeof AuthenticatedAdminContentTableRoute
   '/_authenticated/admin/pages/$page': typeof AuthenticatedAdminPagesPageRoute
+  '/api/public/media/$': typeof ApiPublicMediaSplatRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
@@ -423,6 +432,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/admin/content/$table'
     | '/admin/pages/$page'
+    | '/api/public/media/$'
     | '/api/public/payments/webhook'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
@@ -463,6 +473,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/admin/content/$table'
     | '/admin/pages/$page'
+    | '/api/public/media/$'
     | '/api/public/payments/webhook'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
@@ -505,6 +516,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/'
     | '/_authenticated/admin/content/$table'
     | '/_authenticated/admin/pages/$page'
+    | '/api/public/media/$'
     | '/api/public/payments/webhook'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
@@ -535,6 +547,7 @@ export interface RootRouteChildren {
   JourneysIndexRoute: typeof JourneysIndexRoute
   LodgesIndexRoute: typeof LodgesIndexRoute
   LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
+  ApiPublicMediaSplatRoute: typeof ApiPublicMediaSplatRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
   LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
@@ -811,6 +824,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicPaymentsWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/media/$': {
+      id: '/api/public/media/$'
+      path: '/api/public/media/$'
+      fullPath: '/api/public/media/$'
+      preLoaderRoute: typeof ApiPublicMediaSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/admin/pages/$page': {
       id: '/_authenticated/admin/pages/$page'
       path: '/pages/$page'
@@ -916,6 +936,7 @@ const rootRouteChildren: RootRouteChildren = {
   JourneysIndexRoute: JourneysIndexRoute,
   LodgesIndexRoute: LodgesIndexRoute,
   LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
+  ApiPublicMediaSplatRoute: ApiPublicMediaSplatRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
   LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,

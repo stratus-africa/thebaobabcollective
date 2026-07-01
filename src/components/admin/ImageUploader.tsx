@@ -291,6 +291,20 @@ export function ImageUploader({
           <AlertCircle className="w-3.5 h-3.5" /> {error}
         </p>
       )}
+
+      <MediaLibraryPicker
+        open={pickerOpen}
+        onOpenChange={setPickerOpen}
+        onSelect={(urls) => {
+          const [url] = urls;
+          if (url) {
+            onChange(url);
+            setPreview(null);
+            setMeta(null);
+            setError(null);
+          }
+        }}
+      />
     </div>
   );
 }

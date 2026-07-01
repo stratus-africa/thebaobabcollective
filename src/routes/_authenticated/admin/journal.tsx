@@ -434,7 +434,7 @@ function JournalAdmin() {
                 <Label>Hero image</Label>
                 <ImageUploader
                   value={editing.image ?? ""}
-                  onChange={(v) => onChange("image", v)}
+                  onChange={(v: string) => onChange("image", v)}
                   uploadFn={upload as any}
                   maxSizeMB={5}
                 />

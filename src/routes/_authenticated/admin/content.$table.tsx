@@ -84,7 +84,7 @@ const SUBTITLE: Record<string, (r: any) => string> = {
   journey_categories: (r) => r.tagline ?? "",
 };
 
-type FieldType = "text" | "textarea" | "rich" | "number" | "bool" | "array" | "image";
+type FieldType = "text" | "textarea" | "rich" | "number" | "bool" | "array" | "image" | "images";
 type FieldDef = { name: string; label: string; type: FieldType; placeholder?: string; icon?: "pin" | "hash" };
 
 const FORM_LAYOUT: Record<string, { rows: FieldDef[][] }> = {

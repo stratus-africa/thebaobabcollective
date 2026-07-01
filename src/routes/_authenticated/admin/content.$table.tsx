@@ -674,6 +674,15 @@ function FieldInput({
     return <ImageField label={field.label} value={value ?? ""} onChange={onChange} />;
   }
 
+  if (field.type === "images") {
+    const arr = Array.isArray(value)
+      ? (value as string[])
+      : typeof value === "string" && value
+        ? (value as string).split("\n").map((s) => s.trim()).filter(Boolean)
+        : [];
+    return <MultiImageUploader label={field.label} value={arr} onChange={onChange} />;
+  }
+
   if (field.type === "rich") {
     return (
       <div>

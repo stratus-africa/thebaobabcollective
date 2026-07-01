@@ -117,7 +117,7 @@ const FORM_LAYOUT: Record<string, { rows: FieldDef[][] }> = {
       ],
       [{ name: "description", label: "Description", type: "rich", placeholder: "Describe this lodge…" }],
       [{ name: "hero_image", label: "Hero Image", type: "image" }],
-      [{ name: "gallery", label: "Gallery URLs (one per line)", type: "array" }],
+      [{ name: "gallery", label: "Gallery", type: "images" }],
       [{ name: "amenities", label: "Amenities (one per line)", type: "array" }],
       [
         { name: "price_from_usd", label: "Price from (USD)", type: "number" },

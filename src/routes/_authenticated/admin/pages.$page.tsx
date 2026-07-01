@@ -3,7 +3,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getPageContent, savePageContent } from "@/lib/page-content.functions";
-import { adminUploadImage } from "@/lib/admin.functions";
+import { ImageUploader } from "@/components/admin/ImageUploader";
 import { PAGE_DEFAULTS, mergePageContent, type PageKey } from "@/lib/page-content.defaults";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

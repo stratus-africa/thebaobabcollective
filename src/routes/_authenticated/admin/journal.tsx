@@ -431,65 +431,12 @@ function JournalAdmin() {
 
               <div>
                 <Label>Hero image</Label>
-                <div className="flex items-center gap-3">
-                  {editing.image ? (
-                    <img
-                      src={editing.image}
-                      alt=""
-                      className="w-24 h-24 rounded-md object-cover border border-border"
-                    />
-                  ) : (
-                    <div className="w-24 h-24 rounded-md bg-muted flex items-center justify-center text-foreground/40 border border-border">
-                      <FileText className="w-6 h-6" />
-                    </div>
-                  )}
-                  <div className="flex-1 space-y-2">
-                    <Input
-                      value={editing.image ?? ""}
-                      onChange={(e) => onChange("image", e.target.value)}
-                      placeholder="https://…"
-                    />
-                    <div className="flex items-center gap-2">
-                      <input
-                        ref={fileRef}
-                        type="file"
-                        accept="image/*"
-                        className="hidden"
-                        onChange={(e) => {
-                          const f = e.target.files?.[0];
-                          if (f) onPickImage(f);
-                        }}
-                      />
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        disabled={uploading}
-                        onClick={() => fileRef.current?.click()}
-                      >
-                        {uploading ? (
-                          <Loader2 className="w-4 h-4 mr-1.5 animate-spin" />
-                        ) : (
-                          <Upload className="w-4 h-4 mr-1.5" />
-                        )}
-                        {editing.image ? "Replace image" : "Upload image"}
-                      </Button>
-                      {editing.image && (
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => onChange("image", "")}
-                        >
-                          <Trash2 className="w-4 h-4 mr-1.5" /> Remove
-                        </Button>
-                      )}
-                    </div>
-                    <p className="text-[11px] text-foreground/50">
-                      Preview updates instantly. PNG or JPG, up to 5MB.
-                    </p>
-                  </div>
-                </div>
+                <ImageUploader
+                  value={editing.image ?? ""}
+                  onChange={(v) => onChange("image", v)}
+                  uploadFn={upload as any}
+                  maxSizeMB={5}
+                />
               </div>
 
               <div>

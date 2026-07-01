@@ -261,6 +261,17 @@ export function ImageUploader({
             disabled={uploading}
             onChange={(e) => handleFile(e.target.files?.[0])}
           />
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setPickerOpen(true);
+            }}
+            className="inline-flex items-center gap-1.5 text-xs text-foreground/70 hover:text-gold underline-offset-2 hover:underline"
+          >
+            <FolderOpen className="w-3.5 h-3.5" /> Choose from library
+          </button>
         </label>
       )}
 

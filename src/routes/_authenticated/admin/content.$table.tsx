@@ -384,6 +384,14 @@ function ContentAdmin() {
       if (f.type === "array" && typeof row[f.name] === "string") {
         row[f.name] = (row[f.name] as string).split("\n").map((s) => s.trim()).filter(Boolean);
       }
+      if (f.type === "images") {
+        const raw = row[f.name];
+        if (typeof raw === "string") {
+          row[f.name] = raw.split("\n").map((s) => s.trim()).filter(Boolean);
+        } else if (!Array.isArray(raw)) {
+          row[f.name] = [];
+        }
+      }
     });
     mUpsert.mutate(row);
   };

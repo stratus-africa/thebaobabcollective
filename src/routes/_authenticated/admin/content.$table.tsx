@@ -359,7 +359,11 @@ function ContentAdmin() {
   const startCreate = () => {
     const blank: any = { id: "" };
     flatFields.forEach((f) => {
-      blank[f.name] = f.type === "bool" ? true : f.type === "number" ? 0 : f.type === "array" ? [] : "";
+      blank[f.name] =
+        f.type === "bool" ? true :
+        f.type === "number" ? 0 :
+        f.type === "array" || f.type === "images" ? [] :
+        "";
     });
     setEditing(blank);
     setOpen(true);

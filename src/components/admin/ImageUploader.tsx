@@ -77,6 +77,7 @@ export function ImageUploader({
   const [preview, setPreview] = useState<string | null>(null);
   const [meta, setMeta] = useState<{ name: string; size: number } | null>(null);
   const [drag, setDrag] = useState(false);
+  const [pickerOpen, setPickerOpen] = useState(false);
   const objectUrlRef = useRef<string | null>(null);
 
   useEffect(() => {

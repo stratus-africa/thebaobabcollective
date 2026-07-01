@@ -98,6 +98,31 @@ export const adminUploadImage = createServerFn({ method: "POST" })
     return { url, path, size: bytes.length };
   });
 
+// Delete a previously-uploaded media file so the storage stays in sync with
+// the CMS. Accepts either the stored proxy URL (`/api/public/media/<path>`)
+// or the raw bucket path (`cms/<name>` or `<name>` for legacy journal uploads).
+const DeleteMediaSchema = z.object({
+  url: z.string().min(1).optional(),
+  path: z.string().min(1).optional(),
+}).refine((d) => Boolean(d.url || d.path), { message: "url or path required" });
+
+export const adminDeleteMedia = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => DeleteMediaSchema.parse(d))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    let path = data.path ?? "";
+    if (!path && data.url) {
+      const m = data.url.match(/\/api\/public\/media\/(.+)$/);
+      if (m) path = m[1];
+    }
+    if (!path || path.includes("..")) return { ok: false as const };
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin.storage.from("journal-images").remove([path]);
+    if (error) return { ok: false as const, error: error.message };
+    return { ok: true as const };
+  });
+
 export const adminUpsert = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => UpsertSchema.parse(d))

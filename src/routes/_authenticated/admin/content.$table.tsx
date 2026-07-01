@@ -2,7 +2,8 @@ import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { adminList, adminUpsert, adminDelete, adminUploadImage } from "@/lib/admin.functions";
+import { adminList, adminUpsert, adminDelete } from "@/lib/admin.functions";
+import { ImageUploader } from "@/components/admin/ImageUploader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -730,131 +731,5 @@ function ImageField({
   value: string;
   onChange: (v: string) => void;
 }) {
-  const upload = useServerFn(adminUploadImage);
-  const [uploading, setUploading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  async function handleFile(file: File | undefined) {
-    setError(null);
-    if (!file) return;
-    if (!/^image\/(png|jpe?g|webp|gif|avif)$/i.test(file.type)) {
-      setError("Choose a PNG, JPG, WEBP, GIF, or AVIF image.");
-      return;
-    }
-    if (file.size > 8 * 1024 * 1024) {
-      setError("Image must be under 8MB.");
-      return;
-    }
-    setUploading(true);
-    try {
-      const payload = await fileToBase64(file);
-      const res = await upload({ data: payload });
-      onChange(res.url);
-      toast.success("Image uploaded");
-    } catch (e: any) {
-      setError(e.message ?? "Upload failed");
-    } finally {
-      setUploading(false);
-    }
-  }
-
-  const [drag, setDrag] = useState(false);
-
-  return (
-    <div>
-      <Label className="mb-2 block text-[11px] tracking-[0.2em] uppercase text-foreground/60">{label}</Label>
-      {value ? (
-        <div className="border-2 border-border rounded-md overflow-hidden bg-background">
-          <div className="relative bg-cream">
-            <img src={value} alt="Preview" className="w-full max-h-80 object-contain mx-auto" />
-          </div>
-          <div className="flex flex-wrap items-center gap-2 p-3 border-t border-border bg-cream/40">
-            <UploadButton onPick={handleFile} disabled={uploading} variant="replace" />
-            <button
-              type="button"
-              onClick={() => onChange("")}
-              className="inline-flex items-center gap-1 text-xs px-3 py-2 border border-border rounded-md hover:bg-destructive hover:text-destructive-foreground hover:border-destructive"
-            >
-              <X className="w-3.5 h-3.5" /> Remove
-            </button>
-            <span className="ml-auto text-[11px] text-foreground/50 truncate max-w-[60%]" title={value}>
-              {value.split("/").pop()}
-            </span>
-          </div>
-        </div>
-      ) : (
-        <label
-          onDragOver={(e) => { e.preventDefault(); setDrag(true); }}
-          onDragLeave={() => setDrag(false)}
-          onDrop={(e) => {
-            e.preventDefault();
-            setDrag(false);
-            handleFile(e.dataTransfer.files?.[0]);
-          }}
-          className={`flex flex-col items-center justify-center gap-3 cursor-pointer rounded-md border-2 border-dashed px-6 py-12 text-center transition-colors ${
-            drag ? "border-gold bg-gold/5" : "border-border bg-cream/40 hover:border-gold hover:bg-gold/5"
-          }`}
-        >
-          <div className="h-14 w-14 rounded-full bg-gold/10 text-gold flex items-center justify-center">
-            <Upload className="w-6 h-6" />
-          </div>
-          <div>
-            <p className="text-sm font-medium">Drop an image here or click to upload</p>
-            <p className="text-[11px] text-foreground/50 mt-1">PNG, JPG, WEBP, GIF, AVIF · up to 8MB</p>
-          </div>
-          <input
-            type="file"
-            accept="image/png,image/jpeg,image/webp,image/gif,image/avif"
-            className="hidden"
-            disabled={uploading}
-            onChange={(e) => handleFile(e.target.files?.[0])}
-          />
-        </label>
-      )}
-      <div className="mt-3">
-        <Input
-          value={value ?? ""}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder="…or paste an image URL"
-          className="text-xs"
-        />
-      </div>
-      {error && <p className="text-xs text-destructive mt-2">{error}</p>}
-      {uploading && (
-        <p className="text-xs text-foreground/60 mt-2 flex items-center gap-1">
-          <Loader2 className="w-3 h-3 animate-spin" /> Uploading…
-        </p>
-      )}
-    </div>
-  );
-}
-
-function UploadButton({
-  onPick,
-  disabled,
-  variant,
-}: {
-  onPick: (f: File | undefined) => void;
-  disabled?: boolean;
-  variant: "upload" | "replace";
-}) {
-  return (
-    <label
-      className={`inline-flex items-center gap-1 text-xs cursor-pointer px-3 py-1.5 border ${
-        variant === "replace"
-          ? "bg-background/95 border-border hover:bg-cream"
-          : "bg-gold text-gold-foreground border-gold hover:bg-gold/90"
-      } ${disabled ? "opacity-50 cursor-wait" : ""}`}
-    >
-      {variant === "replace" ? <RefreshCw className="w-3.5 h-3.5" /> : <Upload className="w-3.5 h-3.5" />}
-      {variant === "replace" ? "Replace" : "Choose image"}
-      <input
-        type="file"
-        accept="image/png,image/jpeg,image/webp,image/gif,image/avif"
-        className="hidden"
-        disabled={disabled}
-        onChange={(e) => onPick(e.target.files?.[0])}
-      />
-    </label>
-  );
+  return <ImageUploader label={label} value={value} onChange={onChange} />;
 }

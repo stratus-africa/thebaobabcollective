@@ -3,7 +3,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getPageContent, savePageContent } from "@/lib/page-content.functions";
-import { adminUploadImage } from "@/lib/admin.functions";
+import { ImageUploader } from "@/components/admin/ImageUploader";
 import { PAGE_DEFAULTS, mergePageContent, type PageKey } from "@/lib/page-content.defaults";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -185,113 +185,5 @@ function ImageField({
   value: string;
   onChange: (v: string) => void;
 }) {
-  const upload = useServerFn(adminUploadImage);
-  const [uploading, setUploading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  async function handleFile(file: File | undefined) {
-    setError(null);
-    if (!file) return;
-    if (!/^image\/(png|jpe?g|webp|gif|avif)$/i.test(file.type)) {
-      setError("Choose a PNG, JPG, WEBP, GIF, or AVIF image.");
-      return;
-    }
-    if (file.size > 8 * 1024 * 1024) {
-      setError("Image must be under 8MB.");
-      return;
-    }
-    setUploading(true);
-    try {
-      const reader = new FileReader();
-      const payload = await new Promise<{ base64: string; contentType: string; filename: string }>(
-        (resolve, reject) => {
-          reader.onload = () => {
-            const result = reader.result as string;
-            const base64 = result.split(",")[1] ?? "";
-            resolve({ base64, contentType: file.type || "image/jpeg", filename: file.name });
-          };
-          reader.onerror = reject;
-          reader.readAsDataURL(file);
-        },
-      );
-      const res = await upload({ data: payload });
-      onChange(res.url);
-      toast.success("Image uploaded");
-    } catch (e: any) {
-      setError(e.message ?? "Upload failed");
-    } finally {
-      setUploading(false);
-    }
-  }
-
-  return (
-    <div>
-      <Label className="mb-1.5 block">{label}</Label>
-      <div className="border border-border bg-cream/30">
-        {value ? (
-          <div className="relative group">
-            <img src={value} alt="Preview" className="w-full max-h-72 object-cover" />
-            <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-              <UploadButton onPick={handleFile} disabled={uploading} variant="replace" />
-              <button
-                type="button"
-                onClick={() => onChange("")}
-                className="bg-background/95 border border-border px-2 py-1 text-xs inline-flex items-center gap-1 hover:bg-destructive hover:text-destructive-foreground"
-              >
-                <X className="w-3.5 h-3.5" /> Remove
-              </button>
-            </div>
-          </div>
-        ) : (
-          <div className="p-6 flex flex-col items-center justify-center gap-2 text-foreground/50">
-            <ImageIcon className="w-8 h-8" />
-            <UploadButton onPick={handleFile} disabled={uploading} variant="upload" />
-            <p className="text-[11px]">PNG, JPG, WEBP up to 8MB</p>
-          </div>
-        )}
-      </div>
-      <Input
-        value={value ?? ""}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder="…or paste an image URL"
-        className="text-xs mt-2"
-      />
-      {error && <p className="text-xs text-destructive mt-1">{error}</p>}
-      {uploading && (
-        <p className="text-xs text-foreground/60 mt-1 flex items-center gap-1">
-          <Loader2 className="w-3 h-3 animate-spin" /> Uploading…
-        </p>
-      )}
-    </div>
-  );
-}
-
-function UploadButton({
-  onPick,
-  disabled,
-  variant,
-}: {
-  onPick: (f: File | undefined) => void;
-  disabled?: boolean;
-  variant: "upload" | "replace";
-}) {
-  return (
-    <label
-      className={`inline-flex items-center gap-1 text-xs cursor-pointer px-3 py-1.5 border ${
-        variant === "replace"
-          ? "bg-background/95 border-border hover:bg-cream"
-          : "bg-gold text-gold-foreground border-gold hover:bg-gold/90"
-      } ${disabled ? "opacity-50 cursor-wait" : ""}`}
-    >
-      {variant === "replace" ? <RefreshCw className="w-3.5 h-3.5" /> : <Upload className="w-3.5 h-3.5" />}
-      {variant === "replace" ? "Replace" : "Choose image"}
-      <input
-        type="file"
-        accept="image/png,image/jpeg,image/webp,image/gif,image/avif"
-        className="hidden"
-        disabled={disabled}
-        onChange={(e) => onPick(e.target.files?.[0])}
-      />
-    </label>
-  );
+  return <ImageUploader label={label} value={value} onChange={onChange} />;
 }

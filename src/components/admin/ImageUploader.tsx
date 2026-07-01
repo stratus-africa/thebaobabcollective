@@ -200,6 +200,14 @@ export function ImageUploader({
             <UploadButton onPick={handleFile} disabled={uploading} accept={accept} variant="replace" />
             <button
               type="button"
+              onClick={() => setPickerOpen(true)}
+              disabled={uploading}
+              className="inline-flex items-center gap-1 text-xs px-3 py-2 border border-border rounded-md hover:bg-cream disabled:opacity-50"
+            >
+              <FolderOpen className="w-3.5 h-3.5" /> Library
+            </button>
+            <button
+              type="button"
               onClick={handleRemove}
               disabled={uploading}
               className="inline-flex items-center gap-1 text-xs px-3 py-2 border border-border rounded-md hover:bg-destructive hover:text-destructive-foreground hover:border-destructive disabled:opacity-50"

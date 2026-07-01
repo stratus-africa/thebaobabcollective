@@ -123,6 +123,54 @@ export const adminDeleteMedia = createServerFn({ method: "POST" })
     return { ok: true as const };
   });
 
+// List previously-uploaded media so the admin can reuse images without
+// re-uploading. Walks both the `cms/` prefix (new uploads) and the bucket
+// root (legacy journal uploads) and returns a stable, newest-first list.
+const ListMediaSchema = z.object({
+  search: z.string().trim().max(120).optional(),
+  limit: z.number().int().min(1).max(500).default(200),
+});
+
+export const adminListMedia = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => ListMediaSchema.parse(d ?? {}))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const bucket = supabaseAdmin.storage.from("journal-images");
+
+    async function listPrefix(prefix: string) {
+      const { data: files } = await bucket.list(prefix, {
+        limit: 1000,
+        sortBy: { column: "created_at", order: "desc" },
+      });
+      return (files ?? [])
+        .filter((f: any) => f?.name && f.id) // skip folders (id is null for folders)
+        .map((f: any) => ({
+          name: f.name as string,
+          path: prefix ? `${prefix}/${f.name}` : (f.name as string),
+          size: (f.metadata?.size as number) ?? 0,
+          contentType: (f.metadata?.mimetype as string) ?? "image/jpeg",
+          updated_at: (f.updated_at ?? f.created_at) as string,
+        }));
+    }
+
+    const [cmsFiles, rootFiles] = await Promise.all([listPrefix("cms"), listPrefix("")]);
+    let files = [...cmsFiles, ...rootFiles]
+      .filter((f) => /\.(png|jpe?g|webp|gif|avif|svg)$/i.test(f.name))
+      .sort((a, b) => (b.updated_at ?? "").localeCompare(a.updated_at ?? ""));
+
+    if (data.search) {
+      const s = data.search.toLowerCase();
+      files = files.filter((f) => f.name.toLowerCase().includes(s));
+    }
+
+    return files.slice(0, data.limit).map((f) => ({
+      ...f,
+      url: `/api/public/media/${f.path}`,
+    }));
+  });
+
 export const adminUpsert = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => UpsertSchema.parse(d))

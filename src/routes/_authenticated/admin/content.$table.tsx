@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { adminList, adminUpsert, adminDelete } from "@/lib/admin.functions";
 import { ImageUploader } from "@/components/admin/ImageUploader";
+import { MultiImageUploader } from "@/components/admin/MultiImageUploader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -84,7 +85,7 @@ const SUBTITLE: Record<string, (r: any) => string> = {
   journey_categories: (r) => r.tagline ?? "",
 };
 
-type FieldType = "text" | "textarea" | "rich" | "number" | "bool" | "array" | "image";
+type FieldType = "text" | "textarea" | "rich" | "number" | "bool" | "array" | "image" | "images";
 type FieldDef = { name: string; label: string; type: FieldType; placeholder?: string; icon?: "pin" | "hash" };
 
 const FORM_LAYOUT: Record<string, { rows: FieldDef[][] }> = {
@@ -117,7 +118,7 @@ const FORM_LAYOUT: Record<string, { rows: FieldDef[][] }> = {
       ],
       [{ name: "description", label: "Description", type: "rich", placeholder: "Describe this lodge…" }],
       [{ name: "hero_image", label: "Hero Image", type: "image" }],
-      [{ name: "gallery", label: "Gallery URLs (one per line)", type: "array" }],
+      [{ name: "gallery", label: "Gallery", type: "images" }],
       [{ name: "amenities", label: "Amenities (one per line)", type: "array" }],
       [
         { name: "price_from_usd", label: "Price from (USD)", type: "number" },
@@ -359,7 +360,11 @@ function ContentAdmin() {
   const startCreate = () => {
     const blank: any = { id: "" };
     flatFields.forEach((f) => {
-      blank[f.name] = f.type === "bool" ? true : f.type === "number" ? 0 : f.type === "array" ? [] : "";
+      blank[f.name] =
+        f.type === "bool" ? true :
+        f.type === "number" ? 0 :
+        f.type === "array" || f.type === "images" ? [] :
+        "";
     });
     setEditing(blank);
     setOpen(true);
@@ -379,6 +384,14 @@ function ContentAdmin() {
       if (f.type === "number" && row[f.name] !== null && row[f.name] !== "") row[f.name] = Number(row[f.name]);
       if (f.type === "array" && typeof row[f.name] === "string") {
         row[f.name] = (row[f.name] as string).split("\n").map((s) => s.trim()).filter(Boolean);
+      }
+      if (f.type === "images") {
+        const raw = row[f.name];
+        if (typeof raw === "string") {
+          row[f.name] = raw.split("\n").map((s) => s.trim()).filter(Boolean);
+        } else if (!Array.isArray(raw)) {
+          row[f.name] = [];
+        }
       }
     });
     mUpsert.mutate(row);
@@ -659,6 +672,15 @@ function FieldInput({
 
   if (field.type === "image") {
     return <ImageField label={field.label} value={value ?? ""} onChange={onChange} />;
+  }
+
+  if (field.type === "images") {
+    const arr = Array.isArray(value)
+      ? (value as string[])
+      : typeof value === "string" && value
+        ? (value as string).split("\n").map((s) => s.trim()).filter(Boolean)
+        : [];
+    return <MultiImageUploader label={field.label} value={arr} onChange={onChange} />;
   }
 
   if (field.type === "rich") {

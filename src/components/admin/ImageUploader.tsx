@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { Loader2, RefreshCw, Upload, X, Image as ImageIcon, AlertCircle } from "lucide-react";
+import { FolderOpen, Loader2, RefreshCw, Upload, X, Image as ImageIcon, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { adminUploadImage, adminDeleteMedia } from "@/lib/admin.functions";
+import { MediaLibraryPicker } from "@/components/admin/MediaLibraryPicker";
 
 type UploadFn = (args: {
   data: { filename: string; contentType: string; base64: string };
@@ -76,6 +77,7 @@ export function ImageUploader({
   const [preview, setPreview] = useState<string | null>(null);
   const [meta, setMeta] = useState<{ name: string; size: number } | null>(null);
   const [drag, setDrag] = useState(false);
+  const [pickerOpen, setPickerOpen] = useState(false);
   const objectUrlRef = useRef<string | null>(null);
 
   useEffect(() => {
@@ -198,6 +200,14 @@ export function ImageUploader({
             <UploadButton onPick={handleFile} disabled={uploading} accept={accept} variant="replace" />
             <button
               type="button"
+              onClick={() => setPickerOpen(true)}
+              disabled={uploading}
+              className="inline-flex items-center gap-1 text-xs px-3 py-2 border border-border rounded-md hover:bg-cream disabled:opacity-50"
+            >
+              <FolderOpen className="w-3.5 h-3.5" /> Library
+            </button>
+            <button
+              type="button"
               onClick={handleRemove}
               disabled={uploading}
               className="inline-flex items-center gap-1 text-xs px-3 py-2 border border-border rounded-md hover:bg-destructive hover:text-destructive-foreground hover:border-destructive disabled:opacity-50"
@@ -251,6 +261,17 @@ export function ImageUploader({
             disabled={uploading}
             onChange={(e) => handleFile(e.target.files?.[0])}
           />
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setPickerOpen(true);
+            }}
+            className="inline-flex items-center gap-1.5 text-xs text-foreground/70 hover:text-gold underline-offset-2 hover:underline"
+          >
+            <FolderOpen className="w-3.5 h-3.5" /> Choose from library
+          </button>
         </label>
       )}
 
@@ -270,6 +291,20 @@ export function ImageUploader({
           <AlertCircle className="w-3.5 h-3.5" /> {error}
         </p>
       )}
+
+      <MediaLibraryPicker
+        open={pickerOpen}
+        onOpenChange={setPickerOpen}
+        onSelect={(urls) => {
+          const [url] = urls;
+          if (url) {
+            onChange(url);
+            setPreview(null);
+            setMeta(null);
+            setError(null);
+          }
+        }}
+      />
     </div>
   );
 }

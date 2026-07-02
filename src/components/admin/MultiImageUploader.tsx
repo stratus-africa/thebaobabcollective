@@ -234,14 +234,25 @@ export function MultiImageUploader({
           e.preventDefault();
           setDrag(true);
         }}
+      <label
+        onDragOver={(e) => {
+          if (atCapacity) return;
+          e.preventDefault();
+          setDrag(true);
+        }}
         onDragLeave={() => setDrag(false)}
         onDrop={(e) => {
           e.preventDefault();
           setDrag(false);
+          if (atCapacity) return;
           handleFiles(e.dataTransfer.files);
         }}
-        className={`flex flex-wrap items-center justify-center gap-3 cursor-pointer rounded-md border-2 border-dashed px-6 py-6 text-center transition-colors ${
-          drag ? "border-gold bg-gold/5" : "border-border bg-cream/40 hover:border-gold hover:bg-gold/5"
+        className={`flex flex-wrap items-center justify-center gap-3 rounded-md border-2 border-dashed px-6 py-6 text-center transition-colors ${
+          atCapacity
+            ? "border-border bg-cream/20 cursor-not-allowed opacity-70"
+            : drag
+              ? "border-gold bg-gold/5 cursor-pointer"
+              : "border-border bg-cream/40 hover:border-gold hover:bg-gold/5 cursor-pointer"
         }`}
       >
         <div className="h-10 w-10 rounded-full bg-gold/10 text-gold flex items-center justify-center">
@@ -249,10 +260,16 @@ export function MultiImageUploader({
         </div>
         <div className="text-left">
           <p className="text-sm font-medium">
-            {items.length === 0 ? "Drop images or click to upload" : "Add more images"}
+            {atCapacity
+              ? `Maximum ${maxImages} images reached`
+              : items.length === 0
+                ? "Drop images or click to upload"
+                : "Add more images"}
           </p>
           <p className="text-[11px] text-foreground/50">
-            Multiple files supported · PNG/JPG/WEBP/GIF/AVIF · up to {maxSizeMB}MB each
+            {atCapacity
+              ? "Remove one to add another."
+              : `Multiple files supported · PNG/JPG/WEBP/GIF/AVIF · up to ${maxSizeMB}MB each${maxImages ? ` · ${remainingSlots} slot${remainingSlots === 1 ? "" : "s"} left` : ""}`}
           </p>
         </div>
         <input
@@ -260,6 +277,7 @@ export function MultiImageUploader({
           accept={accept}
           multiple
           className="hidden"
+          disabled={atCapacity}
           onChange={(e) => {
             handleFiles(e.target.files);
             e.target.value = "";
@@ -267,12 +285,13 @@ export function MultiImageUploader({
         />
         <button
           type="button"
+          disabled={atCapacity}
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
-            setPickerOpen(true);
+            if (!atCapacity) setPickerOpen(true);
           }}
-          className="ml-auto inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-md border border-border bg-background hover:bg-cream"
+          className="ml-auto inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-md border border-border bg-background hover:bg-cream disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <FolderOpen className="w-3.5 h-3.5" /> Library
         </button>

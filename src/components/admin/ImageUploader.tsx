@@ -146,6 +146,8 @@ export function ImageUploader({
       setProgress(100);
       onChange(res.url);
       toast.success("Image uploaded");
+      // Refresh media-library cache so new uploads appear in the picker.
+      queryClient.invalidateQueries({ queryKey: MEDIA_LIBRARY_QUERY_KEY });
       // Fire-and-forget cleanup of the previous file in storage.
       void deletePrevious(previousUrl && previousUrl !== res.url ? previousUrl : undefined);
     } catch (e: unknown) {

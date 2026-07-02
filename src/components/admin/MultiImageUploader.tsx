@@ -306,8 +306,21 @@ export function MultiImageUploader({
         onSelect={(urls) => {
           if (!urls.length) return;
           const merged = [...items];
-          for (const u of urls) if (!merged.includes(u)) merged.push(u);
+          let skipped = 0;
+          for (const u of urls) {
+            if (merged.includes(u)) continue;
+            if (maxImages !== undefined && merged.length >= maxImages) {
+              skipped++;
+              continue;
+            }
+            merged.push(u);
+          }
           onChange(merged);
+          if (skipped > 0) {
+            setError(`Skipped ${skipped} image${skipped === 1 ? "" : "s"} — gallery limit of ${maxImages} reached.`);
+          } else {
+            setError(null);
+          }
         }}
       />
     </div>

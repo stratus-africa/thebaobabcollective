@@ -1,13 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
+import { useQueryClient } from "@tanstack/react-query";
 import {
-  AlertCircle, FolderOpen, GripVertical, Image as ImageIcon, Loader2, Plus, Upload, X,
+  AlertCircle, FolderOpen, GripVertical, Image as ImageIcon, Loader2, Plus, X,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { adminUploadImage, adminDeleteMedia } from "@/lib/admin.functions";
-import { MediaLibraryPicker } from "@/components/admin/MediaLibraryPicker";
+import { MediaLibraryPicker, MEDIA_LIBRARY_QUERY_KEY } from "@/components/admin/MediaLibraryPicker";
 
 const DEFAULT_ACCEPT = "image/png,image/jpeg,image/webp,image/gif,image/avif";
 const ACCEPT_REGEX = /^image\/(png|jpe?g|webp|gif|avif|svg\+xml)$/i;

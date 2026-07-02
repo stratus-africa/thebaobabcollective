@@ -1,13 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
+import { useQueryClient } from "@tanstack/react-query";
 import {
-  AlertCircle, FolderOpen, GripVertical, Image as ImageIcon, Loader2, Plus, Upload, X,
+  AlertCircle, FolderOpen, GripVertical, Image as ImageIcon, Loader2, Plus, X,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { adminUploadImage, adminDeleteMedia } from "@/lib/admin.functions";
-import { MediaLibraryPicker } from "@/components/admin/MediaLibraryPicker";
+import { MediaLibraryPicker, MEDIA_LIBRARY_QUERY_KEY } from "@/components/admin/MediaLibraryPicker";
 
 const DEFAULT_ACCEPT = "image/png,image/jpeg,image/webp,image/gif,image/avif";
 const ACCEPT_REGEX = /^image\/(png|jpe?g|webp|gif|avif|svg\+xml)$/i;
@@ -38,6 +39,7 @@ export function MultiImageUploader({
   value,
   onChange,
   maxSizeMB = 8,
+  maxImages,
   accept = DEFAULT_ACCEPT,
   className,
 }: {
@@ -45,11 +47,14 @@ export function MultiImageUploader({
   value: string[];
   onChange: (urls: string[]) => void;
   maxSizeMB?: number;
+  /** Optional cap on total images in the gallery. */
+  maxImages?: number;
   accept?: string;
   className?: string;
 }) {
   const upload = useServerFn(adminUploadImage);
   const deleteMedia = useServerFn(adminDeleteMedia);
+  const queryClient = useQueryClient();
 
   const [pending, setPending] = useState<PendingItem[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -65,21 +70,36 @@ export function MultiImageUploader({
   }, []);
 
   const items = Array.isArray(value) ? value.filter(Boolean) : [];
+  const remainingSlots = maxImages ? Math.max(0, maxImages - items.length) : Infinity;
+  const atCapacity = maxImages !== undefined && items.length >= maxImages;
 
   async function handleFiles(files: FileList | File[] | null | undefined) {
     setError(null);
     if (!files) return;
-    const list = Array.from(files);
-    if (!list.length) return;
+    const incoming = Array.from(files);
+    if (!incoming.length) return;
+
+    if (atCapacity) {
+      setError(`You've reached the ${maxImages} image limit. Remove one before adding more.`);
+      return;
+    }
+
+    let list = incoming;
+    if (maxImages !== undefined && incoming.length > remainingSlots) {
+      setError(
+        `Only ${remainingSlots} more image${remainingSlots === 1 ? "" : "s"} can be added (max ${maxImages}). Extra files were skipped.`,
+      );
+      list = incoming.slice(0, remainingSlots);
+    }
 
     const invalid = list.find((f) => !ACCEPT_REGEX.test(f.type));
     if (invalid) {
-      setError("Only PNG, JPG, WEBP, GIF, AVIF, or SVG images are supported.");
+      setError(`"${invalid.name}" isn't a supported image (use PNG, JPG, WEBP, GIF, AVIF, or SVG).`);
       return;
     }
     const tooBig = list.find((f) => f.size > maxSizeMB * 1024 * 1024);
     if (tooBig) {
-      setError(`Each image must be under ${maxSizeMB}MB (${tooBig.name} is ${humanSize(tooBig.size)}).`);
+      setError(`"${tooBig.name}" is ${humanSize(tooBig.size)} — each image must be under ${maxSizeMB}MB.`);
       return;
     }
 
@@ -121,8 +141,12 @@ export function MultiImageUploader({
       toast.success(
         uploaded.length === 1 ? "Image added to gallery" : `${uploaded.length} images added to gallery`,
       );
+      // Refresh the media-library cache so newly uploaded images show up
+      // immediately in the picker without a page reload.
+      queryClient.invalidateQueries({ queryKey: MEDIA_LIBRARY_QUERY_KEY });
     }
   }
+
 
   async function removeAt(index: number) {
     const url = items[index];
@@ -152,7 +176,9 @@ export function MultiImageUploader({
           <Label className="text-[11px] tracking-[0.2em] uppercase text-foreground/60">
             {label}
           </Label>
-          <span className="text-[11px] text-foreground/50">{items.length} image{items.length === 1 ? "" : "s"}</span>
+          <span className="text-[11px] text-foreground/50">
+            {items.length}{maxImages ? ` / ${maxImages}` : ""} image{items.length === 1 ? "" : "s"}
+          </span>
         </div>
       )}
 
@@ -205,6 +231,7 @@ export function MultiImageUploader({
 
       <label
         onDragOver={(e) => {
+          if (atCapacity) return;
           e.preventDefault();
           setDrag(true);
         }}
@@ -212,10 +239,15 @@ export function MultiImageUploader({
         onDrop={(e) => {
           e.preventDefault();
           setDrag(false);
+          if (atCapacity) return;
           handleFiles(e.dataTransfer.files);
         }}
-        className={`flex flex-wrap items-center justify-center gap-3 cursor-pointer rounded-md border-2 border-dashed px-6 py-6 text-center transition-colors ${
-          drag ? "border-gold bg-gold/5" : "border-border bg-cream/40 hover:border-gold hover:bg-gold/5"
+        className={`flex flex-wrap items-center justify-center gap-3 rounded-md border-2 border-dashed px-6 py-6 text-center transition-colors ${
+          atCapacity
+            ? "border-border bg-cream/20 cursor-not-allowed opacity-70"
+            : drag
+              ? "border-gold bg-gold/5 cursor-pointer"
+              : "border-border bg-cream/40 hover:border-gold hover:bg-gold/5 cursor-pointer"
         }`}
       >
         <div className="h-10 w-10 rounded-full bg-gold/10 text-gold flex items-center justify-center">
@@ -223,10 +255,16 @@ export function MultiImageUploader({
         </div>
         <div className="text-left">
           <p className="text-sm font-medium">
-            {items.length === 0 ? "Drop images or click to upload" : "Add more images"}
+            {atCapacity
+              ? `Maximum ${maxImages} images reached`
+              : items.length === 0
+                ? "Drop images or click to upload"
+                : "Add more images"}
           </p>
           <p className="text-[11px] text-foreground/50">
-            Multiple files supported · PNG/JPG/WEBP/GIF/AVIF · up to {maxSizeMB}MB each
+            {atCapacity
+              ? "Remove one to add another."
+              : `Multiple files supported · PNG/JPG/WEBP/GIF/AVIF · up to ${maxSizeMB}MB each${maxImages ? ` · ${remainingSlots} slot${remainingSlots === 1 ? "" : "s"} left` : ""}`}
           </p>
         </div>
         <input
@@ -234,6 +272,7 @@ export function MultiImageUploader({
           accept={accept}
           multiple
           className="hidden"
+          disabled={atCapacity}
           onChange={(e) => {
             handleFiles(e.target.files);
             e.target.value = "";
@@ -241,12 +280,13 @@ export function MultiImageUploader({
         />
         <button
           type="button"
+          disabled={atCapacity}
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
-            setPickerOpen(true);
+            if (!atCapacity) setPickerOpen(true);
           }}
-          className="ml-auto inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-md border border-border bg-background hover:bg-cream"
+          className="ml-auto inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-md border border-border bg-background hover:bg-cream disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <FolderOpen className="w-3.5 h-3.5" /> Library
         </button>
@@ -266,8 +306,21 @@ export function MultiImageUploader({
         onSelect={(urls) => {
           if (!urls.length) return;
           const merged = [...items];
-          for (const u of urls) if (!merged.includes(u)) merged.push(u);
+          let skipped = 0;
+          for (const u of urls) {
+            if (merged.includes(u)) continue;
+            if (maxImages !== undefined && merged.length >= maxImages) {
+              skipped++;
+              continue;
+            }
+            merged.push(u);
+          }
           onChange(merged);
+          if (skipped > 0) {
+            setError(`Skipped ${skipped} image${skipped === 1 ? "" : "s"} — gallery limit of ${maxImages} reached.`);
+          } else {
+            setError(null);
+          }
         }}
       />
     </div>

@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
+import { useQueryClient } from "@tanstack/react-query";
 import { FolderOpen, Loader2, RefreshCw, Upload, X, Image as ImageIcon, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { adminUploadImage, adminDeleteMedia } from "@/lib/admin.functions";
-import { MediaLibraryPicker } from "@/components/admin/MediaLibraryPicker";
+import { MediaLibraryPicker, MEDIA_LIBRARY_QUERY_KEY } from "@/components/admin/MediaLibraryPicker";
 
 type UploadFn = (args: {
   data: { filename: string; contentType: string; base64: string };
@@ -69,7 +70,9 @@ export function ImageUploader({
 }: ImageUploaderProps) {
   const defaultUpload = useServerFn(adminUploadImage) as unknown as UploadFn;
   const deleteMedia = useServerFn(adminDeleteMedia);
+  const queryClient = useQueryClient();
   const upload = uploadFn ?? defaultUpload;
+
 
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -143,6 +146,8 @@ export function ImageUploader({
       setProgress(100);
       onChange(res.url);
       toast.success("Image uploaded");
+      // Refresh media-library cache so new uploads appear in the picker.
+      queryClient.invalidateQueries({ queryKey: MEDIA_LIBRARY_QUERY_KEY });
       // Fire-and-forget cleanup of the previous file in storage.
       void deletePrevious(previousUrl && previousUrl !== res.url ? previousUrl : undefined);
     } catch (e: unknown) {

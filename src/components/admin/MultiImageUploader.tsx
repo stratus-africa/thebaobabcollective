@@ -231,11 +231,6 @@ export function MultiImageUploader({
 
       <label
         onDragOver={(e) => {
-          e.preventDefault();
-          setDrag(true);
-        }}
-      <label
-        onDragOver={(e) => {
           if (atCapacity) return;
           e.preventDefault();
           setDrag(true);

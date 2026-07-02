@@ -70,7 +70,9 @@ export function ImageUploader({
 }: ImageUploaderProps) {
   const defaultUpload = useServerFn(adminUploadImage) as unknown as UploadFn;
   const deleteMedia = useServerFn(adminDeleteMedia);
+  const queryClient = useQueryClient();
   const upload = uploadFn ?? defaultUpload;
+
 
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);

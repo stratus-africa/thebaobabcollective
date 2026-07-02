@@ -176,7 +176,9 @@ export function MultiImageUploader({
           <Label className="text-[11px] tracking-[0.2em] uppercase text-foreground/60">
             {label}
           </Label>
-          <span className="text-[11px] text-foreground/50">{items.length} image{items.length === 1 ? "" : "s"}</span>
+          <span className="text-[11px] text-foreground/50">
+            {items.length}{maxImages ? ` / ${maxImages}` : ""} image{items.length === 1 ? "" : "s"}
+          </span>
         </div>
       )}
 

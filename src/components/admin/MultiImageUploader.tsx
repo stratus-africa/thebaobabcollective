@@ -39,6 +39,7 @@ export function MultiImageUploader({
   value,
   onChange,
   maxSizeMB = 8,
+  maxImages,
   accept = DEFAULT_ACCEPT,
   className,
 }: {
@@ -46,11 +47,14 @@ export function MultiImageUploader({
   value: string[];
   onChange: (urls: string[]) => void;
   maxSizeMB?: number;
+  /** Optional cap on total images in the gallery. */
+  maxImages?: number;
   accept?: string;
   className?: string;
 }) {
   const upload = useServerFn(adminUploadImage);
   const deleteMedia = useServerFn(adminDeleteMedia);
+  const queryClient = useQueryClient();
 
   const [pending, setPending] = useState<PendingItem[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -66,21 +70,36 @@ export function MultiImageUploader({
   }, []);
 
   const items = Array.isArray(value) ? value.filter(Boolean) : [];
+  const remainingSlots = maxImages ? Math.max(0, maxImages - items.length) : Infinity;
+  const atCapacity = maxImages !== undefined && items.length >= maxImages;
 
   async function handleFiles(files: FileList | File[] | null | undefined) {
     setError(null);
     if (!files) return;
-    const list = Array.from(files);
-    if (!list.length) return;
+    const incoming = Array.from(files);
+    if (!incoming.length) return;
+
+    if (atCapacity) {
+      setError(`You've reached the ${maxImages} image limit. Remove one before adding more.`);
+      return;
+    }
+
+    let list = incoming;
+    if (maxImages !== undefined && incoming.length > remainingSlots) {
+      setError(
+        `Only ${remainingSlots} more image${remainingSlots === 1 ? "" : "s"} can be added (max ${maxImages}). Extra files were skipped.`,
+      );
+      list = incoming.slice(0, remainingSlots);
+    }
 
     const invalid = list.find((f) => !ACCEPT_REGEX.test(f.type));
     if (invalid) {
-      setError("Only PNG, JPG, WEBP, GIF, AVIF, or SVG images are supported.");
+      setError(`"${invalid.name}" isn't a supported image (use PNG, JPG, WEBP, GIF, AVIF, or SVG).`);
       return;
     }
     const tooBig = list.find((f) => f.size > maxSizeMB * 1024 * 1024);
     if (tooBig) {
-      setError(`Each image must be under ${maxSizeMB}MB (${tooBig.name} is ${humanSize(tooBig.size)}).`);
+      setError(`"${tooBig.name}" is ${humanSize(tooBig.size)} — each image must be under ${maxSizeMB}MB.`);
       return;
     }
 
@@ -122,8 +141,12 @@ export function MultiImageUploader({
       toast.success(
         uploaded.length === 1 ? "Image added to gallery" : `${uploaded.length} images added to gallery`,
       );
+      // Refresh the media-library cache so newly uploaded images show up
+      // immediately in the picker without a page reload.
+      queryClient.invalidateQueries({ queryKey: MEDIA_LIBRARY_QUERY_KEY });
     }
   }
+
 
   async function removeAt(index: number) {
     const url = items[index];

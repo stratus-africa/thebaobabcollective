@@ -133,7 +133,7 @@ function LodgePage() {
             <img src={l.hero_image} alt={l.name} className="absolute inset-0 w-full h-full object-cover" />
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
-          <div className="relative max-w-7xl mx-auto px-6 lg:px-10 pb-14 text-background w-full flex flex-wrap items-end justify-between gap-6">
+          <div className="relative max-w-[1440px] mx-auto px-6 lg:px-10 pb-14 text-background w-full flex flex-wrap items-end justify-between gap-6">
             <div>
               <p className="text-[11px] tracking-[0.3em] uppercase text-gold mb-3 inline-flex items-center gap-2">
                 <MapPin className="w-3 h-3" /> {l.location}
@@ -182,7 +182,7 @@ function LodgePage() {
 
         {gallery.length ? (
           <section className="pb-20">
-            <div className="max-w-7xl mx-auto px-6 lg:px-10">
+            <div className="max-w-[1440px] mx-auto px-6 lg:px-10">
               <h2 className="font-serif text-3xl text-foreground mb-8 text-center">Gallery</h2>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
                 {gallery.map((g: { src: string; alt: string }, i: number) => (
@@ -240,7 +240,7 @@ function LodgePage() {
 
         {others.length > 0 && (
           <section className="py-20 bg-cream">
-            <div className="max-w-7xl mx-auto px-6 lg:px-10">
+            <div className="max-w-[1440px] mx-auto px-6 lg:px-10">
               <h2 className="font-serif text-3xl text-foreground mb-10 text-center">Other Lodges</h2>
               <div className="grid md:grid-cols-3 gap-8">
                 {others.map((o: any) => (

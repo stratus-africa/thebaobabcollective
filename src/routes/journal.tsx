@@ -32,7 +32,7 @@ function JournalIndex() {
         </section>
 
         <section className="py-20">
-          <div className="max-w-7xl mx-auto px-6 lg:px-10 grid md:grid-cols-3 gap-10">
+          <div className="max-w-[1440px] mx-auto px-6 lg:px-10 grid md:grid-cols-3 gap-10">
             {articles.map((a) => (
               <Link
                 key={a.slug}

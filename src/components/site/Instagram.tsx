@@ -12,7 +12,7 @@ const imgs = [g1, g2, g3, g4, g5, g6, g7];
 export function InstagramStrip() {
   return (
     <section className="bg-forest text-forest-foreground py-6">
-      <div className="max-w-7xl mx-auto px-6 lg:px-10 flex flex-col lg:flex-row items-center gap-6">
+      <div className="max-w-[1440px] mx-auto px-6 lg:px-10 flex flex-col lg:flex-row items-center gap-6">
         <div className="flex items-center gap-4 shrink-0 lg:w-64">
           <IgIcon className="w-8 h-8" strokeWidth={1.2} />
           <div>

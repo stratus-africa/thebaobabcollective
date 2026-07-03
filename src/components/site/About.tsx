@@ -12,7 +12,7 @@ export function About({ content }: { content?: AboutContent | null } = {}) {
 
   return (
     <section className="bg-cream py-20 md:py-28">
-      <div className="max-w-7xl mx-auto px-6 lg:px-10 grid md:grid-cols-2 gap-12 lg:gap-16 items-center">
+      <div className="max-w-[1440px] mx-auto px-6 lg:px-10 grid md:grid-cols-2 gap-12 lg:gap-16 items-center">
         <div>
           <p className="text-[11px] tracking-[0.3em] uppercase text-foreground/70 mb-6">
             {c.eyebrow}

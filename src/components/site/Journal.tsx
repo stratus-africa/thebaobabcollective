@@ -5,7 +5,7 @@ import { articles } from "@/lib/content";
 export function Journal() {
   return (
     <section className="bg-sand/40 py-20 md:py-28">
-      <div className="max-w-7xl mx-auto px-6 lg:px-10 grid lg:grid-cols-[1fr_2fr] gap-12 lg:gap-16">
+      <div className="max-w-[1440px] mx-auto px-6 lg:px-10 grid lg:grid-cols-[1fr_2fr] gap-12 lg:gap-16">
         <div>
           <p className="text-[11px] tracking-[0.3em] uppercase text-terracotta mb-5">Be Inspired</p>
           <h2 className="font-serif text-4xl md:text-5xl text-foreground leading-[1.1] mb-6">

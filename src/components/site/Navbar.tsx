@@ -62,7 +62,7 @@ export function Navbar() {
       </div>
 
       <div className="bg-background border-b border-border/40">
-        <div className="max-w-7xl mx-auto px-6 lg:px-10 py-1 flex items-center justify-between gap-6">
+        <div className="max-w-[1440px] mx-auto px-6 lg:px-10 py-1 flex items-center justify-between gap-6">
           <Link to="/" className="flex items-center gap-3 shrink-0 -my-2" aria-label="The Baobab Collective home">
             {logoUrl ? (
               <img src={logoUrl} alt="" className="w-40 h-40 lg:w-44 lg:h-44 object-contain" />

@@ -61,7 +61,7 @@ function LodgesPage() {
         </section>
 
         <section className="py-12 md:py-16">
-          <div className="max-w-7xl mx-auto px-6 lg:px-10 space-y-8">
+          <div className="max-w-[1440px] mx-auto px-6 lg:px-10 space-y-8">
             <Suspense
               fallback={
                 <>

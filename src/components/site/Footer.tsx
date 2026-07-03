@@ -33,7 +33,7 @@ export function Footer() {
 
   return (
     <footer id="contact" className="bg-cream pt-16 pb-6">
-      <div className="max-w-7xl mx-auto px-6 lg:px-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
+      <div className="max-w-[1440px] mx-auto px-6 lg:px-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
         <div className="lg:col-span-1">
           <Link to="/" className="flex items-start gap-3 mb-4" aria-label="The Baobab Collective home">
             {logoUrl ? (
@@ -109,7 +109,7 @@ export function Footer() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 lg:px-10 mt-14 pt-6 border-t border-border/60">
+      <div className="max-w-[1440px] mx-auto px-6 lg:px-10 mt-14 pt-6 border-t border-border/60">
         <p className="text-center text-[11px] tracking-[0.2em] uppercase text-foreground/60">
           © The Baobab Collective {new Date().getFullYear()} &nbsp;|&nbsp; All Rights Reserved
         </p>

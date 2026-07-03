@@ -156,31 +156,34 @@ export function Navbar() {
 
         {open && (
           <div className="lg:hidden border-t border-border/40 bg-background px-6 py-4 flex flex-col gap-3 max-h-[80vh] overflow-y-auto">
-            {[...primaryItems, ...moreItems].map((item, i) => (
-              <div key={`${item.to}-${i}`}>
-                <Link
-                  to={item.to as any}
-                  onClick={() => setOpen(false)}
-                  className="text-[12px] tracking-[0.2em] uppercase text-foreground/80 hover:text-foreground py-1 block"
-                >
-                  {item.label}
-                </Link>
-                {"children" in item && item.children && item.children.length > 0 && (
-                  <div className="pl-4 mt-1 flex flex-col gap-1">
-                    {item.children.filter((c) => !c.hidden).map((c) => (
-                      <Link
-                        key={c.to}
-                        to={c.to as any}
-                        onClick={() => setOpen(false)}
-                        className="text-[11px] tracking-[0.2em] uppercase text-foreground/60 hover:text-foreground py-1"
-                      >
-                        {c.label}
-                      </Link>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
+            {[...primaryItems, ...moreItems].map((item, i) => {
+              const children = "children" in item ? (item.children ?? []).filter((c) => !c.hidden) : [];
+              return (
+                <div key={`${item.to}-${i}`}>
+                  <Link
+                    to={item.to as any}
+                    onClick={() => setOpen(false)}
+                    className="text-[12px] tracking-[0.2em] uppercase text-foreground/80 hover:text-foreground py-1 block"
+                  >
+                    {item.label}
+                  </Link>
+                  {children.length > 0 && (
+                    <div className="pl-4 mt-1 flex flex-col gap-1">
+                      {children.map((c) => (
+                        <Link
+                          key={c.to}
+                          to={c.to as any}
+                          onClick={() => setOpen(false)}
+                          className="text-[11px] tracking-[0.2em] uppercase text-foreground/60 hover:text-foreground py-1"
+                        >
+                          {c.label}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
             <div className="pt-3 mt-2 border-t border-border/40 flex flex-col gap-3">
               {user && isAdmin && (
                 <>

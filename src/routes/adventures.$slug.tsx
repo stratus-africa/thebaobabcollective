@@ -100,7 +100,7 @@ function AdventureDetail() {
       <section className="relative h-[60vh] min-h-[420px] overflow-hidden">
         <img src={a.image} alt={a.name} className="absolute inset-0 w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 px-6 lg:px-10 pb-10 max-w-7xl mx-auto text-white">
+        <div className="absolute bottom-0 left-0 right-0 px-6 lg:px-10 pb-10 max-w-[1440px] mx-auto text-white">
           <p className="text-[11px] tracking-[0.3em] uppercase text-gold mb-2 flex items-center gap-2">
             <MapPin className="w-3 h-3" /> {a.region}
           </p>
@@ -113,7 +113,7 @@ function AdventureDetail() {
         </div>
       </section>
 
-      <div className="max-w-7xl mx-auto px-6 lg:px-10 pt-6">
+      <div className="max-w-[1440px] mx-auto px-6 lg:px-10 pt-6">
         <Breadcrumbs
           items={[
             { label: "Home", to: "/" },

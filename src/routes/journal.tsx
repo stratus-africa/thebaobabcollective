@@ -2,9 +2,40 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
-import { articles } from "@/lib/content";
+import { articles as staticArticles } from "@/lib/content";
+import { getArticles } from "@/lib/cms.functions";
+
+type Article = {
+  slug: string;
+  title: string;
+  excerpt: string;
+  image: string;
+  category: string;
+  readTime: string;
+};
+
+function normalize(row: any): Article {
+  return {
+    slug: row.slug,
+    title: row.title,
+    excerpt: row.excerpt ?? "",
+    image: row.image ?? "",
+    category: row.category ?? "",
+    readTime: row.read_time ?? row.readTime ?? "",
+  };
+}
 
 export const Route = createFileRoute("/journal")({
+  loader: async () => {
+    const db = await getArticles().catch(() => [] as any[]);
+    const list: Article[] = db && db.length > 0
+      ? db.map(normalize)
+      : staticArticles.map((a) => ({
+          slug: a.slug, title: a.title, excerpt: a.excerpt, image: a.image,
+          category: a.category, readTime: a.readTime,
+        }));
+    return { list };
+  },
   head: () => ({
     meta: [
       { title: "Journal — The Baobab Collective" },
@@ -19,6 +50,7 @@ export const Route = createFileRoute("/journal")({
 });
 
 function JournalIndex() {
+  const { list } = Route.useLoaderData() as { list: Article[] };
   return (
     <div className="bg-background min-h-screen">
       <Navbar />
@@ -32,8 +64,8 @@ function JournalIndex() {
         </section>
 
         <section className="py-20">
-          <div className="max-w-7xl mx-auto px-6 lg:px-10 grid md:grid-cols-3 gap-10">
-            {articles.map((a) => (
+          <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-10">
+            {list.map((a) => (
               <Link
                 key={a.slug}
                 to="/journal/$slug"
@@ -42,16 +74,22 @@ function JournalIndex() {
               >
                 <article>
                   <div className="overflow-hidden aspect-[4/3] mb-5">
-                    <img
-                      src={a.image}
-                      alt={a.title}
-                      loading="lazy"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                    />
+                    {a.image ? (
+                      <img
+                        src={a.image}
+                        alt={a.title}
+                        loading="lazy"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                      />
+                    ) : <div className="w-full h-full bg-cream" />}
                   </div>
-                  <p className="text-[10px] tracking-[0.25em] uppercase text-gold mb-2">{a.category} · {a.readTime}</p>
+                  {(a.category || a.readTime) && (
+                    <p className="text-[10px] tracking-[0.25em] uppercase text-gold mb-2">
+                      {[a.category, a.readTime].filter(Boolean).join(" · ")}
+                    </p>
+                  )}
                   <h2 className="font-serif text-2xl text-foreground mb-3 group-hover:text-gold transition-colors">{a.title}</h2>
-                  <p className="text-foreground/70 mb-3">{a.excerpt}</p>
+                  {a.excerpt && <p className="text-foreground/70 mb-3">{a.excerpt}</p>}
                   <span className="inline-flex items-center gap-2 text-[11px] tracking-[0.25em] uppercase text-foreground">
                     Read More <ArrowRight className="w-3 h-3" />
                   </span>

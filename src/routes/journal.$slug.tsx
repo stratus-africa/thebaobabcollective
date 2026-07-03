@@ -2,13 +2,61 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowRight, ArrowLeft } from "lucide-react";
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
-import { articles, getArticle } from "@/lib/content";
+import { articles as staticArticles, getArticle as getStaticArticle } from "@/lib/content";
+import { getArticleBySlug, getArticles } from "@/lib/cms.functions";
+
+type ArticleView = {
+  slug: string;
+  title: string;
+  excerpt: string;
+  image: string;
+  date: string;
+  readTime: string;
+  category: string;
+  content: string[];
+};
+
+function normalizeContent(raw: unknown): string[] {
+  if (Array.isArray(raw)) return raw.map((x) => String(x)).filter(Boolean);
+  if (typeof raw === "string") return raw.split(/\n\n+/).map((s) => s.trim()).filter(Boolean);
+  return [];
+}
+
+function toView(row: any): ArticleView {
+  return {
+    slug: row.slug,
+    title: row.title,
+    excerpt: row.excerpt ?? "",
+    image: row.image ?? "",
+    date: row.date ?? (row.published_at ? new Date(row.published_at).toLocaleDateString(undefined, { year: "numeric", month: "long" }) : ""),
+    readTime: row.read_time ?? row.readTime ?? "",
+    category: row.category ?? "",
+    content: normalizeContent(row.content),
+  };
+}
 
 export const Route = createFileRoute("/journal/$slug")({
-  loader: ({ params }) => {
-    const article = getArticle(params.slug);
+  loader: async ({ params }) => {
+    // Try DB first, fall back to static content.
+    const dbRow = await getArticleBySlug({ data: { slug: params.slug } }).catch(() => null);
+    let article: ArticleView | null = dbRow ? toView(dbRow) : null;
+    if (!article) {
+      const stat = getStaticArticle(params.slug);
+      if (stat) article = { ...stat };
+    }
     if (!article) throw notFound();
-    return { article };
+
+    // Related list: prefer DB, fall back to static
+    let relatedPool: ArticleView[] = [];
+    const dbAll = await getArticles().catch(() => [] as any[]);
+    if (dbAll && dbAll.length > 0) {
+      relatedPool = dbAll.map(toView);
+    } else {
+      relatedPool = staticArticles.map((a) => ({ ...a }));
+    }
+    const related = relatedPool.filter((a) => a.slug !== article!.slug).slice(0, 2);
+
+    return { article, related };
   },
   head: ({ loaderData }) => {
     const a = loaderData?.article;
@@ -22,22 +70,9 @@ export const Route = createFileRoute("/journal/$slug")({
         { property: "og:description", content: desc },
         { property: "og:type", content: "article" },
         { property: "og:url", content: a ? `/journal/${a.slug}` : "/journal" },
+        ...(a?.image ? [{ property: "og:image", content: a.image }] : []),
       ],
       links: a ? [{ rel: "canonical", href: `/journal/${a.slug}` }] : [],
-      scripts: a
-        ? [
-            {
-              type: "application/ld+json",
-              children: JSON.stringify({
-                "@context": "https://schema.org",
-                "@type": "Article",
-                headline: a.title,
-                description: a.excerpt,
-                datePublished: a.date,
-              }),
-            },
-          ]
-        : [],
     };
   },
   notFoundComponent: () => (
@@ -64,8 +99,7 @@ export const Route = createFileRoute("/journal/$slug")({
 });
 
 function ArticlePage() {
-  const { article } = Route.useLoaderData();
-  const related = articles.filter((a) => a.slug !== article.slug);
+  const { article, related } = Route.useLoaderData() as { article: ArticleView; related: ArticleView[] };
 
   return (
     <div className="bg-background min-h-screen">
@@ -77,53 +111,65 @@ function ArticlePage() {
               <Link to="/journal" className="inline-flex items-center gap-2 text-[11px] tracking-[0.25em] uppercase text-foreground/60 hover:text-gold mb-8">
                 <ArrowLeft className="w-3 h-3" /> Back to Journal
               </Link>
-              <p className="text-[11px] tracking-[0.3em] uppercase text-terracotta mb-4">{article.category} · {article.readTime}</p>
+              {(article.category || article.readTime) && (
+                <p className="text-[11px] tracking-[0.3em] uppercase text-terracotta mb-4">
+                  {[article.category, article.readTime].filter(Boolean).join(" · ")}
+                </p>
+              )}
               <h1 className="font-serif text-4xl md:text-5xl text-foreground leading-[1.1] mb-5">{article.title}</h1>
-              <p className="text-sm text-foreground/60">{article.date}</p>
+              {article.date && <p className="text-sm text-foreground/60">{article.date}</p>}
             </div>
           </header>
 
-          <div className="max-w-5xl mx-auto px-6 lg:px-10 -mt-8 md:-mt-12">
-            <div className="aspect-[16/9] overflow-hidden">
-              <img src={article.image} alt={article.title} className="w-full h-full object-cover" />
+          {article.image && (
+            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-10 -mt-8 md:-mt-12">
+              <div className="aspect-[16/9] overflow-hidden">
+                <img src={article.image} alt={article.title} className="w-full h-full object-cover" />
+              </div>
             </div>
-          </div>
+          )}
 
-          <div className="max-w-3xl mx-auto px-6 py-16 md:py-20">
+          <div className="max-w-3xl mx-auto px-4 sm:px-6 py-16 md:py-20">
             <div className="space-y-6 text-foreground/85 text-lg leading-relaxed font-serif">
-              {article.content.map((p: string, i: number) => (
-                <p key={i}>{p}</p>
-              ))}
+              {article.content.length > 0 ? (
+                article.content.map((p, i) => <p key={i}>{p}</p>)
+              ) : (
+                <p className="text-foreground/60">This article has no content yet.</p>
+              )}
             </div>
           </div>
         </article>
 
-        <section aria-labelledby="related" className="bg-cream py-20">
-          <div className="max-w-7xl mx-auto px-6 lg:px-10">
-            <h2 id="related" className="font-serif text-3xl text-foreground text-center mb-12">Related Articles</h2>
-            <div className="grid md:grid-cols-2 gap-10">
-              {related.map((a) => (
-                <Link
-                  key={a.slug}
-                  to="/journal/$slug"
-                  params={{ slug: a.slug }}
-                  className="group grid grid-cols-[140px_1fr] gap-5 items-center"
-                >
-                  <div className="overflow-hidden aspect-square">
-                    <img src={a.image} alt={a.title} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-                  </div>
-                  <div>
-                    <p className="text-[10px] tracking-[0.25em] uppercase text-gold mb-1">{a.category}</p>
-                    <h3 className="font-serif text-xl text-foreground group-hover:text-gold transition-colors mb-2">{a.title}</h3>
-                    <span className="inline-flex items-center gap-2 text-[11px] tracking-[0.25em] uppercase text-foreground/70">
-                      Read <ArrowRight className="w-3 h-3" />
-                    </span>
-                  </div>
-                </Link>
-              ))}
+        {related.length > 0 && (
+          <section aria-labelledby="related" className="bg-cream py-20">
+            <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">
+              <h2 id="related" className="font-serif text-3xl text-foreground text-center mb-12">Related Articles</h2>
+              <div className="grid md:grid-cols-2 gap-10">
+                {related.map((a) => (
+                  <Link
+                    key={a.slug}
+                    to="/journal/$slug"
+                    params={{ slug: a.slug }}
+                    className="group grid grid-cols-[140px_1fr] gap-5 items-center"
+                  >
+                    <div className="overflow-hidden aspect-square">
+                      {a.image ? (
+                        <img src={a.image} alt={a.title} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                      ) : <div className="w-full h-full bg-background" />}
+                    </div>
+                    <div>
+                      {a.category && <p className="text-[10px] tracking-[0.25em] uppercase text-gold mb-1">{a.category}</p>}
+                      <h3 className="font-serif text-xl text-foreground group-hover:text-gold transition-colors mb-2">{a.title}</h3>
+                      <span className="inline-flex items-center gap-2 text-[11px] tracking-[0.25em] uppercase text-foreground/70">
+                        Read <ArrowRight className="w-3 h-3" />
+                      </span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        )}
       </main>
       <Footer />
     </div>

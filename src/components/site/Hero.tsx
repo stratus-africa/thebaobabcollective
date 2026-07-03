@@ -36,7 +36,7 @@ export function Hero({ content }: { content?: HeroContent | null } = {}) {
         <div className="absolute inset-0 bg-gradient-to-r from-background/75 via-background/25 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent" />
 
-        <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-10 h-full flex items-center">
+        <div className="relative z-10 max-w-[1440px] mx-auto px-6 lg:px-10 h-full flex items-center">
           <div className="max-w-xl animate-fade-up">
             <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl text-foreground leading-[1.05]">
               {c.hero_title_line1}<br />{c.hero_title_line2}

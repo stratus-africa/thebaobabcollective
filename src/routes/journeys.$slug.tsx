@@ -133,7 +133,7 @@ function JourneyPage() {
             className="absolute inset-0 w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
-          <div className="relative max-w-7xl mx-auto px-6 lg:px-10 pb-16 text-background w-full flex flex-wrap items-end justify-between gap-6">
+          <div className="relative max-w-[1440px] mx-auto px-6 lg:px-10 pb-16 text-background w-full flex flex-wrap items-end justify-between gap-6">
             <div>
               <p className="text-[11px] tracking-[0.3em] uppercase text-gold mb-4">Our Journeys</p>
               <h1 className="font-serif text-5xl md:text-7xl leading-[1.05] mb-4">{journey.title}</h1>
@@ -158,7 +158,7 @@ function JourneyPage() {
         </section>
 
         <section className="py-20">
-          <div className="max-w-7xl mx-auto px-6 lg:px-10">
+          <div className="max-w-[1440px] mx-auto px-6 lg:px-10">
             <h2 className="font-serif text-3xl md:text-4xl text-foreground mb-12 text-center">
               Featured Itineraries
             </h2>
@@ -222,7 +222,7 @@ function JourneyPage() {
 
         {galleryItems.length >= 2 && (
           <section className="pb-20 bg-cream pt-16">
-            <div className="max-w-7xl mx-auto px-6 lg:px-10">
+            <div className="max-w-[1440px] mx-auto px-6 lg:px-10">
               <p className="text-[11px] tracking-[0.3em] uppercase text-terracotta mb-3 text-center">Glimpses</p>
               <h2 className="font-serif text-3xl md:text-4xl text-foreground mb-10 text-center">Gallery</h2>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
@@ -281,7 +281,7 @@ function JourneyPage() {
 
         {featuredDestinations.length > 0 && (
           <section className="py-20">
-            <div className="max-w-7xl mx-auto px-6 lg:px-10">
+            <div className="max-w-[1440px] mx-auto px-6 lg:px-10">
               <div className="text-center mb-12">
                 <p className="text-[11px] tracking-[0.3em] uppercase text-terracotta mb-3">Where it could take you</p>
                 <h2 className="font-serif text-3xl md:text-4xl text-foreground">Featured Destinations</h2>
@@ -316,7 +316,7 @@ function JourneyPage() {
         )}
 
         <section className="py-20 bg-cream">
-          <div className="max-w-7xl mx-auto px-6 lg:px-10">
+          <div className="max-w-[1440px] mx-auto px-6 lg:px-10">
             <h2 className="font-serif text-3xl text-foreground mb-10 text-center">Other Journeys</h2>
             <div className="grid md:grid-cols-3 gap-8">
               {others.map((o) => (

@@ -11,7 +11,7 @@ export function Breadcrumbs({ items, className }: { items: Crumb[]; className?: 
   return (
     <nav
       aria-label="Breadcrumb"
-      className={`max-w-7xl mx-auto px-6 lg:px-10 pt-6 ${className ?? ""}`}
+      className={`max-w-[1440px] mx-auto px-6 lg:px-10 pt-6 ${className ?? ""}`}
     >
       <ol className="flex flex-wrap items-center gap-1.5 text-xs tracking-wide text-foreground/65">
         <li className="flex items-center gap-1.5">

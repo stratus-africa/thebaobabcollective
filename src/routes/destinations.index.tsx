@@ -79,7 +79,7 @@ function DestinationsPage() {
         </section>
 
         <section className="py-16">
-          <div className="max-w-7xl mx-auto px-6 lg:px-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="max-w-[1440px] mx-auto px-6 lg:px-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {filtered.map((d) => (
               <article
                 key={d.id}

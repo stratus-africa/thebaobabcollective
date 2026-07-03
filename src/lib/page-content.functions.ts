@@ -3,7 +3,20 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
 
-const KEYS = ["home", "about", "private_travel"] as const;
+const KEYS = [
+  "home",
+  "about",
+  "private_travel",
+  "home_journeys",
+  "home_journal",
+  "home_instagram",
+  "top_bar",
+  "contact",
+  "journeys_index",
+  "destinations_index",
+  "lodges_index",
+  "adventures_index",
+] as const;
 type PageKey = (typeof KEYS)[number];
 
 const GetSchema = z.object({ key: z.enum(KEYS) });

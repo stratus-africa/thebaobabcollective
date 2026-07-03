@@ -157,7 +157,9 @@ export function Navbar() {
         {open && (
           <div className="lg:hidden border-t border-border/40 bg-background px-6 py-4 flex flex-col gap-3 max-h-[80vh] overflow-y-auto">
             {[...primaryItems, ...moreItems].map((item, i) => {
-              const children = "children" in item ? (item.children ?? []).filter((c) => !c.hidden) : [];
+              const rawChildren = ("children" in item ? item.children : undefined) as
+                | { label: string; to: string; hidden?: boolean }[] | undefined;
+              const children = (rawChildren ?? []).filter((c) => !c.hidden);
               return (
                 <div key={`${item.to}-${i}`}>
                   <Link

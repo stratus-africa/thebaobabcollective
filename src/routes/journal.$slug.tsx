@@ -99,7 +99,7 @@ export const Route = createFileRoute("/journal/$slug")({
 });
 
 function ArticlePage() {
-  const { article, related } = Route.useLoaderData();
+  const { article, related } = Route.useLoaderData() as { article: ArticleView; related: ArticleView[] };
 
   return (
     <div className="bg-background min-h-screen">

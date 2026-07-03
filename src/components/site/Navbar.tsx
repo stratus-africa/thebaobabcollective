@@ -4,21 +4,9 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { BaobabLogo } from "./Logo";
 import { EnquireDialog } from "@/components/site/EnquireDialog";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { useMenuConfig } from "@/hooks/useMenuConfig";
 import { supabase } from "@/integrations/supabase/client";
 import type { User } from "@supabase/supabase-js";
-
-const primaryItems = [
-  { label: "Home", to: "/" as const },
-  { label: "Adventures", to: "/adventures" as const, children: [{ label: "Destinations", to: "/destinations" as const }] },
-  { label: "Lodges", to: "/lodges" as const },
-  { label: "Journal", to: "/journal" as const },
-];
-
-const moreItems = [
-  { label: "About", to: "/about" as const },
-  { label: "Testimonials", to: "/testimonials" as const },
-  { label: "FAQ", to: "/faq" as const },
-];
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
@@ -27,6 +15,10 @@ export function Navbar() {
   const [isAdmin, setIsAdmin] = useState(false);
   const navigate = useNavigate();
   const { logoUrl } = useSiteSettings();
+  const menu = useMenuConfig();
+
+  const primaryItems = menu.primary.filter((i) => !i.hidden);
+  const moreItems = menu.more.filter((i) => !i.hidden);
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setUser(data.user));
@@ -57,28 +49,30 @@ export function Navbar() {
 
   return (
     <header className="sticky top-0 z-50">
-      <div className="bg-forest text-forest-foreground py-2 px-4 text-center text-[11px] tracking-luxury uppercase">
-        Curated Safari Journeys. Authentic Connections. Extraordinary Experiences.
-      </div>
+      {menu.topBarEnabled && menu.topBarText && (
+        <div className="bg-forest text-forest-foreground py-2 px-4 text-center text-[11px] tracking-luxury uppercase">
+          {menu.topBarText}
+        </div>
+      )}
 
       <div className="bg-background border-b border-border/40">
-        <div className="max-w-[1440px] mx-auto px-6 lg:px-10 py-1 flex items-center justify-between gap-6">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 py-1 flex items-center justify-between gap-4 lg:gap-6">
           <Link to="/" className="flex items-center gap-3 shrink-0 -my-2" aria-label="The Baobab Collective home">
             {logoUrl ? (
-              <img src={logoUrl} alt="" className="w-40 h-40 lg:w-44 lg:h-44 object-contain" />
+              <img src={logoUrl} alt="" className="w-24 h-24 sm:w-32 sm:h-32 lg:w-44 lg:h-44 object-contain" />
             ) : (
-              <BaobabLogo className="w-40 h-40 lg:w-44 lg:h-44" />
+              <BaobabLogo className="w-24 h-24 sm:w-32 sm:h-32 lg:w-44 lg:h-44" />
             )}
           </Link>
 
-          <nav aria-label="Primary" className="hidden lg:flex items-center gap-7">
-            {primaryItems.map((item) => (
-              "children" in item && item.children ? (
-                <PrimaryWithSubmenu key={item.to} item={item} />
+          <nav aria-label="Primary" className="hidden lg:flex items-center gap-6 xl:gap-7">
+            {primaryItems.map((item, i) => (
+              item.children && item.children.length ? (
+                <PrimaryWithSubmenu key={`${item.to}-${i}`} item={item} />
               ) : (
                 <Link
-                  key={item.to}
-                  to={item.to}
+                  key={`${item.to}-${i}`}
+                  to={item.to as any}
                   activeOptions={{ exact: item.to === "/" }}
                   className="text-[12px] tracking-[0.2em] uppercase text-foreground/70 hover:text-foreground"
                   activeProps={{ className: "text-foreground" }}
@@ -88,31 +82,33 @@ export function Navbar() {
               )
             ))}
 
-            <div className="relative" onMouseLeave={() => setMoreOpen(false)}>
-              <button
-                onMouseEnter={() => setMoreOpen(true)}
-                onClick={() => setMoreOpen((o) => !o)}
-                className="text-[12px] tracking-[0.2em] uppercase text-foreground/70 hover:text-foreground inline-flex items-center gap-1"
-              >
-                More <ChevronDown className="w-3 h-3" />
-              </button>
-              {moreOpen && (
-                <div className="absolute right-0 top-full pt-2">
-                  <div className="bg-background border border-border shadow-lg py-2 min-w-[200px]">
-                    {moreItems.map((m) => (
-                      <Link
-                        key={m.to}
-                        to={m.to}
-                        onClick={() => setMoreOpen(false)}
-                        className="block px-5 py-2 text-[12px] tracking-[0.15em] uppercase text-foreground/75 hover:text-foreground hover:bg-cream"
-                      >
-                        {m.label}
-                      </Link>
-                    ))}
+            {moreItems.length > 0 && (
+              <div className="relative" onMouseLeave={() => setMoreOpen(false)}>
+                <button
+                  onMouseEnter={() => setMoreOpen(true)}
+                  onClick={() => setMoreOpen((o) => !o)}
+                  className="text-[12px] tracking-[0.2em] uppercase text-foreground/70 hover:text-foreground inline-flex items-center gap-1"
+                >
+                  More <ChevronDown className="w-3 h-3" />
+                </button>
+                {moreOpen && (
+                  <div className="absolute right-0 top-full pt-2">
+                    <div className="bg-background border border-border shadow-lg py-2 min-w-[200px]">
+                      {moreItems.map((m, i) => (
+                        <Link
+                          key={`${m.to}-${i}`}
+                          to={m.to as any}
+                          onClick={() => setMoreOpen(false)}
+                          className="block px-5 py-2 text-[12px] tracking-[0.15em] uppercase text-foreground/75 hover:text-foreground hover:bg-cream"
+                        >
+                          {m.label}
+                        </Link>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )}
-            </div>
+                )}
+              </div>
+            )}
           </nav>
 
           <div className="hidden lg:flex items-center gap-4">
@@ -126,17 +122,26 @@ export function Navbar() {
                 </button>
               </>
             )}
-            <EnquireDialog
-              autosaveKey="enquire:navbar"
-              trigger={
-                <button
-                  type="button"
-                  className="inline-flex items-center justify-center border border-gold text-gold uppercase tracking-[0.2em] text-[11px] px-5 py-3 hover:bg-gold hover:text-gold-foreground transition-colors"
-                >
-                  Enquire
-                </button>
-              }
-            />
+            {menu.ctaTo ? (
+              <Link
+                to={menu.ctaTo as any}
+                className="inline-flex items-center justify-center border border-gold text-gold uppercase tracking-[0.2em] text-[11px] px-5 py-3 hover:bg-gold hover:text-gold-foreground transition-colors"
+              >
+                {menu.ctaLabel}
+              </Link>
+            ) : (
+              <EnquireDialog
+                autosaveKey="enquire:navbar"
+                trigger={
+                  <button
+                    type="button"
+                    className="inline-flex items-center justify-center border border-gold text-gold uppercase tracking-[0.2em] text-[11px] px-5 py-3 hover:bg-gold hover:text-gold-foreground transition-colors"
+                  >
+                    {menu.ctaLabel}
+                  </button>
+                }
+              />
+            )}
           </div>
 
           <button
@@ -151,15 +156,30 @@ export function Navbar() {
 
         {open && (
           <div className="lg:hidden border-t border-border/40 bg-background px-6 py-4 flex flex-col gap-3 max-h-[80vh] overflow-y-auto">
-            {[...primaryItems, ...moreItems].map((item) => (
-              <Link
-                key={item.to}
-                to={item.to}
-                onClick={() => setOpen(false)}
-                className="text-[12px] tracking-[0.2em] uppercase text-foreground/80 hover:text-foreground py-1"
-              >
-                {item.label}
-              </Link>
+            {[...primaryItems, ...moreItems].map((item, i) => (
+              <div key={`${item.to}-${i}`}>
+                <Link
+                  to={item.to as any}
+                  onClick={() => setOpen(false)}
+                  className="text-[12px] tracking-[0.2em] uppercase text-foreground/80 hover:text-foreground py-1 block"
+                >
+                  {item.label}
+                </Link>
+                {"children" in item && item.children && item.children.length > 0 && (
+                  <div className="pl-4 mt-1 flex flex-col gap-1">
+                    {item.children.filter((c) => !c.hidden).map((c) => (
+                      <Link
+                        key={c.to}
+                        to={c.to as any}
+                        onClick={() => setOpen(false)}
+                        className="text-[11px] tracking-[0.2em] uppercase text-foreground/60 hover:text-foreground py-1"
+                      >
+                        {c.label}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
             ))}
             <div className="pt-3 mt-2 border-t border-border/40 flex flex-col gap-3">
               {user && isAdmin && (
@@ -172,18 +192,28 @@ export function Navbar() {
                   </button>
                 </>
               )}
-              <EnquireDialog
-                autosaveKey="enquire:navbar"
-                trigger={
-                  <button
-                    type="button"
-                    onClick={() => setOpen(false)}
-                    className="inline-flex items-center justify-center border border-gold text-gold uppercase tracking-[0.2em] text-[11px] px-6 py-3 mt-2"
-                  >
-                    Enquire Now
-                  </button>
-                }
-              />
+              {menu.ctaTo ? (
+                <Link
+                  to={menu.ctaTo as any}
+                  onClick={() => setOpen(false)}
+                  className="inline-flex items-center justify-center border border-gold text-gold uppercase tracking-[0.2em] text-[11px] px-6 py-3 mt-2"
+                >
+                  {menu.ctaLabel}
+                </Link>
+              ) : (
+                <EnquireDialog
+                  autosaveKey="enquire:navbar"
+                  trigger={
+                    <button
+                      type="button"
+                      onClick={() => setOpen(false)}
+                      className="inline-flex items-center justify-center border border-gold text-gold uppercase tracking-[0.2em] text-[11px] px-6 py-3 mt-2"
+                    >
+                      {menu.ctaLabel}
+                    </button>
+                  }
+                />
+              )}
             </div>
           </div>
         )}
@@ -192,8 +222,13 @@ export function Navbar() {
   );
 }
 
-function PrimaryWithSubmenu({ item }: { item: { label: string; to: string; children: { label: string; to: string }[] } }) {
+function PrimaryWithSubmenu({
+  item,
+}: {
+  item: { label: string; to: string; children?: { label: string; to: string; hidden?: boolean }[] };
+}) {
   const [open, setOpen] = useState(false);
+  const kids = (item.children ?? []).filter((c) => !c.hidden);
   return (
     <div className="relative" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
       <Link
@@ -203,10 +238,10 @@ function PrimaryWithSubmenu({ item }: { item: { label: string; to: string; child
       >
         {item.label} <ChevronDown className="w-3 h-3" />
       </Link>
-      {open && (
+      {open && kids.length > 0 && (
         <div className="absolute left-0 top-full pt-2">
           <div className="bg-background border border-border shadow-lg py-2 min-w-[200px]">
-            {item.children.map((c) => (
+            {kids.map((c) => (
               <Link
                 key={c.to}
                 to={c.to as any}

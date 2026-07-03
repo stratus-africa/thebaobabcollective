@@ -16,8 +16,8 @@ type FieldDef = { name: string; label: string; type: "text" | "textarea" | "imag
 
 const SCHEMAS: Record<PageKey, { title: string; description: string; preview: string; fields: FieldDef[] }> = {
   home: {
-    title: "Home Page",
-    description: "Hero copy, CTAs and the imagery shown on the homepage.",
+    title: "Home — Hero",
+    description: "Hero copy, CTAs and background image on the homepage.",
     preview: "/",
     fields: [
       { name: "hero_image_url", label: "Hero Background Image", type: "image" },
@@ -55,6 +55,105 @@ const SCHEMAS: Record<PageKey, { title: string; description: string; preview: st
       { name: "submit_label", label: "Submit Button Label", type: "text" },
       { name: "success_title", label: "Success Title", type: "text" },
       { name: "success_body", label: "Success Body", type: "textarea" },
+    ],
+  },
+  home_journeys: {
+    title: "Home — Journeys Strip",
+    description: "The 'Our Journeys' section on the homepage.",
+    preview: "/",
+    fields: [
+      { name: "eyebrow", label: "Eyebrow", type: "text" },
+      { name: "title", label: "Title", type: "text" },
+      { name: "body", label: "Body", type: "textarea" },
+    ],
+  },
+  home_journal: {
+    title: "Home — Journal Strip",
+    description: "The 'Stories. Guidance. Inspiration.' block on the homepage.",
+    preview: "/",
+    fields: [
+      { name: "eyebrow", label: "Eyebrow", type: "text" },
+      { name: "title_line1", label: "Title — Line 1", type: "text" },
+      { name: "title_line2", label: "Title — Line 2", type: "text" },
+      { name: "title_line3", label: "Title — Line 3", type: "text" },
+      { name: "body", label: "Body", type: "textarea" },
+      { name: "cta_label", label: "CTA Label", type: "text" },
+    ],
+  },
+  home_instagram: {
+    title: "Home — Instagram Strip",
+    description: "Handle and heading shown on the Instagram section.",
+    preview: "/",
+    fields: [
+      { name: "heading", label: "Heading", type: "text" },
+      { name: "handle", label: "Instagram Handle", type: "text" },
+      { name: "url", label: "Instagram URL", type: "text" },
+    ],
+  },
+  top_bar: {
+    title: "Top Announcement Bar",
+    description: "The dark bar at the very top of every page.",
+    preview: "/",
+    fields: [
+      { name: "text", label: "Announcement Text", type: "text" },
+    ],
+  },
+  contact: {
+    title: "Contact Page",
+    description: "All copy on the /contact page.",
+    preview: "/contact",
+    fields: [
+      { name: "eyebrow", label: "Eyebrow", type: "text" },
+      { name: "title_line1", label: "Title — Line 1", type: "text" },
+      { name: "title_line2", label: "Title — Line 2", type: "text" },
+      { name: "body", label: "Intro Paragraph", type: "textarea" },
+      { name: "form_title", label: "Form Card Title", type: "text" },
+      { name: "form_intro", label: "Form Card Intro", type: "textarea" },
+      { name: "form_cta", label: "Form CTA Button", type: "text" },
+      { name: "instagram_url", label: "Instagram URL", type: "text" },
+      { name: "instagram_handle", label: "Instagram Handle", type: "text" },
+      { name: "facebook_url", label: "Facebook URL", type: "text" },
+      { name: "facebook_handle", label: "Facebook Handle", type: "text" },
+    ],
+  },
+  journeys_index: {
+    title: "Journeys — Landing",
+    description: "Intro band on the /journeys listing page.",
+    preview: "/journeys",
+    fields: [
+      { name: "eyebrow", label: "Eyebrow", type: "text" },
+      { name: "title", label: "Title", type: "text" },
+      { name: "subtitle", label: "Subtitle", type: "textarea" },
+    ],
+  },
+  destinations_index: {
+    title: "Destinations — Landing",
+    description: "Intro band on the /destinations listing page.",
+    preview: "/destinations",
+    fields: [
+      { name: "eyebrow", label: "Eyebrow", type: "text" },
+      { name: "title", label: "Title", type: "text" },
+      { name: "subtitle", label: "Subtitle", type: "textarea" },
+    ],
+  },
+  lodges_index: {
+    title: "Lodges — Landing",
+    description: "Intro band on the /lodges listing page.",
+    preview: "/lodges",
+    fields: [
+      { name: "eyebrow", label: "Eyebrow", type: "text" },
+      { name: "title", label: "Title", type: "text" },
+      { name: "subtitle", label: "Subtitle", type: "textarea" },
+    ],
+  },
+  adventures_index: {
+    title: "Adventures — Landing",
+    description: "Intro band on the /adventures listing page.",
+    preview: "/adventures",
+    fields: [
+      { name: "eyebrow", label: "Eyebrow", type: "text" },
+      { name: "title", label: "Title", type: "text" },
+      { name: "subtitle", label: "Subtitle", type: "textarea" },
     ],
   },
 };

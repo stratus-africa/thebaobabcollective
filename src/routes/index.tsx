@@ -7,14 +7,24 @@ import { Journal } from "@/components/site/Journal";
 import { InstagramStrip } from "@/components/site/Instagram";
 import { Footer } from "@/components/site/Footer";
 import { getPageContent } from "@/lib/page-content.functions";
+import { getArticles } from "@/lib/cms.functions";
 
 export const Route = createFileRoute("/")({
   loader: async () => {
-    const [home, about] = await Promise.all([
+    const [home, about, home_journeys, home_journal, home_instagram, articles] = await Promise.all([
       getPageContent({ data: { key: "home" } }).catch(() => null),
       getPageContent({ data: { key: "about" } }).catch(() => null),
+      getPageContent({ data: { key: "home_journeys" } }).catch(() => null),
+      getPageContent({ data: { key: "home_journal" } }).catch(() => null),
+      getPageContent({ data: { key: "home_instagram" } }).catch(() => null),
+      getArticles().catch(() => [] as any[]),
     ]);
-    return { home, about };
+    const journalCards = (articles ?? []).slice(0, 3).map((r: any) => ({
+      slug: r.slug,
+      title: r.title,
+      image: r.image ?? "",
+    }));
+    return { home, about, home_journeys, home_journal, home_instagram, journalCards };
   },
   head: () => ({
     meta: [
@@ -35,15 +45,15 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
-  const { home, about } = Route.useLoaderData();
+  const { home, about, home_journeys, home_journal, home_instagram, journalCards } = Route.useLoaderData();
   return (
     <main className="bg-background min-h-screen">
       <Navbar />
       <Hero content={home} />
       <About content={about} />
-      <Journeys />
-      <Journal />
-      <InstagramStrip />
+      <Journeys content={home_journeys} />
+      <Journal content={home_journal} articles={journalCards.length ? journalCards : undefined} />
+      <InstagramStrip content={home_instagram} />
       <Footer />
     </main>
   );

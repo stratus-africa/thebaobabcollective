@@ -31,8 +31,18 @@ const groups: NavGroup[] = [
   {
     label: "Pages",
     items: [
-      { to: "/admin/pages/home", label: "Home Page", icon: LayoutDashboard },
+      { to: "/admin/pages/home", label: "Home — Hero", icon: LayoutDashboard },
+      { to: "/admin/pages/home_journeys", label: "Home — Journeys", icon: Compass },
+      { to: "/admin/pages/home_journal", label: "Home — Journal", icon: BookOpen },
+      { to: "/admin/pages/home_instagram", label: "Home — Instagram", icon: Globe },
+      { to: "/admin/pages/top_bar", label: "Top Bar", icon: Bell },
       { to: "/admin/pages/about", label: "About", icon: BookOpen },
+      { to: "/admin/pages/contact", label: "Contact", icon: Mail },
+      { to: "/admin/pages/journeys_index", label: "Journeys Landing", icon: Compass },
+      { to: "/admin/pages/destinations_index", label: "Destinations Landing", icon: MapPin },
+      { to: "/admin/pages/lodges_index", label: "Lodges Landing", icon: Building },
+      { to: "/admin/pages/adventures_index", label: "Adventures Landing", icon: Plane },
+      { to: "/admin/menu", label: "Menu & Navigation", icon: Menu },
     ],
   },
   {

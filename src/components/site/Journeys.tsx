@@ -1,6 +1,7 @@
 import { ArrowRight, Sun, Leaf, Globe, Trees } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { PAGE_DEFAULTS } from "@/lib/page-content.defaults";
+import { usePreviewMerge } from "@/lib/preview-overrides";
 
 const categories = [
   { slug: "adventure" as const, icon: Sun, title: "Adventure", desc: "Wild landscapes and thrilling encounters that awaken your sense of wonder." },
@@ -12,7 +13,8 @@ const categories = [
 type Content = Partial<typeof PAGE_DEFAULTS.home_journeys>;
 
 export function Journeys({ content }: { content?: Content | null } = {}) {
-  const c = { ...PAGE_DEFAULTS.home_journeys, ...(content ?? {}) };
+  const base = { ...PAGE_DEFAULTS.home_journeys, ...(content ?? {}) };
+  const c = usePreviewMerge("home_journeys", base);
   return (
     <section id="journeys" className="bg-background py-20 md:py-28">
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">

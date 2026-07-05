@@ -46,7 +46,7 @@ function MenuEditor() {
       <div className="flex items-center justify-between gap-4 mb-6 flex-wrap">
         <div>
           <h1 className="font-serif text-3xl">Menu &amp; Navigation</h1>
-          <p className="text-sm text-foreground/60 mt-1">Edit the main menu, submenus, CTA and footer links.</p>
+          <p className="text-sm text-foreground/60 mt-1">Edit the main menu, submenus, CTA and footer links. Save to see changes in the preview.</p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={reset}><RefreshCw className="w-4 h-4 mr-1" /> Reset</Button>
@@ -62,6 +62,7 @@ function MenuEditor() {
           <Loader2 className="w-5 h-5 animate-spin inline mr-2" /> Loading…
         </div>
       ) : (
+        <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_minmax(0,600px)] gap-6">
         <div className="space-y-8">
           {/* Top bar */}
           <Section title="Top Announcement Bar">
@@ -179,7 +180,27 @@ function MenuEditor() {
             </div>
           </Section>
         </div>
+        <MenuPreviewPanel savedAt={mSave.isSuccess ? mSave.submittedAt : 0} />
+        </div>
       )}
+    </div>
+  );
+}
+
+function MenuPreviewPanel({ savedAt }: { savedAt: number }) {
+  const [nonce, setNonce] = useState(0);
+  useEffect(() => {
+    if (savedAt) setNonce((n) => n + 1);
+  }, [savedAt]);
+  return (
+    <div className="border border-border bg-muted/30 flex flex-col min-h-[600px] sticky top-4">
+      <div className="flex items-center justify-between gap-2 px-3 py-2 border-b border-border bg-background">
+        <div className="text-[11px] tracking-[0.2em] uppercase text-foreground/60">Preview · saved state</div>
+        <Button variant="ghost" size="sm" onClick={() => setNonce((n) => n + 1)}>
+          <RefreshCw className="w-4 h-4" />
+        </Button>
+      </div>
+      <iframe key={nonce} title="Menu preview" src="/" className="flex-1 w-full bg-background" />
     </div>
   );
 }

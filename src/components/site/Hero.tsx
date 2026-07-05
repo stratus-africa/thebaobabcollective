@@ -18,10 +18,13 @@ const quickLinks = [
   { to: "/lodges", label: "Lodges", icon: Tent },
 ] as const;
 
+import { usePreviewMerge } from "@/lib/preview-overrides";
+
 type HeroContent = Partial<typeof PAGE_DEFAULTS.home>;
 
 export function Hero({ content }: { content?: HeroContent | null } = {}) {
-  const c = { ...PAGE_DEFAULTS.home, ...(content ?? {}) };
+  const base = { ...PAGE_DEFAULTS.home, ...(content ?? {}) };
+  const c = usePreviewMerge("home", base);
   const heroSrc = c.hero_image_url || heroImg;
   return (
     <section className="relative w-full overflow-hidden pb-28 md:pb-36">

@@ -2,11 +2,13 @@ import { ArrowRight } from "lucide-react";
 import lodge from "@/assets/lodge-tent.jpg";
 import elephant from "@/assets/elephant.jpg";
 import { PAGE_DEFAULTS } from "@/lib/page-content.defaults";
+import { usePreviewMerge } from "@/lib/preview-overrides";
 
 type AboutContent = Partial<typeof PAGE_DEFAULTS.about>;
 
 export function About({ content }: { content?: AboutContent | null } = {}) {
-  const c = { ...PAGE_DEFAULTS.about, ...(content ?? {}) };
+  const base = { ...PAGE_DEFAULTS.about, ...(content ?? {}) };
+  const c = usePreviewMerge("about", base);
   const leftSrc = c.image_left_url || lodge;
   const rightSrc = c.image_right_url || elephant;
 

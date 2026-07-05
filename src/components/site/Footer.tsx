@@ -6,12 +6,18 @@ import { BaobabLogo } from "./Logo";
 import { subscribeNewsletter } from "@/lib/submissions.functions";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { useMenuConfig } from "@/hooks/useMenuConfig";
+import { PAGE_DEFAULTS } from "@/lib/page-content.defaults";
+import { usePreviewMerge } from "@/lib/preview-overrides";
 import { toast } from "sonner";
 
-export function Footer() {
+type FooterContent = Partial<typeof PAGE_DEFAULTS.footer>;
+
+export function Footer({ content }: { content?: FooterContent | null } = {}) {
   const subscribe = useServerFn(subscribeNewsletter);
   const { email: contactEmail, phone: contactPhone, phoneTel: contactPhoneTel, logoUrl } = useSiteSettings();
   const menu = useMenuConfig();
+  const base = { ...PAGE_DEFAULTS.footer, ...(content ?? {}) };
+  const f = usePreviewMerge("footer", base);
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -70,7 +76,7 @@ export function Footer() {
         ))}
 
         <address className="not-italic">
-          <h4 className="text-[11px] tracking-[0.25em] uppercase text-foreground mb-5">Get in Touch</h4>
+          <h4 className="text-[11px] tracking-[0.25em] uppercase text-foreground mb-5">{f.contact_heading}</h4>
           <p className="text-sm text-foreground/75 mb-1">
             <a href={`mailto:${contactEmail}`} className="hover:text-gold break-all">{contactEmail}</a>
           </p>
@@ -84,8 +90,8 @@ export function Footer() {
         </address>
 
         <div>
-          <h4 className="text-[11px] tracking-[0.25em] uppercase text-foreground mb-5">Newsletter</h4>
-          <p className="text-sm text-foreground/75 mb-4">Receive travel inspiration and special offers.</p>
+          <h4 className="text-[11px] tracking-[0.25em] uppercase text-foreground mb-5">{f.newsletter_title}</h4>
+          <p className="text-sm text-foreground/75 mb-4">{f.newsletter_body}</p>
           <form onSubmit={onSubmit} className="flex border border-border bg-background" noValidate>
             <label htmlFor="newsletter-email" className="sr-only">Email address</label>
             <input
@@ -94,7 +100,7 @@ export function Footer() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="Your email address"
+              placeholder={f.newsletter_placeholder}
               className="flex-1 min-w-0 px-3 py-3 text-sm bg-transparent outline-none placeholder:text-foreground/40 focus-visible:ring-2 focus-visible:ring-gold"
             />
             <button
@@ -111,7 +117,7 @@ export function Footer() {
 
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 mt-14 pt-6 border-t border-border/60">
         <p className="text-center text-[11px] tracking-[0.2em] uppercase text-foreground/60">
-          © The Baobab Collective {new Date().getFullYear()} &nbsp;|&nbsp; All Rights Reserved
+          {(f.copyright || "").replace("{year}", String(new Date().getFullYear()))}
         </p>
       </div>
     </footer>

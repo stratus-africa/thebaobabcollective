@@ -19,6 +19,28 @@ export const PAGE_DEFAULTS = {
     image_left_url: "",
     image_right_url: "",
   },
+  about_mission: {
+    eyebrow: "Our Mission",
+    title: "Journeys with purpose",
+    body: "Every safari we design supports conservation, community, and the guides who make Africa feel like home. We believe travel should give back as much as it gives.",
+  },
+  about_values: {
+    eyebrow: "What guides us",
+    title: "Our values",
+    value_1_title: "Conservation-led",
+    value_1_body: "Each journey supports the wild places we love.",
+    value_2_title: "Community-first",
+    value_2_body: "We partner with local guides and lodges.",
+    value_3_title: "Slow travel",
+    value_3_body: "Fewer destinations. Deeper connections.",
+    value_4_title: "Bespoke by design",
+    value_4_body: "No two itineraries are ever the same.",
+  },
+  about_team: {
+    eyebrow: "The people",
+    title: "Meet the collective",
+    body: "A small team of Africa specialists, guides and storytellers based between London and Nairobi.",
+  },
   private_travel: {
     eyebrow: "Private Travel",
     title: "Designed entirely around you.",
@@ -29,11 +51,28 @@ export const PAGE_DEFAULTS = {
       "A confirmation has been sent to your inbox. One of our journey designers will reach out within 48 hours.",
     submit_label: "Request my bespoke journey",
   },
-  // NEW — homepage strip sections
   home_journeys: {
     eyebrow: "Curated Safari Journeys",
     title: "OUR JOURNEYS",
     body: "Thoughtfully curated experiences that celebrate adventure, connection and heritage.",
+  },
+  home_adventures: {
+    eyebrow: "Signature Adventures",
+    title: "WILD AFRICA",
+    body: "Walking safaris, mokoro expeditions, gorilla treks — wild Africa, deeply lived.",
+    cta_label: "See all adventures",
+  },
+  home_destinations: {
+    eyebrow: "The Continent",
+    title: "DESTINATIONS",
+    body: "From the deltas of Botswana to the highlands of Ethiopia — explore where each journey could take you.",
+    cta_label: "Explore destinations",
+  },
+  home_lodges: {
+    eyebrow: "Where you'll stay",
+    title: "PARTNER LODGES",
+    body: "Every camp and lodge has been walked, slept in, and chosen for soul as much as setting.",
+    cta_label: "See our lodges",
   },
   home_journal: {
     eyebrow: "Be Inspired",
@@ -52,7 +91,6 @@ export const PAGE_DEFAULTS = {
     text: "Curated Safari Journeys. Authentic Connections. Extraordinary Experiences.",
     enabled: true,
   },
-  // NEW — dedicated pages
   contact: {
     eyebrow: "We'd love to hear from you",
     title_line1: "Let's Plan",
@@ -71,7 +109,6 @@ export const PAGE_DEFAULTS = {
     facebook_url: "https://facebook.com/thebaobabcollective",
     facebook_handle: "/thebaobabcollective",
   },
-  // Landing page copy (only the intro / hero band on the listing pages)
   journeys_index: {
     eyebrow: "Curated Safari Journeys",
     title: "Our Journeys",
@@ -91,6 +128,55 @@ export const PAGE_DEFAULTS = {
     eyebrow: "Signature Adventures",
     title: "Wild Africa, Deeply Lived",
     subtitle: "Walking safaris, mokoro expeditions, desert traverses, gorilla treks and migration chases.",
+  },
+  // Detail-page templates (shared intros / CTAs)
+  detail_journey: {
+    enquire_cta: "Enquire about this journey",
+    intro_eyebrow: "The Journey",
+    related_title: "Other journeys you might love",
+  },
+  detail_adventure: {
+    enquire_cta: "Enquire about this adventure",
+    intro_eyebrow: "The Adventure",
+    related_title: "More adventures",
+  },
+  detail_lodge: {
+    enquire_cta: "Enquire about this lodge",
+    intro_eyebrow: "The Lodge",
+    related_title: "Similar lodges",
+  },
+  detail_destination: {
+    enquire_cta: "Plan a trip here",
+    intro_eyebrow: "The Destination",
+    related_title: "Nearby destinations",
+  },
+  // Footer copy (columns/socials are managed via Menu editor)
+  footer: {
+    newsletter_title: "Newsletter",
+    newsletter_body: "Receive travel inspiration and special offers.",
+    newsletter_placeholder: "Your email address",
+    copyright: "© The Baobab Collective {year} | All Rights Reserved",
+    contact_heading: "Get in Touch",
+  },
+  // 404 / Auth / global SEO
+  not_found: {
+    title: "Page not found",
+    body: "The page you're looking for doesn't exist or has been moved.",
+    cta_label: "Go home",
+  },
+  auth_page: {
+    title: "Admin sign in",
+    subtitle: "Access The Baobab Collective admin.",
+    email_label: "Email",
+    password_label: "Password",
+    submit_label: "Sign in",
+  },
+  seo: {
+    site_name: "The Baobab Collective",
+    default_title: "The Baobab Collective — Curated Safari Journeys",
+    default_description:
+      "Luxury curated safari experiences in Africa. Authentic connections, conservation-led journeys, and extraordinary moments.",
+    default_og_image: "",
   },
 } as const;
 

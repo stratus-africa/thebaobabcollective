@@ -3,6 +3,9 @@ import { Navbar } from "@/components/site/Navbar";
 import { Hero } from "@/components/site/Hero";
 import { About } from "@/components/site/About";
 import { Journeys } from "@/components/site/Journeys";
+import { HomeAdventures } from "@/components/site/HomeAdventures";
+import { HomeDestinations } from "@/components/site/HomeDestinations";
+import { HomeLodges } from "@/components/site/HomeLodges";
 import { Journal } from "@/components/site/Journal";
 import { InstagramStrip } from "@/components/site/Instagram";
 import { Footer } from "@/components/site/Footer";
@@ -11,12 +14,27 @@ import { getArticles } from "@/lib/cms.functions";
 
 export const Route = createFileRoute("/")({
   loader: async () => {
-    const [home, about, home_journeys, home_journal, home_instagram, articles] = await Promise.all([
+    const [
+      home,
+      about,
+      home_journeys,
+      home_adventures,
+      home_destinations,
+      home_lodges,
+      home_journal,
+      home_instagram,
+      footer,
+      articles,
+    ] = await Promise.all([
       getPageContent({ data: { key: "home" } }).catch(() => null),
       getPageContent({ data: { key: "about" } }).catch(() => null),
       getPageContent({ data: { key: "home_journeys" } }).catch(() => null),
+      getPageContent({ data: { key: "home_adventures" } }).catch(() => null),
+      getPageContent({ data: { key: "home_destinations" } }).catch(() => null),
+      getPageContent({ data: { key: "home_lodges" } }).catch(() => null),
       getPageContent({ data: { key: "home_journal" } }).catch(() => null),
       getPageContent({ data: { key: "home_instagram" } }).catch(() => null),
+      getPageContent({ data: { key: "footer" } }).catch(() => null),
       getArticles().catch(() => [] as any[]),
     ]);
     const journalCards = (articles ?? []).slice(0, 3).map((r: any) => ({
@@ -24,7 +42,18 @@ export const Route = createFileRoute("/")({
       title: r.title,
       image: r.image ?? "",
     }));
-    return { home, about, home_journeys, home_journal, home_instagram, journalCards };
+    return {
+      home,
+      about,
+      home_journeys,
+      home_adventures,
+      home_destinations,
+      home_lodges,
+      home_journal,
+      home_instagram,
+      footer,
+      journalCards,
+    };
   },
   head: () => ({
     meta: [
@@ -45,16 +74,30 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
-  const { home, about, home_journeys, home_journal, home_instagram, journalCards } = Route.useLoaderData();
+  const {
+    home,
+    about,
+    home_journeys,
+    home_adventures,
+    home_destinations,
+    home_lodges,
+    home_journal,
+    home_instagram,
+    footer,
+    journalCards,
+  } = Route.useLoaderData();
   return (
     <main className="bg-background min-h-screen">
       <Navbar />
       <Hero content={home} />
       <About content={about} />
       <Journeys content={home_journeys} />
+      <HomeAdventures content={home_adventures} />
+      <HomeDestinations content={home_destinations} />
+      <HomeLodges content={home_lodges} />
       <Journal content={home_journal} articles={journalCards.length ? journalCards : undefined} />
       <InstagramStrip content={home_instagram} />
-      <Footer />
+      <Footer content={footer} />
     </main>
   );
 }

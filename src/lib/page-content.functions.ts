@@ -6,8 +6,14 @@ import { z } from "zod";
 const KEYS = [
   "home",
   "about",
+  "about_mission",
+  "about_values",
+  "about_team",
   "private_travel",
   "home_journeys",
+  "home_adventures",
+  "home_destinations",
+  "home_lodges",
   "home_journal",
   "home_instagram",
   "top_bar",
@@ -16,6 +22,14 @@ const KEYS = [
   "destinations_index",
   "lodges_index",
   "adventures_index",
+  "detail_journey",
+  "detail_adventure",
+  "detail_lodge",
+  "detail_destination",
+  "footer",
+  "not_found",
+  "auth_page",
+  "seo",
 ] as const;
 type PageKey = (typeof KEYS)[number];
 

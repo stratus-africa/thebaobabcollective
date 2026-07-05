@@ -8,12 +8,15 @@ import g6 from "@/assets/gallery-6.jpg";
 import g7 from "@/assets/gallery-7.jpg";
 import { PAGE_DEFAULTS } from "@/lib/page-content.defaults";
 
+import { usePreviewMerge } from "@/lib/preview-overrides";
+
 const imgs = [g1, g2, g3, g4, g5, g6, g7];
 
 type Content = Partial<typeof PAGE_DEFAULTS.home_instagram>;
 
 export function InstagramStrip({ content }: { content?: Content | null } = {}) {
-  const c = { ...PAGE_DEFAULTS.home_instagram, ...(content ?? {}) };
+  const base = { ...PAGE_DEFAULTS.home_instagram, ...(content ?? {}) };
+  const c = usePreviewMerge("home_instagram", base);
   return (
     <section className="bg-forest text-forest-foreground py-6">
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 flex flex-col lg:flex-row items-center gap-6">

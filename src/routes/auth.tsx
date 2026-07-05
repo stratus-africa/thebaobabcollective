@@ -24,6 +24,7 @@ export const Route = createFileRoute("/auth")({
 function AuthPage() {
   const { redirect: redirectTo } = Route.useSearch();
   const navigate = useNavigate();
+  const c = usePreviewMerge("auth_page", PAGE_DEFAULTS.auth_page);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);

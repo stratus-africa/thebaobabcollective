@@ -2,6 +2,7 @@ import { ArrowRight } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { articles as staticArticles } from "@/lib/content";
 import { PAGE_DEFAULTS } from "@/lib/page-content.defaults";
+import { usePreviewMerge } from "@/lib/preview-overrides";
 
 type Content = Partial<typeof PAGE_DEFAULTS.home_journal>;
 type Article = {
@@ -17,7 +18,8 @@ export function Journal({
   content?: Content | null;
   articles?: Article[] | null;
 } = {}) {
-  const c = { ...PAGE_DEFAULTS.home_journal, ...(content ?? {}) };
+  const base = { ...PAGE_DEFAULTS.home_journal, ...(content ?? {}) };
+  const c = usePreviewMerge("home_journal", base);
   const list = (articles && articles.length > 0 ? articles : staticArticles).slice(0, 3);
 
   return (

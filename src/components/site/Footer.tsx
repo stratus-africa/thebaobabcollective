@@ -6,12 +6,18 @@ import { BaobabLogo } from "./Logo";
 import { subscribeNewsletter } from "@/lib/submissions.functions";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { useMenuConfig } from "@/hooks/useMenuConfig";
+import { PAGE_DEFAULTS } from "@/lib/page-content.defaults";
+import { usePreviewMerge } from "@/lib/preview-overrides";
 import { toast } from "sonner";
 
-export function Footer() {
+type FooterContent = Partial<typeof PAGE_DEFAULTS.footer>;
+
+export function Footer({ content }: { content?: FooterContent | null } = {}) {
   const subscribe = useServerFn(subscribeNewsletter);
   const { email: contactEmail, phone: contactPhone, phoneTel: contactPhoneTel, logoUrl } = useSiteSettings();
   const menu = useMenuConfig();
+  const base = { ...PAGE_DEFAULTS.footer, ...(content ?? {}) };
+  const f = usePreviewMerge("footer", base);
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
 

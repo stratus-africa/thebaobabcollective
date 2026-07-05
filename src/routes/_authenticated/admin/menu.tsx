@@ -180,7 +180,27 @@ function MenuEditor() {
             </div>
           </Section>
         </div>
+        <MenuPreviewPanel savedAt={mSave.isSuccess ? mSave.submittedAt : 0} />
+        </div>
       )}
+    </div>
+  );
+}
+
+function MenuPreviewPanel({ savedAt }: { savedAt: number }) {
+  const [nonce, setNonce] = useState(0);
+  useEffect(() => {
+    if (savedAt) setNonce((n) => n + 1);
+  }, [savedAt]);
+  return (
+    <div className="border border-border bg-muted/30 flex flex-col min-h-[600px] sticky top-4">
+      <div className="flex items-center justify-between gap-2 px-3 py-2 border-b border-border bg-background">
+        <div className="text-[11px] tracking-[0.2em] uppercase text-foreground/60">Preview · saved state</div>
+        <Button variant="ghost" size="sm" onClick={() => setNonce((n) => n + 1)}>
+          <RefreshCw className="w-4 h-4" />
+        </Button>
+      </div>
+      <iframe key={nonce} title="Menu preview" src="/" className="flex-1 w-full bg-background" />
     </div>
   );
 }

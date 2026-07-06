@@ -419,6 +419,26 @@ function PageEditor() {
             <div className="bg-background border border-border p-10 text-center text-foreground/60">
               <Loader2 className="w-5 h-5 animate-spin inline mr-2" /> Loading…
             </div>
+          ) : REORDER_GROUPS[page] ? (
+            <div className="bg-background border border-border p-6 space-y-5">
+              {schema.fields
+                .filter((f) => !/^image_\d+_/.test(f.name))
+                .map((f) => (
+                  <FieldRow
+                    key={f.name}
+                    field={f}
+                    value={draft[f.name] ?? (f.type === "boolean" ? false : "")}
+                    onChange={(v) => setDraft((d) => ({ ...d, [f.name]: v }))}
+                  />
+                ))}
+              <ReorderableGroups
+                page={page}
+                group={REORDER_GROUPS[page]!}
+                schema={schema}
+                draft={draft}
+                setDraft={setDraft}
+              />
+            </div>
           ) : (
             <div className="bg-background border border-border p-6 space-y-5">
               {schema.fields.map((f) => (
@@ -431,6 +451,7 @@ function PageEditor() {
               ))}
             </div>
           )}
+
         </div>
         {showPreview && (
           <div className="min-h-[600px]">

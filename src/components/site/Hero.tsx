@@ -50,18 +50,24 @@ export function Hero({ content }: { content?: HeroContent | null } = {}) {
               {c.hero_subtitle}
             </p>
             <div className="flex flex-wrap items-center gap-4">
-              <a
-                href="#journeys"
+              <Link
+                to="/adventures"
                 className="inline-flex items-center bg-gold text-gold-foreground uppercase tracking-[0.25em] text-[11px] px-8 py-4 hover:bg-gold/90 transition-colors"
               >
                 {c.hero_cta_primary}
-              </a>
-              <Link
-                to="/contact"
-                className="inline-flex items-center border border-foreground/30 text-foreground uppercase tracking-[0.25em] text-[11px] px-8 py-4 hover:border-gold hover:text-gold transition-colors"
-              >
-                {c.hero_cta_secondary}
               </Link>
+              <EnquireDialog
+                sourceUrl="/"
+                autosaveKey="enquire-home-hero"
+                trigger={
+                  <button
+                    type="button"
+                    className="inline-flex items-center border border-foreground/30 text-foreground uppercase tracking-[0.25em] text-[11px] px-8 py-4 hover:border-gold hover:text-gold transition-colors"
+                  >
+                    {c.hero_cta_secondary}
+                  </button>
+                }
+              />
             </div>
 
             <div className="mt-10 flex items-center gap-4">

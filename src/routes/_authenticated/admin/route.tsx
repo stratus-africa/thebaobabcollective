@@ -29,29 +29,40 @@ const groups: NavGroup[] = [
     ],
   },
   {
-    label: "Pages",
+    label: "Pages · Home",
     items: [
       { to: "/admin/pages/home", label: "Home — Hero", icon: LayoutDashboard },
-      { to: "/admin/pages/home_adventures", label: "Home — Adventures", icon: Compass },
-      { to: "/admin/pages/home_destinations", label: "Home — Destinations", icon: MapPin },
-      { to: "/admin/pages/home_lodges", label: "Home — Lodges", icon: Building },
+      { to: "/admin/pages/home_adventures", label: "Adventures — Landing", icon: Compass },
+      { to: "/admin/pages/home_destinations", label: "Destinations — Landing", icon: MapPin },
+      { to: "/admin/pages/home_lodges", label: "Lodges — Landing", icon: Building },
       { to: "/admin/pages/home_journal", label: "Home — Journal", icon: BookOpen },
       { to: "/admin/pages/home_instagram", label: "Home — Instagram", icon: Globe },
       { to: "/admin/pages/top_bar", label: "Top Bar", icon: Bell },
+    ],
+  },
+  {
+    label: "Pages · About",
+    items: [
       { to: "/admin/pages/about", label: "About — Hero", icon: BookOpen },
-      { to: "/admin/pages/about_mission", label: "About — Mission", icon: BookOpen },
-      { to: "/admin/pages/about_values", label: "About — Values", icon: BookOpen },
-      { to: "/admin/pages/about_team", label: "About — Team", icon: BookOpen },
+      { to: "/admin/pages/about_mission", label: "Mission", icon: BookOpen },
+      { to: "/admin/pages/about_values", label: "Values", icon: BookOpen },
+      { to: "/admin/pages/about_team", label: "Team", icon: BookOpen },
+    ],
+  },
+  {
+    label: "Pages · Contact",
+    items: [
       { to: "/admin/pages/contact", label: "Contact", icon: Mail },
+    ],
+  },
+  {
+    label: "Pages · Landings & Templates",
+    items: [
       { to: "/admin/pages/lodges_index", label: "Lodges Landing", icon: Building },
       { to: "/admin/pages/adventures_index", label: "Adventures Landing", icon: Plane },
-      { to: "/admin/pages/detail_journey", label: "Journey Detail Template", icon: Compass },
+      { to: "/admin/pages/detail_journey", label: "Adventure Detail Template", icon: Compass },
       { to: "/admin/pages/detail_lodge", label: "Lodge Detail Template", icon: Building },
       { to: "/admin/pages/footer", label: "Footer", icon: LayoutDashboard },
-      { to: "/admin/pages/not_found", label: "404 Page", icon: HelpCircle },
-      { to: "/admin/pages/auth_page", label: "Admin Sign-in Page", icon: HelpCircle },
-      { to: "/admin/pages/seo", label: "Global SEO", icon: Globe },
-      { to: "/admin/menu", label: "Menu & Navigation", icon: Menu },
     ],
   },
   {
@@ -65,10 +76,17 @@ const groups: NavGroup[] = [
   {
     label: "System",
     items: [
+      { to: "/admin/menu", label: "Menu & Navigation", icon: Menu },
+      { to: "/admin/pages/seo", label: "Global SEO", icon: Globe },
+      { to: "/admin/pages/auth_page", label: "Admin Sign-in Page", icon: HelpCircle },
+      { to: "/admin/pages/not_found", label: "404 Page", icon: HelpCircle },
       { to: "/admin/settings", label: "Settings", icon: Settings },
     ],
   },
 ];
+
+
+
 
 export const Route = createFileRoute("/_authenticated/admin")({
   ssr: false,

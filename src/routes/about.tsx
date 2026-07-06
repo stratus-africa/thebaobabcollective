@@ -75,6 +75,7 @@ function TeamSection({ content }: { content: any }) {
       url: c[`image_${n}_url`] as string,
       name: c[`image_${n}_name`] as string,
       role: c[`image_${n}_role`] as string,
+      bio: c[`image_${n}_bio`] as string,
     }))
     .filter((m) => m.url || m.name);
   return (
@@ -105,6 +106,9 @@ function TeamSection({ content }: { content: any }) {
                     {m.role}
                   </p>
                 )}
+                {m.bio && (
+                  <p className="text-sm text-foreground/70 mt-3 leading-relaxed">{m.bio}</p>
+                )}
               </div>
             ))}
           </div>
@@ -113,6 +117,7 @@ function TeamSection({ content }: { content: any }) {
     </section>
   );
 }
+
 
 function AboutPage() {
   const { about, mission, values, team } = Route.useLoaderData();

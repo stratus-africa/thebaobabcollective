@@ -80,7 +80,7 @@ const SCHEMAS: Record<PageKey, { title: string; description: string; preview: st
   },
   about_team: {
     title: "About — Team",
-    description: "Team intro and photos shown on the About page.",
+    description: "Team intro and photos shown on the About page. Use the arrows to reorder members.",
     preview: "/about",
     fields: [
       { name: "eyebrow", label: "Eyebrow", type: "text" },
@@ -89,17 +89,22 @@ const SCHEMAS: Record<PageKey, { title: string; description: string; preview: st
       { name: "image_1_url", label: "Member 1 — Photo", type: "image" },
       { name: "image_1_name", label: "Member 1 — Name", type: "text" },
       { name: "image_1_role", label: "Member 1 — Role", type: "text" },
+      { name: "image_1_bio", label: "Member 1 — Brief Bio", type: "textarea" },
       { name: "image_2_url", label: "Member 2 — Photo", type: "image" },
       { name: "image_2_name", label: "Member 2 — Name", type: "text" },
       { name: "image_2_role", label: "Member 2 — Role", type: "text" },
+      { name: "image_2_bio", label: "Member 2 — Brief Bio", type: "textarea" },
       { name: "image_3_url", label: "Member 3 — Photo", type: "image" },
       { name: "image_3_name", label: "Member 3 — Name", type: "text" },
       { name: "image_3_role", label: "Member 3 — Role", type: "text" },
+      { name: "image_3_bio", label: "Member 3 — Brief Bio", type: "textarea" },
       { name: "image_4_url", label: "Member 4 — Photo", type: "image" },
       { name: "image_4_name", label: "Member 4 — Name", type: "text" },
       { name: "image_4_role", label: "Member 4 — Role", type: "text" },
+      { name: "image_4_bio", label: "Member 4 — Brief Bio", type: "textarea" },
     ],
   },
+
   private_travel: {
     title: "Private Travel Page",
     description: "Headline, subtitle and confirmation copy for the bespoke travel form.",
@@ -161,14 +166,22 @@ const SCHEMAS: Record<PageKey, { title: string; description: string; preview: st
   },
   home_instagram: {
     title: "Home — Instagram Strip",
-    description: "Handle and heading shown on the Instagram section.",
+    description: "Handle, heading, and the 7 thumbnails shown in the Instagram section.",
     preview: "/",
     fields: [
       { name: "heading", label: "Heading", type: "text" },
       { name: "handle", label: "Instagram Handle", type: "text" },
       { name: "url", label: "Instagram URL", type: "text" },
+      { name: "image_1_url", label: "Photo 1", type: "image" },
+      { name: "image_2_url", label: "Photo 2", type: "image" },
+      { name: "image_3_url", label: "Photo 3", type: "image" },
+      { name: "image_4_url", label: "Photo 4", type: "image" },
+      { name: "image_5_url", label: "Photo 5", type: "image" },
+      { name: "image_6_url", label: "Photo 6", type: "image" },
+      { name: "image_7_url", label: "Photo 7", type: "image" },
     ],
   },
+
   top_bar: {
     title: "Top Announcement Bar",
     description: "The dark bar at the very top of every page.",
@@ -217,15 +230,16 @@ const SCHEMAS: Record<PageKey, { title: string; description: string; preview: st
     ],
   },
   detail_journey: {
-    title: "Journey Detail Template",
-    description: "Shared copy across all journey detail pages.",
-    preview: "/journeys",
+    title: "Adventure Detail Template",
+    description: "Shared copy across all adventure detail (itinerary) pages.",
+    preview: "/adventures",
     fields: [
       { name: "intro_eyebrow", label: "Intro Eyebrow", type: "text" },
       { name: "enquire_cta", label: "Enquire CTA Label", type: "text" },
       { name: "related_title", label: "Related Section Title", type: "text" },
     ],
   },
+
   detail_lodge: {
     title: "Lodge Detail Template",
     description: "Shared copy across all lodge detail pages.",
@@ -298,7 +312,7 @@ function PageEditor() {
   const saveFn = useServerFn(savePageContent);
   const qc = useQueryClient();
   const schema = SCHEMAS[page];
-  const [showPreview, setShowPreview] = useState(true);
+  const [showPreview, setShowPreview] = useState(false);
 
   const { data, isLoading } = useQuery({
     queryKey: ["page-content", page],

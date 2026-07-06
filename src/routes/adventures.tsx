@@ -25,6 +25,8 @@ import {
 } from "lucide-react";
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
+import { EnquireDialog } from "@/components/site/EnquireDialog";
+
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -355,15 +357,19 @@ function SignaturesSection({ signatures }: { signatures: AdventuresPage["signatu
                     >
                       View Itinerary <ArrowRight className="w-3 h-3" />
                     </Link>
-                    <Link
-                      to="/adventures/$slug"
-                      params={{ slug: a.slug }}
-                      search={{ itinerary: a.name } as any}
-                      hash="enquire"
-                      className="inline-flex items-center gap-2 border border-gold text-gold uppercase tracking-[0.25em] text-[11px] px-6 py-3 hover:bg-gold hover:text-gold-foreground transition-colors"
-                    >
-                      Enquire
-                    </Link>
+                    <EnquireDialog
+                      sourceUrl={`/adventures/${a.slug}`}
+                      autosaveKey={`enquire:adventure:${a.slug}`}
+                      trigger={
+                        <button
+                          type="button"
+                          className="inline-flex items-center gap-2 border border-gold text-gold uppercase tracking-[0.25em] text-[11px] px-6 py-3 hover:bg-gold hover:text-gold-foreground transition-colors"
+                        >
+                          Enquire
+                        </button>
+                      }
+                    />
+
                   </div>
                 </article>
               );

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X, ChevronDown, Search } from "lucide-react";
 import { Link, useNavigate } from "@tanstack/react-router";
 
 import { EnquireDialog } from "@/components/site/EnquireDialog";

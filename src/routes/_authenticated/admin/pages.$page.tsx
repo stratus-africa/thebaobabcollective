@@ -89,6 +89,7 @@ const SCHEMAS: Record<PageKey, { title: string; description: string; preview: st
       { name: "hero_cta_primary", label: "Primary CTA Label", type: "text" },
       { name: "hero_cta_secondary", label: "Secondary CTA Label", type: "text" },
       { name: "hero_proof_text", label: "Social Proof Text", type: "text" },
+      { name: "quick_explore_hidden", label: "Hide 'Where shall we wander?' Quick Explore Section", type: "boolean" },
     ],
   },
   about: {

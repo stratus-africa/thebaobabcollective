@@ -171,7 +171,6 @@ function HeroSection({ hero }: { hero: AdventuresPage["hero"] }) {
   );
 }
 
-}
 
 function SignaturesSection({ signatures }: { signatures: AdventuresPage["signatures"] }) {
   const search = Route.useSearch();

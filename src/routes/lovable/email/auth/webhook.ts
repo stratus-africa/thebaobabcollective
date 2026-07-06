@@ -31,10 +31,10 @@ const EMAIL_TEMPLATES: Record<string, React.ComponentType<any>> = {
 }
 
 // Configuration
-const SITE_NAME = "thebaobabcollective"
-const SENDER_DOMAIN = "notify.thebaobabcollective.co.uk"
-const ROOT_DOMAIN = "thebaobabcollective.co.uk"
-const FROM_DOMAIN = "thebaobabcollective.co.uk"
+const SITE_NAME = 'thebaobabcollective'
+const SENDER_DOMAIN = 'notify.thebaobabcollective.co.uk'
+const ROOT_DOMAIN = 'thebaobabcollective.co.uk'
+const FROM_DOMAIN = 'thebaobabcollective.co.uk'
 
 function redactEmail(email: string | null | undefined): string {
   if (!email) return '***'
@@ -43,7 +43,7 @@ function redactEmail(email: string | null | undefined): string {
   return `${localPart[0]}***@${domain}`
 }
 
-export const Route = createFileRoute("/lovable/email/auth/webhook")({
+export const Route = createFileRoute('/lovable/email/auth/webhook')({
   server: {
     handlers: {
       POST: async ({ request }) => {
@@ -51,10 +51,7 @@ export const Route = createFileRoute("/lovable/email/auth/webhook")({
 
         if (!apiKey) {
           console.error('LOVABLE_API_KEY not configured')
-          return Response.json(
-            { error: 'Server configuration error' },
-            { status: 500 }
-          )
+          return Response.json({ error: 'Server configuration error' }, { status: 500 })
         }
 
         // Verify signature + timestamp, then parse payload.
@@ -76,33 +73,21 @@ export const Route = createFileRoute("/lovable/email/auth/webhook")({
               case 'invalid_timestamp':
               case 'stale_timestamp':
                 console.error('Invalid webhook signature', { error: error.message })
-                return Response.json(
-                  { error: 'Invalid signature' },
-                  { status: 401 }
-                )
+                return Response.json({ error: 'Invalid signature' }, { status: 401 })
               case 'invalid_payload':
               case 'invalid_json':
                 console.error('Invalid webhook payload', { error: error.message })
-                return Response.json(
-                  { error: 'Invalid webhook payload' },
-                  { status: 400 }
-                )
+                return Response.json({ error: 'Invalid webhook payload' }, { status: 400 })
             }
           }
 
           console.error('Webhook verification failed', { error })
-          return Response.json(
-            { error: 'Invalid webhook payload' },
-            { status: 400 }
-          )
+          return Response.json({ error: 'Invalid webhook payload' }, { status: 400 })
         }
 
         if (!run_id) {
           console.error('Webhook payload missing run_id')
-          return Response.json(
-            { error: 'Invalid webhook payload' },
-            { status: 400 }
-          )
+          return Response.json({ error: 'Invalid webhook payload' }, { status: 400 })
         }
 
         if (payload.version !== '1') {
@@ -125,10 +110,7 @@ export const Route = createFileRoute("/lovable/email/auth/webhook")({
         const EmailTemplate = EMAIL_TEMPLATES[emailType]
         if (!EmailTemplate) {
           console.error('Unknown email type', { emailType, run_id })
-          return Response.json(
-            { error: `Unknown email type: ${emailType}` },
-            { status: 400 }
-          )
+          return Response.json({ error: `Unknown email type: ${emailType}` }, { status: 400 })
         }
 
         // Build template props from payload.data (HookData structure)
@@ -154,10 +136,7 @@ export const Route = createFileRoute("/lovable/email/auth/webhook")({
 
         if (!supabaseUrl || !supabaseServiceKey) {
           console.error('Missing Supabase environment variables')
-          return Response.json(
-            { error: 'Server configuration error' },
-            { status: 500 }
-          )
+          return Response.json({ error: 'Server configuration error' }, { status: 500 })
         }
 
         const supabase = createClient(supabaseUrl, supabaseServiceKey)
@@ -182,7 +161,11 @@ export const Route = createFileRoute("/lovable/email/auth/webhook")({
             subject: EMAIL_SUBJECTS[emailType] || 'Notification',
             html,
             text,
-            purpose: 'transactional',
+            // These are Supabase auth emails (signup confirmation, magic link,
+            // recovery, invite, email change, reauthentication) sent through the
+            // auth_emails queue. They are exempt from the unsubscribe_token
+            // requirement that applies to purpose: 'transactional' emails.
+            purpose: 'auth',
             label: emailType,
             queued_at: new Date().toISOString(),
           },
@@ -197,10 +180,7 @@ export const Route = createFileRoute("/lovable/email/auth/webhook")({
             status: 'failed',
             error_message: 'Failed to enqueue email',
           })
-          return Response.json(
-            { error: 'Failed to enqueue email' },
-            { status: 500 }
-          )
+          return Response.json({ error: 'Failed to enqueue email' }, { status: 500 })
         }
 
         console.log('Auth email enqueued', {

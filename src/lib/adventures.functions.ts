@@ -42,7 +42,9 @@ export const adventuresDefaults: AdventuresPage = {
     subhead:
       "Walking safaris, mokoro mornings, gorilla treks, desert traverses. The adventures we build are slow, private and shaped by the people who know the land best.",
     image: "",
+    imageAlt: "Sunrise over the African bush — a guide leads a walking safari toward distant baobabs",
   },
+
   cta: {
     eyebrow: "Begin",
     headline: "Your adventure, our craft.",

@@ -12,6 +12,14 @@ export function Hero({ content }: { content?: HeroContent | null } = {}) {
   const base = { ...PAGE_DEFAULTS.home, ...(content ?? {}) };
   const c = usePreviewMerge("home", base);
   const asBackground = Boolean((c as any).hero_image_as_background);
+  const heroSrc = c.hero_image_url || heroImg;
+  const navigate = useNavigate();
+
+  const onSearch = (formData: FormData) => {
+    const q = String(formData.get("location") ?? "").trim();
+    navigate({ to: "/adventures", search: { q, region: "", terrain: "", difficulty: "" } });
+  };
+
 
   return (
     <section className="relative w-full pb-12 md:pb-16">

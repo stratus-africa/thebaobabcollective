@@ -166,14 +166,22 @@ const SCHEMAS: Record<PageKey, { title: string; description: string; preview: st
   },
   home_instagram: {
     title: "Home — Instagram Strip",
-    description: "Handle and heading shown on the Instagram section.",
+    description: "Handle, heading, and the 7 thumbnails shown in the Instagram section.",
     preview: "/",
     fields: [
       { name: "heading", label: "Heading", type: "text" },
       { name: "handle", label: "Instagram Handle", type: "text" },
       { name: "url", label: "Instagram URL", type: "text" },
+      { name: "image_1_url", label: "Photo 1", type: "image" },
+      { name: "image_2_url", label: "Photo 2", type: "image" },
+      { name: "image_3_url", label: "Photo 3", type: "image" },
+      { name: "image_4_url", label: "Photo 4", type: "image" },
+      { name: "image_5_url", label: "Photo 5", type: "image" },
+      { name: "image_6_url", label: "Photo 6", type: "image" },
+      { name: "image_7_url", label: "Photo 7", type: "image" },
     ],
   },
+
   top_bar: {
     title: "Top Announcement Bar",
     description: "The dark bar at the very top of every page.",

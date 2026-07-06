@@ -71,6 +71,7 @@ export const getAdventuresPage = createServerFn({ method: "GET" }).handler(
     return {
       id: (data as any).id,
       hero: { ...adventuresDefaults.hero, ...((data as any).hero ?? {}) },
+
       cta: { ...adventuresDefaults.cta, ...((data as any).cta ?? {}) },
       signatures: ((data as any).signatures ?? []) as AdventuresSignature[],
     };

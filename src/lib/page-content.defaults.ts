@@ -40,6 +40,18 @@ export const PAGE_DEFAULTS = {
     eyebrow: "The people",
     title: "Meet the collective",
     body: "A small team of Africa specialists, guides and storytellers based between London and Nairobi.",
+    image_1_url: "",
+    image_1_name: "",
+    image_1_role: "",
+    image_2_url: "",
+    image_2_name: "",
+    image_2_role: "",
+    image_3_url: "",
+    image_3_name: "",
+    image_3_role: "",
+    image_4_url: "",
+    image_4_name: "",
+    image_4_role: "",
   },
   private_travel: {
     eyebrow: "Private Travel",
@@ -50,11 +62,6 @@ export const PAGE_DEFAULTS = {
     success_body:
       "A confirmation has been sent to your inbox. One of our journey designers will reach out within 48 hours.",
     submit_label: "Request my bespoke journey",
-  },
-  home_journeys: {
-    eyebrow: "Curated Safari Journeys",
-    title: "OUR JOURNEYS",
-    body: "Thoughtfully curated experiences that celebrate adventure, connection and heritage.",
   },
   home_adventures: {
     eyebrow: "Signature Adventures",
@@ -109,16 +116,6 @@ export const PAGE_DEFAULTS = {
     facebook_url: "https://facebook.com/thebaobabcollective",
     facebook_handle: "/thebaobabcollective",
   },
-  journeys_index: {
-    eyebrow: "Curated Safari Journeys",
-    title: "Our Journeys",
-    subtitle: "Handpicked safari experiences that celebrate adventure, connection, heritage and conservation.",
-  },
-  destinations_index: {
-    eyebrow: "The Continent",
-    title: "Destinations",
-    subtitle: "From the deltas of Botswana to the highlands of Ethiopia — explore where each journey could take you.",
-  },
   lodges_index: {
     eyebrow: "Where you'll stay",
     title: "Partner Lodges",
@@ -135,20 +132,10 @@ export const PAGE_DEFAULTS = {
     intro_eyebrow: "The Journey",
     related_title: "Other journeys you might love",
   },
-  detail_adventure: {
-    enquire_cta: "Enquire about this adventure",
-    intro_eyebrow: "The Adventure",
-    related_title: "More adventures",
-  },
   detail_lodge: {
     enquire_cta: "Enquire about this lodge",
     intro_eyebrow: "The Lodge",
     related_title: "Similar lodges",
-  },
-  detail_destination: {
-    enquire_cta: "Plan a trip here",
-    intro_eyebrow: "The Destination",
-    related_title: "Nearby destinations",
   },
   // Footer copy (columns/socials are managed via Menu editor)
   footer: {

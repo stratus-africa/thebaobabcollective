@@ -1,4 +1,5 @@
 import { ArrowRight } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 import lodge from "@/assets/lodge-tent.jpg";
 import elephant from "@/assets/elephant.jpg";
 import { PAGE_DEFAULTS } from "@/lib/page-content.defaults";
@@ -26,12 +27,12 @@ export function About({ content }: { content?: AboutContent | null } = {}) {
           <p className="text-foreground/75 leading-relaxed max-w-md mb-8">
             {c.body}
           </p>
-          <a
-            href="#about"
+          <Link
+            to="/about"
             className="inline-flex items-center gap-2 text-[11px] tracking-[0.25em] uppercase text-foreground border-b border-foreground/40 pb-1 hover:border-gold hover:text-gold transition-colors"
           >
             {c.cta_label} <ArrowRight className="w-3.5 h-3.5" />
-          </a>
+          </Link>
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div className="overflow-hidden">

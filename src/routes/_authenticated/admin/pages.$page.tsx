@@ -80,12 +80,24 @@ const SCHEMAS: Record<PageKey, { title: string; description: string; preview: st
   },
   about_team: {
     title: "About — Team",
-    description: "Team intro section on the About page.",
+    description: "Team intro and photos shown on the About page.",
     preview: "/about",
     fields: [
       { name: "eyebrow", label: "Eyebrow", type: "text" },
       { name: "title", label: "Title", type: "text" },
       { name: "body", label: "Body", type: "textarea" },
+      { name: "image_1_url", label: "Member 1 — Photo", type: "image" },
+      { name: "image_1_name", label: "Member 1 — Name", type: "text" },
+      { name: "image_1_role", label: "Member 1 — Role", type: "text" },
+      { name: "image_2_url", label: "Member 2 — Photo", type: "image" },
+      { name: "image_2_name", label: "Member 2 — Name", type: "text" },
+      { name: "image_2_role", label: "Member 2 — Role", type: "text" },
+      { name: "image_3_url", label: "Member 3 — Photo", type: "image" },
+      { name: "image_3_name", label: "Member 3 — Name", type: "text" },
+      { name: "image_3_role", label: "Member 3 — Role", type: "text" },
+      { name: "image_4_url", label: "Member 4 — Photo", type: "image" },
+      { name: "image_4_name", label: "Member 4 — Name", type: "text" },
+      { name: "image_4_role", label: "Member 4 — Role", type: "text" },
     ],
   },
   private_travel: {
@@ -99,16 +111,6 @@ const SCHEMAS: Record<PageKey, { title: string; description: string; preview: st
       { name: "submit_label", label: "Submit Button Label", type: "text" },
       { name: "success_title", label: "Success Title", type: "text" },
       { name: "success_body", label: "Success Body", type: "textarea" },
-    ],
-  },
-  home_journeys: {
-    title: "Home — Journeys Strip",
-    description: "The 'Our Journeys' section on the homepage.",
-    preview: "/",
-    fields: [
-      { name: "eyebrow", label: "Eyebrow", type: "text" },
-      { name: "title", label: "Title", type: "text" },
-      { name: "body", label: "Body", type: "textarea" },
     ],
   },
   home_adventures: {
@@ -194,26 +196,6 @@ const SCHEMAS: Record<PageKey, { title: string; description: string; preview: st
       { name: "facebook_handle", label: "Facebook Handle", type: "text" },
     ],
   },
-  journeys_index: {
-    title: "Journeys — Landing",
-    description: "Intro band on the /journeys listing page.",
-    preview: "/journeys",
-    fields: [
-      { name: "eyebrow", label: "Eyebrow", type: "text" },
-      { name: "title", label: "Title", type: "text" },
-      { name: "subtitle", label: "Subtitle", type: "textarea" },
-    ],
-  },
-  destinations_index: {
-    title: "Destinations — Landing",
-    description: "Intro band on the /destinations listing page.",
-    preview: "/destinations",
-    fields: [
-      { name: "eyebrow", label: "Eyebrow", type: "text" },
-      { name: "title", label: "Title", type: "text" },
-      { name: "subtitle", label: "Subtitle", type: "textarea" },
-    ],
-  },
   lodges_index: {
     title: "Lodges — Landing",
     description: "Intro band on the /lodges listing page.",
@@ -244,30 +226,10 @@ const SCHEMAS: Record<PageKey, { title: string; description: string; preview: st
       { name: "related_title", label: "Related Section Title", type: "text" },
     ],
   },
-  detail_adventure: {
-    title: "Adventure Detail Template",
-    description: "Shared copy across all adventure detail pages.",
-    preview: "/adventures",
-    fields: [
-      { name: "intro_eyebrow", label: "Intro Eyebrow", type: "text" },
-      { name: "enquire_cta", label: "Enquire CTA Label", type: "text" },
-      { name: "related_title", label: "Related Section Title", type: "text" },
-    ],
-  },
   detail_lodge: {
     title: "Lodge Detail Template",
     description: "Shared copy across all lodge detail pages.",
     preview: "/lodges",
-    fields: [
-      { name: "intro_eyebrow", label: "Intro Eyebrow", type: "text" },
-      { name: "enquire_cta", label: "Enquire CTA Label", type: "text" },
-      { name: "related_title", label: "Related Section Title", type: "text" },
-    ],
-  },
-  detail_destination: {
-    title: "Destination Detail Template",
-    description: "Shared copy across all destination detail pages.",
-    preview: "/destinations",
     fields: [
       { name: "intro_eyebrow", label: "Intro Eyebrow", type: "text" },
       { name: "enquire_cta", label: "Enquire CTA Label", type: "text" },

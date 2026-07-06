@@ -69,13 +69,46 @@ function ValuesSection({ content }: { content: any }) {
 }
 
 function TeamSection({ content }: { content: any }) {
-  const c = usePreviewMerge("about_team", { ...PAGE_DEFAULTS.about_team, ...(content ?? {}) });
+  const c: any = usePreviewMerge("about_team", { ...PAGE_DEFAULTS.about_team, ...(content ?? {}) });
+  const members = [1, 2, 3, 4]
+    .map((n) => ({
+      url: c[`image_${n}_url`] as string,
+      name: c[`image_${n}_name`] as string,
+      role: c[`image_${n}_role`] as string,
+    }))
+    .filter((m) => m.url || m.name);
   return (
     <section className="bg-background py-20">
-      <div className="max-w-[1440px] mx-auto px-6 lg:px-10 max-w-3xl text-center">
-        <p className="text-[11px] tracking-[0.3em] uppercase text-foreground/70 mb-3">{c.eyebrow}</p>
-        <h2 className="font-serif text-3xl md:text-4xl mb-6">{c.title}</h2>
-        <p className="text-foreground/75 leading-relaxed">{c.body}</p>
+      <div className="max-w-[1440px] mx-auto px-6 lg:px-10">
+        <div className="max-w-3xl mx-auto text-center mb-12">
+          <p className="text-[11px] tracking-[0.3em] uppercase text-foreground/70 mb-3">{c.eyebrow}</p>
+          <h2 className="font-serif text-3xl md:text-4xl mb-6">{c.title}</h2>
+          <p className="text-foreground/75 leading-relaxed">{c.body}</p>
+        </div>
+        {members.length > 0 && (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {members.map((m, i) => (
+              <div key={i} className="text-center">
+                {m.url ? (
+                  <img
+                    src={m.url}
+                    alt={m.name || `Team member ${i + 1}`}
+                    loading="lazy"
+                    className="w-full aspect-[3/4] object-cover mb-4 bg-cream"
+                  />
+                ) : (
+                  <div className="w-full aspect-[3/4] bg-cream mb-4" />
+                )}
+                {m.name && <p className="font-serif text-lg text-foreground">{m.name}</p>}
+                {m.role && (
+                  <p className="text-[11px] tracking-[0.2em] uppercase text-foreground/60 mt-1">
+                    {m.role}
+                  </p>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

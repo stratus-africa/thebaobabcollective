@@ -460,6 +460,15 @@ function PageEditor() {
                 schema={schema}
                 draft={draft}
                 setDraft={setDraft}
+                onReorderCommit={(next) => {
+                  // Persist immediately so the public page updates without a manual Save.
+                  saveFn({ data: { key: page, value: next } })
+                    .then(() => {
+                      qc.invalidateQueries({ queryKey: ["page-content", page] });
+                      toast.success("Order saved");
+                    })
+                    .catch((e: any) => toast.error(e?.message ?? "Could not save order"));
+                }}
               />
             </div>
           ) : (

@@ -86,6 +86,7 @@ const FooterColumnSchema = z.object({
 const MenuSchema = z.object({
   topBarText: z.string().default(""),
   topBarEnabled: z.boolean().default(true),
+  transparentOverHero: z.boolean().default(false),
   primary: z.array(NavSchema).default([]),
   more: z.array(ChildSchema).default([]),
   ctaLabel: z.string().default("Enquire"),

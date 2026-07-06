@@ -95,31 +95,33 @@ export function Hero({ content }: { content?: HeroContent | null } = {}) {
       </div>
 
       {/* Floating quick-explore card */}
-      <div className="relative z-20 max-w-5xl mx-auto px-6 lg:px-10 -mt-20 md:-mt-24">
-        <div className="bg-background/95 backdrop-blur border border-border shadow-xl">
-          <div className="px-6 md:px-8 py-5 border-b border-border flex items-center justify-between">
-            <span className="font-serif text-xl text-foreground">Where shall we wander?</span>
-            <span className="hidden md:inline text-[11px] uppercase tracking-[0.25em] text-muted-foreground">
-              Curated · Conservation-led
-            </span>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-4">
-            {quickLinks.map(({ to, label, icon: Icon }) => (
-              <Link
-                key={to}
-                to={to}
-                className="group flex flex-col items-start gap-3 p-6 border-t md:border-t-0 md:border-l border-border first:border-l-0 first:border-t-0 hover:bg-muted/40 transition-colors"
-              >
-                <Icon className="h-5 w-5 text-gold" strokeWidth={1.5} />
-                <span className="font-serif text-lg text-foreground">{label}</span>
-                <span className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground group-hover:text-gold transition-colors">
-                  Explore →
-                </span>
-              </Link>
-            ))}
+      {!c.quick_explore_hidden && (
+        <div className="relative z-20 max-w-5xl mx-auto px-6 lg:px-10 -mt-20 md:-mt-24">
+          <div className="bg-background/95 backdrop-blur border border-border shadow-xl">
+            <div className="px-6 md:px-8 py-5 border-b border-border flex items-center justify-between">
+              <span className="font-serif text-xl text-foreground">Where shall we wander?</span>
+              <span className="hidden md:inline text-[11px] uppercase tracking-[0.25em] text-muted-foreground">
+                Curated · Conservation-led
+              </span>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4">
+              {quickLinks.map(({ to, label, icon: Icon }) => (
+                <Link
+                  key={to}
+                  to={to}
+                  className="group flex flex-col items-start gap-3 p-6 border-t md:border-t-0 md:border-l border-border first:border-l-0 first:border-t-0 hover:bg-muted/40 transition-colors"
+                >
+                  <Icon className="h-5 w-5 text-gold" strokeWidth={1.5} />
+                  <span className="font-serif text-lg text-foreground">{label}</span>
+                  <span className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground group-hover:text-gold transition-colors">
+                    Explore →
+                  </span>
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </section>
   );
 }

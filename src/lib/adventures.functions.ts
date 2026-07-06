@@ -6,16 +6,14 @@ export type AdventuresHero = {
   eyebrow: string;
   headline: string;
   subhead: string;
+  image: string;
 };
-export type AdventuresPhilosophy = { eyebrow: string; body: string };
 export type AdventuresCta = {
   eyebrow: string;
   headline: string;
   body: string;
   buttonLabel: string;
 };
-export type AdventuresTerrain = { icon: string; label: string; note: string };
-export type AdventuresStyle = { icon: string; title: string; body: string };
 export type AdventuresSignature = {
   slug: string;
   name: string;
@@ -31,10 +29,7 @@ export type AdventuresSignature = {
 export type AdventuresPage = {
   id?: string;
   hero: AdventuresHero;
-  philosophy: AdventuresPhilosophy;
   cta: AdventuresCta;
-  terrains: AdventuresTerrain[];
-  styles: AdventuresStyle[];
   signatures: AdventuresSignature[];
 };
 
@@ -44,10 +39,7 @@ export const adventuresDefaults: AdventuresPage = {
     headline: "Wild Africa, deeply lived.",
     subhead:
       "Walking safaris, mokoro mornings, gorilla treks, desert traverses. The adventures we build are slow, private and shaped by the people who know the land best.",
-  },
-  philosophy: {
-    eyebrow: "The Philosophy",
-    body: "Adventure isn't a checklist. It's the long walk that turns into a discovery, the silence that holds you on a riverbank, the elder who lets you sit with the fire. We craft the conditions — Africa does the rest.",
+    image: "",
   },
   cta: {
     eyebrow: "Begin",
@@ -55,8 +47,6 @@ export const adventuresDefaults: AdventuresPage = {
     body: "Share your dates, your dreams and the shape of your travelling party. We'll respond within 24 hours with a first sketch.",
     buttonLabel: "Request Your Adventure",
   },
-  terrains: [],
-  styles: [],
   signatures: [],
 };
 
@@ -70,35 +60,32 @@ export const getAdventuresPage = createServerFn({ method: "GET" }).handler(
     );
     const { data } = await supabase
       .from("adventures_page_blocks" as any)
-      .select("id, hero, philosophy, cta, terrains, styles, signatures")
+      .select("id, hero, cta, signatures")
       .limit(1)
       .maybeSingle();
     if (!data) return adventuresDefaults;
     return {
       id: (data as any).id,
       hero: { ...adventuresDefaults.hero, ...((data as any).hero ?? {}) },
-      philosophy: { ...adventuresDefaults.philosophy, ...((data as any).philosophy ?? {}) },
       cta: { ...adventuresDefaults.cta, ...((data as any).cta ?? {}) },
-      terrains: ((data as any).terrains ?? []) as AdventuresTerrain[],
-      styles: ((data as any).styles ?? []) as AdventuresStyle[],
       signatures: ((data as any).signatures ?? []) as AdventuresSignature[],
     };
   },
 );
 
 const SavePayload = z.object({
-  hero: z.object({ eyebrow: z.string(), headline: z.string(), subhead: z.string() }),
-  philosophy: z.object({ eyebrow: z.string(), body: z.string() }),
+  hero: z.object({
+    eyebrow: z.string(),
+    headline: z.string(),
+    subhead: z.string(),
+    image: z.string().default(""),
+  }),
   cta: z.object({
     eyebrow: z.string(),
     headline: z.string(),
     body: z.string(),
     buttonLabel: z.string(),
   }),
-  terrains: z.array(
-    z.object({ icon: z.string(), label: z.string(), note: z.string() }),
-  ),
-  styles: z.array(z.object({ icon: z.string(), title: z.string(), body: z.string() })),
   signatures: z.array(
     z.object({
       slug: z.string().min(1),

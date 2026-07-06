@@ -116,16 +116,6 @@ export const PAGE_DEFAULTS = {
     facebook_url: "https://facebook.com/thebaobabcollective",
     facebook_handle: "/thebaobabcollective",
   },
-  journeys_index: {
-    eyebrow: "Curated Safari Journeys",
-    title: "Our Journeys",
-    subtitle: "Handpicked safari experiences that celebrate adventure, connection, heritage and conservation.",
-  },
-  destinations_index: {
-    eyebrow: "The Continent",
-    title: "Destinations",
-    subtitle: "From the deltas of Botswana to the highlands of Ethiopia — explore where each journey could take you.",
-  },
   lodges_index: {
     eyebrow: "Where you'll stay",
     title: "Partner Lodges",

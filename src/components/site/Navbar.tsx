@@ -151,14 +151,6 @@ export function Navbar() {
                 }
               />
             )}
-            <button
-              type="button"
-              aria-label="Open menu"
-              className="p-2 text-foreground/70 hover:text-foreground transition-colors border border-border/60 rounded-md ml-1"
-              onClick={() => setOpen((o) => !o)}
-            >
-              <Menu className="w-4 h-4" />
-            </button>
           </div>
 
           <button

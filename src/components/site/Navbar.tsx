@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X, ChevronDown, Search } from "lucide-react";
 import { Link, useNavigate } from "@tanstack/react-router";
 
 import { EnquireDialog } from "@/components/site/EnquireDialog";
@@ -56,7 +56,7 @@ export function Navbar() {
       )}
 
       <div className="bg-background border-b border-border/40">
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 py-1 flex items-center justify-between gap-4 lg:gap-6">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 py-1 flex items-center gap-4 lg:gap-6">
           <Link to="/" className="flex items-center gap-3 shrink-0 -my-2" aria-label="The Baobab Collective home">
             {logoUrl ? (
               <img src={logoUrl} alt="The Baobab Collective" className="w-auto h-16 sm:h-20 lg:h-28 object-contain" />
@@ -67,8 +67,7 @@ export function Navbar() {
             )}
           </Link>
 
-
-          <nav aria-label="Primary" className="hidden lg:flex items-center gap-6 xl:gap-7">
+          <nav aria-label="Primary" className="hidden lg:flex flex-1 items-center justify-center gap-7 xl:gap-9">
             {primaryItems.map((item, i) => (
               item.children && item.children.length ? (
                 <PrimaryWithSubmenu key={`${item.to}-${i}`} item={item} />
@@ -114,7 +113,7 @@ export function Navbar() {
             )}
           </nav>
 
-          <div className="hidden lg:flex items-center gap-4">
+          <div className="hidden lg:flex items-center gap-4 shrink-0">
             {user && isAdmin && (
               <>
                 <Link to="/admin" className="text-[11px] tracking-[0.2em] uppercase text-gold hover:underline">
@@ -125,10 +124,17 @@ export function Navbar() {
                 </button>
               </>
             )}
+            <button
+              type="button"
+              aria-label="Search"
+              className="p-2 text-foreground/70 hover:text-foreground transition-colors"
+            >
+              <Search className="w-4 h-4" strokeWidth={1.75} />
+            </button>
             {menu.ctaTo ? (
               <Link
                 to={menu.ctaTo as any}
-                className="inline-flex items-center justify-center border border-gold text-gold uppercase tracking-[0.2em] text-[11px] px-5 py-3 hover:bg-gold hover:text-gold-foreground transition-colors"
+                className="inline-flex items-center justify-center rounded-full bg-gold text-gold-foreground uppercase tracking-[0.2em] text-[11px] px-6 py-3 hover:bg-gold/90 transition-colors"
               >
                 {menu.ctaLabel}
               </Link>
@@ -138,7 +144,7 @@ export function Navbar() {
                 trigger={
                   <button
                     type="button"
-                    className="inline-flex items-center justify-center border border-gold text-gold uppercase tracking-[0.2em] text-[11px] px-5 py-3 hover:bg-gold hover:text-gold-foreground transition-colors"
+                    className="inline-flex items-center justify-center rounded-full bg-gold text-gold-foreground uppercase tracking-[0.2em] text-[11px] px-6 py-3 hover:bg-gold/90 transition-colors"
                   >
                     {menu.ctaLabel}
                   </button>
@@ -148,7 +154,7 @@ export function Navbar() {
           </div>
 
           <button
-            className="lg:hidden p-2"
+            className="lg:hidden p-2 ml-auto"
             onClick={() => setOpen((o) => !o)}
             aria-label={open ? "Close menu" : "Open menu"}
             aria-expanded={open}
@@ -156,6 +162,7 @@ export function Navbar() {
             {open ? <X /> : <Menu />}
           </button>
         </div>
+
 
         {open && (
           <div className="lg:hidden border-t border-border/40 bg-background px-6 py-4 flex flex-col gap-3 max-h-[80vh] overflow-y-auto">

@@ -1,23 +1,21 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { ArrowRight } from "lucide-react";
 import { Navbar } from "@/components/site/Navbar";
 import { Hero } from "@/components/site/Hero";
 import { About } from "@/components/site/About";
-import { Journeys } from "@/components/site/Journeys";
-import { HomeAdventures } from "@/components/site/HomeAdventures";
-import { HomeDestinations } from "@/components/site/HomeDestinations";
-import { HomeLodges } from "@/components/site/HomeLodges";
 import { Journal } from "@/components/site/Journal";
 import { InstagramStrip } from "@/components/site/Instagram";
 import { Footer } from "@/components/site/Footer";
 import { getPageContent } from "@/lib/page-content.functions";
 import { getArticles } from "@/lib/cms.functions";
+import { PAGE_DEFAULTS } from "@/lib/page-content.defaults";
+import { usePreviewMerge } from "@/lib/preview-overrides";
 
 export const Route = createFileRoute("/")({
   loader: async () => {
     const [
       home,
       about,
-      home_journeys,
       home_adventures,
       home_destinations,
       home_lodges,
@@ -28,7 +26,6 @@ export const Route = createFileRoute("/")({
     ] = await Promise.all([
       getPageContent({ data: { key: "home" } }).catch(() => null),
       getPageContent({ data: { key: "about" } }).catch(() => null),
-      getPageContent({ data: { key: "home_journeys" } }).catch(() => null),
       getPageContent({ data: { key: "home_adventures" } }).catch(() => null),
       getPageContent({ data: { key: "home_destinations" } }).catch(() => null),
       getPageContent({ data: { key: "home_lodges" } }).catch(() => null),
@@ -45,7 +42,6 @@ export const Route = createFileRoute("/")({
     return {
       home,
       about,
-      home_journeys,
       home_adventures,
       home_destinations,
       home_lodges,
@@ -73,11 +69,61 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
+type StripKey = "home_adventures" | "home_destinations" | "home_lodges";
+type StripLink = { to: "/adventures" | "/destinations" | "/lodges" };
+
+function StripCard({
+  content,
+  keyName,
+  linkTo,
+}: {
+  content: any;
+  keyName: StripKey;
+  linkTo: StripLink["to"];
+}) {
+  const base = { ...(PAGE_DEFAULTS[keyName] as any), ...(content ?? {}) };
+  const c: any = usePreviewMerge(keyName, base);
+  return (
+    <div className="bg-background border border-border p-8 md:p-10 text-center flex flex-col h-full">
+      <p className="text-[11px] tracking-[0.3em] uppercase text-foreground/70 mb-3">{c.eyebrow}</p>
+      <h3 className="font-serif text-2xl md:text-3xl text-foreground mb-4 tracking-wider">{c.title}</h3>
+      <p className="text-foreground/70 mb-8 flex-1">{c.body}</p>
+      <Link
+        to={linkTo}
+        className="mx-auto inline-flex items-center gap-2 border border-gold text-gold uppercase tracking-[0.25em] text-[11px] px-6 py-3 hover:bg-gold hover:text-gold-foreground transition-colors"
+      >
+        {c.cta_label} <ArrowRight className="w-3 h-3" />
+      </Link>
+    </div>
+  );
+}
+
+function HomeStrips({
+  adventures,
+  destinations,
+  lodges,
+}: {
+  adventures: any;
+  destinations: any;
+  lodges: any;
+}) {
+  return (
+    <section className="bg-cream py-16 md:py-20">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <StripCard content={adventures} keyName="home_adventures" linkTo="/adventures" />
+          <StripCard content={destinations} keyName="home_destinations" linkTo="/destinations" />
+          <StripCard content={lodges} keyName="home_lodges" linkTo="/lodges" />
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function Index() {
   const {
     home,
     about,
-    home_journeys,
     home_adventures,
     home_destinations,
     home_lodges,
@@ -91,13 +137,11 @@ function Index() {
       <Navbar />
       <Hero content={home} />
       <About content={about} />
-      <Journeys content={home_journeys} />
-      <HomeAdventures content={home_adventures} />
-      <HomeDestinations content={home_destinations} />
-      <HomeLodges content={home_lodges} />
+      <HomeStrips adventures={home_adventures} destinations={home_destinations} lodges={home_lodges} />
       <Journal content={home_journal} articles={journalCards.length ? journalCards : undefined} />
       <InstagramStrip content={home_instagram} />
       <Footer content={footer} />
     </main>
   );
 }
+

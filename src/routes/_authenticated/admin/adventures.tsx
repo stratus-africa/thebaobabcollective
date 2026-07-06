@@ -4,16 +4,14 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import {
-  Loader2, Plus, Trash2, Save, Upload, X, Compass, Sparkles, Megaphone,
-  Mountain, Footprints, Map as MapIcon, Image as ImageIcon,
+  Loader2, Plus, Trash2, Save, Upload, X, Sparkles, Megaphone,
+  Map as MapIcon, Image as ImageIcon,
 } from "lucide-react";
 import {
   getAdventuresPage,
   saveAdventuresPage,
   type AdventuresPage,
   type AdventuresSignature,
-  type AdventuresStyle,
-  type AdventuresTerrain,
   adventuresDefaults,
 } from "@/lib/adventures.functions";
 import { adminUploadImage } from "@/lib/admin.functions";

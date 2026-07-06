@@ -29,9 +29,8 @@ import {
   useSortable,
   verticalListSortingStrategy,
   arrayMove,
-  restrictToVerticalAxis,
 } from "@dnd-kit/sortable";
-import { restrictToParentElement } from "@dnd-kit/modifiers";
+import { restrictToVerticalAxis, restrictToParentElement } from "@dnd-kit/modifiers";
 import { CSS } from "@dnd-kit/utilities";
 
 // Pages whose fields group by index (image_1_*, image_2_* ...) and support reordering.

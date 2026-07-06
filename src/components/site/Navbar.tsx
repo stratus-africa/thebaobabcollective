@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { BaobabLogo } from "./Logo";
+
 import { EnquireDialog } from "@/components/site/EnquireDialog";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { useMenuConfig } from "@/hooks/useMenuConfig";

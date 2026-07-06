@@ -120,7 +120,7 @@ export function Hero({ content }: { content?: HeroContent | null } = {}) {
 
               {/* Search capsule */}
               <div className="mt-6 md:mt-10">
-                <SearchCapsule onSubmit={onSearch} />
+                <SearchCapsule onSubmit={onSearch} adventures={adventures} />
               </div>
             </div>
 

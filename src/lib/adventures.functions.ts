@@ -7,7 +7,9 @@ export type AdventuresHero = {
   headline: string;
   subhead: string;
   image: string;
+  imageAlt: string;
 };
+
 export type AdventuresCta = {
   eyebrow: string;
   headline: string;

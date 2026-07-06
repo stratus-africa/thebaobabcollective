@@ -196,26 +196,6 @@ const SCHEMAS: Record<PageKey, { title: string; description: string; preview: st
       { name: "facebook_handle", label: "Facebook Handle", type: "text" },
     ],
   },
-  journeys_index: {
-    title: "Journeys — Landing",
-    description: "Intro band on the /journeys listing page.",
-    preview: "/journeys",
-    fields: [
-      { name: "eyebrow", label: "Eyebrow", type: "text" },
-      { name: "title", label: "Title", type: "text" },
-      { name: "subtitle", label: "Subtitle", type: "textarea" },
-    ],
-  },
-  destinations_index: {
-    title: "Destinations — Landing",
-    description: "Intro band on the /destinations listing page.",
-    preview: "/destinations",
-    fields: [
-      { name: "eyebrow", label: "Eyebrow", type: "text" },
-      { name: "title", label: "Title", type: "text" },
-      { name: "subtitle", label: "Subtitle", type: "textarea" },
-    ],
-  },
   lodges_index: {
     title: "Lodges — Landing",
     description: "Intro band on the /lodges listing page.",

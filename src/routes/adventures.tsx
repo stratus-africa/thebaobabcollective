@@ -136,10 +136,11 @@ function AdventuresPage() {
 }
 
 function HeroSection({ hero }: { hero: AdventuresPage["hero"] }) {
+  const heroSrc = hero.image || heroBaobab;
   return (
     <section className="relative h-[78vh] min-h-[560px] flex items-end">
       <img
-        src={heroBaobab}
+        src={heroSrc}
         alt="Sunrise over the African bush — a guide leads a walking safari toward distant baobabs"
         className="absolute inset-0 w-full h-full object-cover"
       />

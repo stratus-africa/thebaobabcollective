@@ -54,22 +54,23 @@ export function Navbar() {
     ? "text-cream/85 hover:text-cream"
     : "text-foreground/80 hover:text-foreground";
 
-  return (
-    <header className={overlay ? "absolute top-0 left-0 right-0 z-50" : "sticky top-0 z-50"}>
-      {menu.topBarEnabled && menu.topBarText && (
-        <div
-          className={
-            overlay
-              ? "bg-transparent text-cream py-2 px-4 text-center text-[11px] tracking-luxury uppercase"
-              : "bg-forest text-forest-foreground py-2 px-4 text-center text-[11px] tracking-luxury uppercase"
-          }
-        >
-          {menu.topBarText}
-        </div>
-      )}
+  const topBar = menu.topBarEnabled && menu.topBarText ? (
+    <div className="bg-forest text-forest-foreground py-2 px-4 text-center text-[11px] tracking-luxury uppercase">
+      {menu.topBarText}
+    </div>
+  ) : null;
 
-      <div className={overlay ? "bg-transparent" : "bg-background border-b border-border/40"}>
-        <div className="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-10 py-1 flex items-center gap-4 lg:gap-6">
+  return (
+    <>
+      {/* When overlay is enabled, keep the top bar as its own opaque section
+          in normal flow, above the transparent nav that floats over the hero. */}
+      {overlay && topBar}
+      <header className={overlay ? "absolute inset-x-0 z-50" : "sticky top-0 z-50"}>
+        {!overlay && topBar}
+
+        <div className={overlay ? "bg-transparent" : "bg-background border-b border-border/40"}>
+          <div className="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-10 py-1 flex items-center gap-4 lg:gap-6">
+
           <Link to="/" className="flex items-center gap-3 shrink-0 -my-2" aria-label="The Baobab Collective home">
             {logoUrl ? (
               <img src={logoUrl} alt="The Baobab Collective" className="w-auto h-16 sm:h-20 lg:h-28 object-contain" />
@@ -248,8 +249,10 @@ export function Navbar() {
         )}
       </div>
     </header>
+    </>
   );
 }
+
 
 function PrimaryWithSubmenu({
   item,

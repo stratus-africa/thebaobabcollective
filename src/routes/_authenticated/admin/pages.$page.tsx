@@ -90,6 +90,8 @@ const SCHEMAS: Record<PageKey, { title: string; description: string; preview: st
       { name: "hero_cta_secondary", label: "Secondary CTA Label", type: "text" },
       { name: "hero_proof_text", label: "Social Proof Text", type: "text" },
       { name: "hero_image_as_background", label: "Use Hero Image as Full Background", type: "boolean" },
+      { name: "hero_hide_search", label: "Hide Search Filter", type: "boolean" },
+
 
     ],
   },

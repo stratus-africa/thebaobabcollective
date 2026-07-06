@@ -8,6 +8,7 @@ import { PAGE_DEFAULTS } from "@/lib/page-content.defaults";
 import { EnquireDialog } from "@/components/site/EnquireDialog";
 import { usePreviewMerge } from "@/lib/preview-overrides";
 import { getAdventuresPage } from "@/lib/adventures.functions";
+import { useMenuConfig } from "@/hooks/useMenuConfig";
 
 type HeroContent = Partial<typeof PAGE_DEFAULTS.home>;
 
@@ -15,8 +16,11 @@ export function Hero({ content }: { content?: HeroContent | null } = {}) {
   const base = { ...PAGE_DEFAULTS.home, ...(content ?? {}) };
   const c = usePreviewMerge("home", base);
   const asBackground = Boolean((c as any).hero_image_as_background);
+  const hideSearch = Boolean((c as any).hero_hide_search);
   const heroSrc = c.hero_image_url || heroImg;
   const navigate = useNavigate();
+  const menu = useMenuConfig();
+  const overlay = !!menu.transparentOverHero;
 
   const fetchAdventures = useServerFn(getAdventuresPage);
   const { data: adventuresPage } = useQuery({
@@ -35,15 +39,22 @@ export function Hero({ content }: { content?: HeroContent | null } = {}) {
     navigate({ to: "/adventures", search: { q: "", region: "", terrain: "", difficulty: "" } });
   };
 
-
-
+  // When the site menu is set to overlay the hero, extend the hero panel
+  // edge-to-edge (no outer padding, no top rounding) so the transparent
+  // navbar can float above the artwork.
+  const outerPadding = overlay ? "" : "px-3 sm:px-4 lg:px-6";
+  const panelRounding = overlay
+    ? "rounded-b-[20px] md:rounded-b-[28px]"
+    : "rounded-[20px] md:rounded-[28px]";
+  const overlayNavSpacer = overlay ? "pt-24 sm:pt-28 md:pt-32 lg:pt-36" : "";
 
   return (
-    <section className="relative w-full pb-12 md:pb-16">
-      {/* Full-bleed framed panel */}
-      <div className="w-full px-3 sm:px-4 lg:px-6">
+    <section className={`relative w-full pb-12 md:pb-16 ${overlay ? "-mt-px" : ""}`}>
+      <div className={`w-full ${outerPadding}`}>
         <div
-          className={`relative overflow-hidden rounded-[20px] md:rounded-[28px] ${asBackground ? "text-cream" : "bg-forest text-forest-foreground"}`}
+          className={`relative overflow-hidden ${panelRounding} ${
+            asBackground ? "text-cream" : "bg-forest text-forest-foreground"
+          }`}
         >
           {asBackground && (
             <>
@@ -76,24 +87,24 @@ export function Hero({ content }: { content?: HeroContent | null } = {}) {
           </svg>
 
           <div
-            className={`relative grid gap-8 lg:gap-10 px-5 sm:px-8 md:px-12 lg:px-16 xl:px-24 pt-10 sm:pt-14 md:pt-20 pb-10 sm:pb-14 md:pb-20 ${
+            className={`relative grid gap-8 lg:gap-10 px-5 sm:px-8 md:px-12 lg:px-16 xl:px-24 ${overlayNavSpacer} pt-10 sm:pt-14 md:pt-20 pb-10 sm:pb-14 md:pb-20 ${
               asBackground
                 ? "grid-cols-1"
                 : "grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.9fr)]"
             }`}
           >
-            {/* LEFT — copy */}
-            <div className={`max-w-2xl animate-fade-up ${asBackground ? "min-h-[520px] md:min-h-[640px] flex flex-col justify-center py-8" : ""}`}>
-              <p className="font-serif italic text-xl sm:text-2xl md:text-3xl lg:text-4xl text-gold mb-2 md:mb-3">
-                Discover
+            {/* LEFT — copy (previous format) */}
+            <div className={`max-w-2xl animate-fade-up ${asBackground ? "min-h-[480px] md:min-h-[560px] flex flex-col justify-center py-8" : ""}`}>
+              <p className="text-[11px] tracking-[0.3em] uppercase text-cream/70 mb-4">
+                The Baobab Collective
               </p>
-              <h1 className="font-serif text-[44px] leading-[0.95] sm:text-[64px] md:text-[84px] lg:text-[104px] xl:text-[120px] text-cream tracking-tight">
+              <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl leading-[1.05] text-cream">
                 {c.hero_title_line1}
                 <br />
                 <span className="italic">{c.hero_title_line2}</span>
               </h1>
 
-              <p className="mt-4 md:mt-6 text-cream/80 italic text-sm sm:text-base md:text-lg lg:text-xl max-w-md">
+              <p className="mt-5 md:mt-6 text-cream/80 text-sm sm:text-base md:text-lg max-w-md">
                 {c.hero_subtitle}
               </p>
 
@@ -118,10 +129,12 @@ export function Hero({ content }: { content?: HeroContent | null } = {}) {
                 />
               </div>
 
-              {/* Search capsule */}
-              <div className="mt-6 md:mt-10">
-                <SearchCapsule onSubmit={onSearch} adventures={adventures} />
-              </div>
+              {/* Search capsule — hideable from admin */}
+              {!hideSearch && (
+                <div className="mt-6 md:mt-10">
+                  <SearchCapsule onSubmit={onSearch} adventures={adventures} />
+                </div>
+              )}
             </div>
 
             {/* RIGHT — hero image + discount badge (hidden when background mode) */}
@@ -147,6 +160,7 @@ export function Hero({ content }: { content?: HeroContent | null } = {}) {
     </section>
   );
 }
+
 
 
 function SearchCapsule({

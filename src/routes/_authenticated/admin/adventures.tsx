@@ -138,14 +138,11 @@ function AdminAdventures() {
           <Field label="Subhead">
             <Textarea rows={3} value={draft.hero.subhead} onChange={(e) => setDraft({ ...draft, hero: { ...draft.hero, subhead: e.target.value } })} />
           </Field>
-        </Card>
-
-        <Card id="philosophy" title="Philosophy" icon={Compass} description="The values that shape every adventure.">
-          <Field label="Eyebrow">
-            <Input value={draft.philosophy.eyebrow} onChange={(e) => setDraft({ ...draft, philosophy: { ...draft.philosophy, eyebrow: e.target.value } })} />
-          </Field>
-          <Field label="Body">
-            <Textarea rows={4} value={draft.philosophy.body} onChange={(e) => setDraft({ ...draft, philosophy: { ...draft.philosophy, body: e.target.value } })} />
+          <Field label="Hero background image">
+            <ImageUpload
+              value={draft.hero.image}
+              onChange={(url) => setDraft({ ...draft, hero: { ...draft.hero, image: url } })}
+            />
           </Field>
         </Card>
 
@@ -166,57 +163,6 @@ function AdminAdventures() {
           </Field>
         </Card>
 
-        <ListCard
-          id="terrains"
-          title="Terrain tiles"
-          icon={Mountain}
-          description="Quick visual tiles introducing each terrain."
-          items={draft.terrains}
-          onChange={(terrains) => setDraft({ ...draft, terrains })}
-          empty={{ icon: "Mountain", label: "", note: "" }}
-          previewLabel={(t) => t.label || "Untitled tile"}
-          render={(t, set) => (
-            <>
-              <div className="grid md:grid-cols-3 gap-4">
-                <Field label="Icon">
-                  <IconSelect value={t.icon} onChange={(v) => set({ ...t, icon: v })} />
-                </Field>
-                <Field label="Label">
-                  <Input value={t.label} onChange={(e) => set({ ...t, label: e.target.value })} />
-                </Field>
-                <Field label="Note">
-                  <Input value={t.note} onChange={(e) => set({ ...t, note: e.target.value })} />
-                </Field>
-              </div>
-            </>
-          )}
-        />
-
-        <ListCard
-          id="styles"
-          title="Adventure styles"
-          icon={Footprints}
-          description="How travellers can experience the wild."
-          items={draft.styles}
-          onChange={(styles) => setDraft({ ...draft, styles })}
-          empty={{ icon: "Footprints", title: "", body: "" }}
-          previewLabel={(s) => s.title || "Untitled style"}
-          render={(s, set) => (
-            <>
-              <div className="grid md:grid-cols-[180px_1fr] gap-4">
-                <Field label="Icon">
-                  <IconSelect value={s.icon} onChange={(v) => set({ ...s, icon: v })} />
-                </Field>
-                <Field label="Title">
-                  <Input value={s.title} onChange={(e) => set({ ...s, title: e.target.value })} />
-                </Field>
-              </div>
-              <Field label="Body">
-                <Textarea rows={2} value={s.body} onChange={(e) => set({ ...s, body: e.target.value })} />
-              </Field>
-            </>
-          )}
-        />
 
         <ListCard
           id="signatures"

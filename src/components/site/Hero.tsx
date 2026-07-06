@@ -1,10 +1,13 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { MapPin, Calendar, Users, Search, Plus, Minus } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
+import { useQuery } from "@tanstack/react-query";
+import { Compass, Calendar, Users, Search, Plus, Minus } from "lucide-react";
 import heroImg from "@/assets/hero-baobab.jpg";
 import { PAGE_DEFAULTS } from "@/lib/page-content.defaults";
 import { EnquireDialog } from "@/components/site/EnquireDialog";
 import { usePreviewMerge } from "@/lib/preview-overrides";
+import { getAdventuresPage } from "@/lib/adventures.functions";
 
 type HeroContent = Partial<typeof PAGE_DEFAULTS.home>;
 
@@ -15,10 +18,24 @@ export function Hero({ content }: { content?: HeroContent | null } = {}) {
   const heroSrc = c.hero_image_url || heroImg;
   const navigate = useNavigate();
 
+  const fetchAdventures = useServerFn(getAdventuresPage);
+  const { data: adventuresPage } = useQuery({
+    queryKey: ["hero-adventures"],
+    queryFn: () => fetchAdventures(),
+    staleTime: 5 * 60_000,
+  });
+  const adventures = adventuresPage?.signatures ?? [];
+
   const onSearch = (formData: FormData) => {
-    const q = String(formData.get("location") ?? "").trim();
-    navigate({ to: "/adventures", search: { q, region: "", terrain: "", difficulty: "" } });
+    const slug = String(formData.get("adventure") ?? "").trim();
+    if (slug) {
+      navigate({ to: "/adventures/$slug", params: { slug } });
+      return;
+    }
+    navigate({ to: "/adventures", search: { q: "", region: "", terrain: "", difficulty: "" } });
   };
+
+
 
 
   return (

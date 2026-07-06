@@ -125,9 +125,6 @@ function AdventuresPage() {
       <Navbar />
       <main>
         <HeroSection hero={page.hero} />
-        <PhilosophySection philosophy={page.philosophy} />
-        <TerrainsSection terrains={page.terrains} />
-        <StylesSection styles={page.styles} />
         <SignaturesSection signatures={page.signatures} />
         <RhythmSection />
         <PlanningGuideSection />

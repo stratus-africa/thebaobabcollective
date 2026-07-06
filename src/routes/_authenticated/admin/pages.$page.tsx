@@ -12,7 +12,39 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
-import { Loader2, RefreshCw, ExternalLink, Save, Eye, EyeOff } from "lucide-react";
+import { Loader2, RefreshCw, ExternalLink, Save, Eye, EyeOff, ArrowUp, ArrowDown } from "lucide-react";
+
+// Pages whose fields group by index (image_1_*, image_2_* ...) and support reordering.
+const REORDER_GROUPS: Partial<Record<PageKey, { count: number; suffixes: string[]; label: (i: number) => string }>> = {
+  about_team: {
+    count: 4,
+    suffixes: ["url", "name", "role", "bio"],
+    label: (i) => `Member ${i}`,
+  },
+  home_instagram: {
+    count: 7,
+    suffixes: ["url", "caption"],
+    label: (i) => `Photo ${i}`,
+  },
+};
+
+function swapGroup(
+  draft: Record<string, any>,
+  suffixes: string[],
+  a: number,
+  b: number,
+): Record<string, any> {
+  const next = { ...draft };
+  for (const s of suffixes) {
+    const ka = `image_${a}_${s}`;
+    const kb = `image_${b}_${s}`;
+    const tmp = next[ka];
+    next[ka] = next[kb];
+    next[kb] = tmp;
+  }
+  return next;
+}
+
 
 type FieldDef = {
   name: string;

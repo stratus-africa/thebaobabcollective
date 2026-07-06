@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Compass, MapPin, Mountain, Tent } from "lucide-react";
 import heroImg from "@/assets/hero-baobab.jpg";
 import { PAGE_DEFAULTS } from "@/lib/page-content.defaults";
+import { EnquireDialog } from "@/components/site/EnquireDialog";
 
 const proofAvatars = [
   "https://randomuser.me/api/portraits/women/68.jpg",

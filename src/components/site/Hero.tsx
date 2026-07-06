@@ -11,19 +11,26 @@ type HeroContent = Partial<typeof PAGE_DEFAULTS.home>;
 export function Hero({ content }: { content?: HeroContent | null } = {}) {
   const base = { ...PAGE_DEFAULTS.home, ...(content ?? {}) };
   const c = usePreviewMerge("home", base);
-  const heroSrc = c.hero_image_url || heroImg;
-  const navigate = useNavigate();
-
-  const onSearch = (formData: FormData) => {
-    const q = String(formData.get("location") ?? "").trim();
-    navigate({ to: "/adventures", search: { q, region: "", terrain: "", difficulty: "" } });
-  };
+  const asBackground = Boolean((c as any).hero_image_as_background);
 
   return (
-    <section className="relative w-full pb-16 md:pb-20">
-      {/* Full-bleed framed forest panel */}
+    <section className="relative w-full pb-12 md:pb-16">
+      {/* Full-bleed framed panel */}
       <div className="w-full px-3 sm:px-4 lg:px-6">
-        <div className="relative overflow-hidden rounded-[24px] md:rounded-[28px] bg-forest text-forest-foreground">
+        <div
+          className={`relative overflow-hidden rounded-[20px] md:rounded-[28px] ${asBackground ? "text-cream" : "bg-forest text-forest-foreground"}`}
+        >
+          {asBackground && (
+            <>
+              <img
+                src={heroSrc}
+                alt="Baobab safari hero"
+                className="absolute inset-0 h-full w-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-forest/85 via-forest/60 to-forest/30" />
+            </>
+          )}
+
           {/* Decorative dotted flight paths */}
           <svg
             className="pointer-events-none absolute inset-0 w-full h-full opacity-30"
@@ -43,26 +50,32 @@ export function Hero({ content }: { content?: HeroContent | null } = {}) {
             />
           </svg>
 
-          <div className="relative grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.95fr)] gap-8 lg:gap-8 px-5 sm:px-8 md:px-12 lg:px-16 xl:px-24 pt-12 sm:pt-14 md:pt-20 pb-12 sm:pb-16 md:pb-24">
+          <div
+            className={`relative grid gap-8 lg:gap-10 px-5 sm:px-8 md:px-12 lg:px-16 xl:px-24 pt-10 sm:pt-14 md:pt-20 pb-10 sm:pb-14 md:pb-20 ${
+              asBackground
+                ? "grid-cols-1"
+                : "grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.9fr)]"
+            }`}
+          >
             {/* LEFT — copy */}
-            <div className="max-w-2xl animate-fade-up">
-              <p className="font-serif italic text-2xl sm:text-3xl md:text-4xl text-gold mb-2 md:mb-3">
+            <div className={`max-w-2xl animate-fade-up ${asBackground ? "min-h-[520px] md:min-h-[640px] flex flex-col justify-center py-8" : ""}`}>
+              <p className="font-serif italic text-xl sm:text-2xl md:text-3xl lg:text-4xl text-gold mb-2 md:mb-3">
                 Discover
               </p>
-              <h1 className="font-serif text-[52px] leading-[0.95] sm:text-[72px] md:text-[96px] lg:text-[112px] xl:text-[128px] text-cream tracking-tight">
+              <h1 className="font-serif text-[44px] leading-[0.95] sm:text-[64px] md:text-[84px] lg:text-[104px] xl:text-[120px] text-cream tracking-tight">
                 {c.hero_title_line1}
                 <br />
                 <span className="italic">{c.hero_title_line2}</span>
               </h1>
 
-              <p className="mt-5 md:mt-6 text-cream/80 italic text-base sm:text-lg md:text-xl max-w-md">
+              <p className="mt-4 md:mt-6 text-cream/80 italic text-sm sm:text-base md:text-lg lg:text-xl max-w-md">
                 {c.hero_subtitle}
               </p>
 
               <div className="mt-6 md:mt-8 flex flex-wrap items-center gap-3 md:gap-4">
                 <Link
                   to="/adventures"
-                  className="inline-flex items-center rounded-full bg-gold text-gold-foreground uppercase tracking-[0.2em] text-[11px] px-7 md:px-8 py-3.5 md:py-4 hover:bg-gold/90 transition-colors shadow-lg"
+                  className="inline-flex items-center rounded-full bg-gold text-gold-foreground uppercase tracking-[0.2em] text-[11px] px-6 sm:px-7 md:px-8 py-3 sm:py-3.5 md:py-4 hover:bg-gold/90 transition-colors shadow-lg"
                 >
                   {c.hero_cta_primary}
                 </Link>
@@ -72,7 +85,7 @@ export function Hero({ content }: { content?: HeroContent | null } = {}) {
                   trigger={
                     <button
                       type="button"
-                      className="inline-flex items-center rounded-full border border-cream/40 text-cream uppercase tracking-[0.2em] text-[11px] px-7 md:px-8 py-3.5 md:py-4 hover:border-gold hover:text-gold transition-colors"
+                      className="inline-flex items-center rounded-full border border-cream/40 text-cream uppercase tracking-[0.2em] text-[11px] px-6 sm:px-7 md:px-8 py-3 sm:py-3.5 md:py-4 hover:border-gold hover:text-gold transition-colors"
                     >
                       {c.hero_cta_secondary}
                     </button>
@@ -81,32 +94,35 @@ export function Hero({ content }: { content?: HeroContent | null } = {}) {
               </div>
 
               {/* Search capsule */}
-              <div className="mt-8 md:mt-10">
+              <div className="mt-6 md:mt-10">
                 <SearchCapsule onSubmit={onSearch} />
               </div>
             </div>
 
-            {/* RIGHT — hero image + discount badge */}
-            <div className="relative min-h-[320px] sm:min-h-[420px] lg:min-h-[560px]">
-              <div className="absolute inset-0 flex items-end justify-center lg:justify-end">
-                <img
-                  src={heroSrc}
-                  alt="Baobab safari hero"
-                  className="w-full h-full max-h-[600px] object-cover object-center rounded-[20px] md:rounded-[24px] shadow-2xl"
-                />
-              </div>
-              {c.hero_proof_text && (
-                <div className="absolute -left-2 top-4 md:top-10 rotate-[-8deg] bg-cream text-forest px-3 md:px-4 py-2 md:py-3 rounded-md shadow-xl max-w-[180px] md:max-w-[220px]">
-                  <p className="font-serif text-xs md:text-sm leading-snug">{c.hero_proof_text}</p>
+            {/* RIGHT — hero image + discount badge (hidden when background mode) */}
+            {!asBackground && (
+              <div className="relative min-h-[280px] sm:min-h-[380px] lg:min-h-[560px]">
+                <div className="absolute inset-0 flex items-end justify-center lg:justify-end">
+                  <img
+                    src={heroSrc}
+                    alt="Baobab safari hero"
+                    className="w-full h-full max-h-[600px] object-cover object-center rounded-[18px] md:rounded-[24px] shadow-2xl"
+                  />
                 </div>
-              )}
-            </div>
+                {c.hero_proof_text && (
+                  <div className="absolute -left-2 top-4 md:top-10 rotate-[-8deg] bg-cream text-forest px-3 md:px-4 py-2 md:py-3 rounded-md shadow-xl max-w-[180px] md:max-w-[220px]">
+                    <p className="font-serif text-xs md:text-sm leading-snug">{c.hero_proof_text}</p>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>
     </section>
   );
 }
+
 
 function SearchCapsule({ onSubmit }: { onSubmit: (fd: FormData) => void }) {
   const [travellers, setTravellers] = useState(2);

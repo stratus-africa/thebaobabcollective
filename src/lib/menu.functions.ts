@@ -30,6 +30,7 @@ export type MenuConfig = {
 export const MENU_DEFAULTS: MenuConfig = {
   topBarText: "Curated Safari Journeys. Authentic Connections. Extraordinary Experiences.",
   topBarEnabled: true,
+  transparentOverHero: false,
   primary: [
     { label: "Home", to: "/" },
     { label: "Adventures", to: "/adventures", children: [{ label: "Destinations", to: "/destinations" }] },

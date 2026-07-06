@@ -63,11 +63,6 @@ export const PAGE_DEFAULTS = {
       "A confirmation has been sent to your inbox. One of our journey designers will reach out within 48 hours.",
     submit_label: "Request my bespoke journey",
   },
-  home_journeys: {
-    eyebrow: "Curated Safari Journeys",
-    title: "OUR JOURNEYS",
-    body: "Thoughtfully curated experiences that celebrate adventure, connection and heritage.",
-  },
   home_adventures: {
     eyebrow: "Signature Adventures",
     title: "WILD AFRICA",

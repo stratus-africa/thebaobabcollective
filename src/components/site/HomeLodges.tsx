@@ -10,7 +10,7 @@ export function HomeLodges({ content }: { content?: Content | null } = {}) {
   const c = usePreviewMerge("home_lodges", base);
   return (
     <section className="bg-cream py-16 md:py-20">
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 text-center">
+      <div className="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-10 text-center">
         <p className="text-[11px] tracking-[0.3em] uppercase text-foreground/70 mb-3">{c.eyebrow}</p>
         <h2 className="font-serif text-3xl md:text-4xl text-foreground mb-4 tracking-wider">{c.title}</h2>
         <p className="text-foreground/70 max-w-2xl mx-auto mb-8">{c.body}</p>

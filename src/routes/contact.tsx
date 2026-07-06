@@ -35,7 +35,7 @@ function ContactPage() {
       <Navbar />
       <main>
         <section className="bg-cream py-20 md:py-28">
-          <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 grid lg:grid-cols-[5fr_7fr] gap-10 lg:gap-14 items-start">
+          <div className="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-10 grid lg:grid-cols-[5fr_7fr] gap-10 lg:gap-14 items-start">
             <div>
               <p className="text-[11px] tracking-[0.3em] uppercase text-terracotta mb-5">{c.eyebrow}</p>
               <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl text-foreground leading-[1.05] mb-8">

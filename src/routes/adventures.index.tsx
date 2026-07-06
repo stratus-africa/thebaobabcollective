@@ -148,7 +148,7 @@ function HeroSection({ hero }: { hero: AdventuresPage["hero"] }) {
       />
 
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/35 to-black/20" />
-      <div className="relative max-w-[1440px] mx-auto px-6 lg:px-10 pb-20 text-background w-full">
+      <div className="relative max-w-[1920px] mx-auto px-6 lg:px-10 pb-20 text-background w-full">
         <p className="text-[11px] tracking-[0.35em] uppercase text-gold mb-5">{hero.eyebrow}</p>
         <h1 className="font-serif text-5xl md:text-7xl lg:text-8xl leading-[1] mb-6 max-w-4xl">
           {hero.headline}
@@ -220,7 +220,7 @@ function SignaturesSection({ signatures }: { signatures: AdventuresPage["signatu
 
   return (
     <section id="signature" className="py-24 md:py-32 scroll-mt-20">
-      <div className="max-w-[1440px] mx-auto px-6 lg:px-10">
+      <div className="max-w-[1920px] mx-auto px-6 lg:px-10">
         <div className="text-center max-w-2xl mx-auto mb-12">
           <p className="text-[11px] tracking-[0.3em] uppercase text-terracotta mb-4">Signature Adventures</p>
           <h2 className="font-serif text-4xl md:text-5xl text-foreground">
@@ -389,7 +389,7 @@ function RhythmSection() {
   ];
   return (
     <section className="py-24 bg-cream">
-      <div className="max-w-[1440px] mx-auto px-6 lg:px-10">
+      <div className="max-w-[1920px] mx-auto px-6 lg:px-10">
         <div className="grid lg:grid-cols-12 gap-12 items-start">
           <div className="lg:col-span-4 lg:sticky lg:top-32">
             <p className="text-[11px] tracking-[0.3em] uppercase text-gold mb-4">A Day in the Field</p>

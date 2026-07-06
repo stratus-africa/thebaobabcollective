@@ -18,6 +18,7 @@ export type FooterColumn = {
 export type MenuConfig = {
   topBarText: string;
   topBarEnabled: boolean;
+  transparentOverHero: boolean;
   primary: NavItem[];
   more: { label: string; to: string; hidden?: boolean }[];
   ctaLabel: string;

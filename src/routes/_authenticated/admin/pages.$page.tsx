@@ -12,7 +12,24 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
-import { Loader2, RefreshCw, ExternalLink, Save, Eye, EyeOff, ArrowUp, ArrowDown } from "lucide-react";
+import { Loader2, RefreshCw, ExternalLink, Save, Eye, EyeOff, ArrowUp, ArrowDown, GripVertical } from "lucide-react";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+  arrayMove,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 // Pages whose fields group by index (image_1_*, image_2_* ...) and support reordering.
 const REORDER_GROUPS: Partial<Record<PageKey, { count: number; suffixes: string[]; label: (i: number) => string }>> = {
@@ -28,19 +45,23 @@ const REORDER_GROUPS: Partial<Record<PageKey, { count: number; suffixes: string[
   },
 };
 
-function swapGroup(
+// Reorder all group values by applying an old->new index permutation.
+// order[newPos-1] = oldPos (1-indexed).
+function reorderGroup(
   draft: Record<string, any>,
   suffixes: string[],
-  a: number,
-  b: number,
+  order: number[],
 ): Record<string, any> {
   const next = { ...draft };
   for (const s of suffixes) {
-    const ka = `image_${a}_${s}`;
-    const kb = `image_${b}_${s}`;
-    const tmp = next[ka];
-    next[ka] = next[kb];
-    next[kb] = tmp;
+    const snapshot: Record<number, any> = {};
+    for (let i = 1; i <= order.length; i++) {
+      snapshot[i] = draft[`image_${i}_${s}`];
+    }
+    for (let newPos = 1; newPos <= order.length; newPos++) {
+      const oldPos = order[newPos - 1];
+      next[`image_${newPos}_${s}`] = snapshot[oldPos];
+    }
   }
   return next;
 }

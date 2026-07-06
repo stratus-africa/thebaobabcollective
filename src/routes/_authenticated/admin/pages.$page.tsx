@@ -230,15 +230,16 @@ const SCHEMAS: Record<PageKey, { title: string; description: string; preview: st
     ],
   },
   detail_journey: {
-    title: "Journey Detail Template",
-    description: "Shared copy across all journey detail pages.",
-    preview: "/journeys",
+    title: "Adventure Detail Template",
+    description: "Shared copy across all adventure detail (itinerary) pages.",
+    preview: "/adventures",
     fields: [
       { name: "intro_eyebrow", label: "Intro Eyebrow", type: "text" },
       { name: "enquire_cta", label: "Enquire CTA Label", type: "text" },
       { name: "related_title", label: "Related Section Title", type: "text" },
     ],
   },
+
   detail_lodge: {
     title: "Lodge Detail Template",
     description: "Shared copy across all lodge detail pages.",

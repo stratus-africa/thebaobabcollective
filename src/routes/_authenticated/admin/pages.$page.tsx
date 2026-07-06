@@ -12,7 +12,39 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
-import { Loader2, RefreshCw, ExternalLink, Save, Eye, EyeOff } from "lucide-react";
+import { Loader2, RefreshCw, ExternalLink, Save, Eye, EyeOff, ArrowUp, ArrowDown } from "lucide-react";
+
+// Pages whose fields group by index (image_1_*, image_2_* ...) and support reordering.
+const REORDER_GROUPS: Partial<Record<PageKey, { count: number; suffixes: string[]; label: (i: number) => string }>> = {
+  about_team: {
+    count: 4,
+    suffixes: ["url", "name", "role", "bio"],
+    label: (i) => `Member ${i}`,
+  },
+  home_instagram: {
+    count: 7,
+    suffixes: ["url", "caption"],
+    label: (i) => `Photo ${i}`,
+  },
+};
+
+function swapGroup(
+  draft: Record<string, any>,
+  suffixes: string[],
+  a: number,
+  b: number,
+): Record<string, any> {
+  const next = { ...draft };
+  for (const s of suffixes) {
+    const ka = `image_${a}_${s}`;
+    const kb = `image_${b}_${s}`;
+    const tmp = next[ka];
+    next[ka] = next[kb];
+    next[kb] = tmp;
+  }
+  return next;
+}
+
 
 type FieldDef = {
   name: string;
@@ -166,21 +198,29 @@ const SCHEMAS: Record<PageKey, { title: string; description: string; preview: st
   },
   home_instagram: {
     title: "Home — Instagram Strip",
-    description: "Handle, heading, and the 7 thumbnails shown in the Instagram section.",
+    description: "Handle, heading, and the 7 thumbnails. Use ↑/↓ to reorder photos.",
     preview: "/",
     fields: [
       { name: "heading", label: "Heading", type: "text" },
       { name: "handle", label: "Instagram Handle", type: "text" },
       { name: "url", label: "Instagram URL", type: "text" },
       { name: "image_1_url", label: "Photo 1", type: "image" },
+      { name: "image_1_caption", label: "Photo 1 — Caption", type: "text" },
       { name: "image_2_url", label: "Photo 2", type: "image" },
+      { name: "image_2_caption", label: "Photo 2 — Caption", type: "text" },
       { name: "image_3_url", label: "Photo 3", type: "image" },
+      { name: "image_3_caption", label: "Photo 3 — Caption", type: "text" },
       { name: "image_4_url", label: "Photo 4", type: "image" },
+      { name: "image_4_caption", label: "Photo 4 — Caption", type: "text" },
       { name: "image_5_url", label: "Photo 5", type: "image" },
+      { name: "image_5_caption", label: "Photo 5 — Caption", type: "text" },
       { name: "image_6_url", label: "Photo 6", type: "image" },
+      { name: "image_6_caption", label: "Photo 6 — Caption", type: "text" },
       { name: "image_7_url", label: "Photo 7", type: "image" },
+      { name: "image_7_caption", label: "Photo 7 — Caption", type: "text" },
     ],
   },
+
 
   top_bar: {
     title: "Top Announcement Bar",
@@ -379,6 +419,26 @@ function PageEditor() {
             <div className="bg-background border border-border p-10 text-center text-foreground/60">
               <Loader2 className="w-5 h-5 animate-spin inline mr-2" /> Loading…
             </div>
+          ) : REORDER_GROUPS[page] ? (
+            <div className="bg-background border border-border p-6 space-y-5">
+              {schema.fields
+                .filter((f) => !/^image_\d+_/.test(f.name))
+                .map((f) => (
+                  <FieldRow
+                    key={f.name}
+                    field={f}
+                    value={draft[f.name] ?? (f.type === "boolean" ? false : "")}
+                    onChange={(v) => setDraft((d) => ({ ...d, [f.name]: v }))}
+                  />
+                ))}
+              <ReorderableGroups
+                page={page}
+                group={REORDER_GROUPS[page]!}
+                schema={schema}
+                draft={draft}
+                setDraft={setDraft}
+              />
+            </div>
           ) : (
             <div className="bg-background border border-border p-6 space-y-5">
               {schema.fields.map((f) => (
@@ -391,6 +451,7 @@ function PageEditor() {
               ))}
             </div>
           )}
+
         </div>
         {showPreview && (
           <div className="min-h-[600px]">
@@ -438,3 +499,66 @@ function FieldRow({
     </div>
   );
 }
+
+function ReorderableGroups({
+  page,
+  group,
+  schema,
+  draft,
+  setDraft,
+}: {
+  page: PageKey;
+  group: { count: number; suffixes: string[]; label: (i: number) => string };
+  schema: { fields: FieldDef[] };
+  draft: Record<string, any>;
+  setDraft: (fn: (d: Record<string, any>) => Record<string, any>) => void;
+}) {
+  const move = (i: number, dir: -1 | 1) => {
+    const j = i + dir;
+    if (j < 1 || j > group.count) return;
+    setDraft((d) => swapGroup(d, group.suffixes, i, j));
+  };
+
+  return (
+    <div className="space-y-4 pt-4 border-t border-border">
+      <p className="text-[11px] tracking-[0.2em] uppercase text-foreground/60">Items — drag with arrows to reorder</p>
+      {Array.from({ length: group.count }, (_, k) => k + 1).map((i) => {
+        const fields = group.suffixes
+          .map((s) => schema.fields.find((f) => f.name === `image_${i}_${s}`))
+          .filter(Boolean) as FieldDef[];
+        return (
+          <div key={i} className="border border-border rounded-md p-4 bg-cream/30 space-y-3">
+            <div className="flex items-center justify-between">
+              <p className="font-medium text-sm">{group.label(i)}</p>
+              <div className="flex items-center gap-1">
+                <Button
+                  type="button" size="icon" variant="outline"
+                  onClick={() => move(i, -1)} disabled={i === 1}
+                  aria-label="Move up"
+                >
+                  <ArrowUp className="w-4 h-4" />
+                </Button>
+                <Button
+                  type="button" size="icon" variant="outline"
+                  onClick={() => move(i, 1)} disabled={i === group.count}
+                  aria-label="Move down"
+                >
+                  <ArrowDown className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+            {fields.map((f) => (
+              <FieldRow
+                key={f.name}
+                field={f}
+                value={draft[f.name] ?? ""}
+                onChange={(v) => setDraft((d) => ({ ...d, [f.name]: v }))}
+              />
+            ))}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+

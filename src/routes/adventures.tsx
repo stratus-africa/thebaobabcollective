@@ -143,9 +143,10 @@ function HeroSection({ hero }: { hero: AdventuresPage["hero"] }) {
     <section className="relative h-[78vh] min-h-[560px] flex items-end">
       <img
         src={heroSrc}
-        alt="Sunrise over the African bush — a guide leads a walking safari toward distant baobabs"
+        alt={hero.imageAlt || "Sunrise over the African bush — a guide leads a walking safari toward distant baobabs"}
         className="absolute inset-0 w-full h-full object-cover"
       />
+
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/35 to-black/20" />
       <div className="relative max-w-[1440px] mx-auto px-6 lg:px-10 pb-20 text-background w-full">
         <p className="text-[11px] tracking-[0.35em] uppercase text-gold mb-5">{hero.eyebrow}</p>

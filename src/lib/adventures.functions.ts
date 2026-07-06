@@ -7,7 +7,9 @@ export type AdventuresHero = {
   headline: string;
   subhead: string;
   image: string;
+  imageAlt: string;
 };
+
 export type AdventuresCta = {
   eyebrow: string;
   headline: string;
@@ -40,7 +42,9 @@ export const adventuresDefaults: AdventuresPage = {
     subhead:
       "Walking safaris, mokoro mornings, gorilla treks, desert traverses. The adventures we build are slow, private and shaped by the people who know the land best.",
     image: "",
+    imageAlt: "Sunrise over the African bush — a guide leads a walking safari toward distant baobabs",
   },
+
   cta: {
     eyebrow: "Begin",
     headline: "Your adventure, our craft.",
@@ -67,6 +71,7 @@ export const getAdventuresPage = createServerFn({ method: "GET" }).handler(
     return {
       id: (data as any).id,
       hero: { ...adventuresDefaults.hero, ...((data as any).hero ?? {}) },
+
       cta: { ...adventuresDefaults.cta, ...((data as any).cta ?? {}) },
       signatures: ((data as any).signatures ?? []) as AdventuresSignature[],
     };
@@ -79,7 +84,9 @@ const SavePayload = z.object({
     headline: z.string(),
     subhead: z.string(),
     image: z.string().default(""),
+    imageAlt: z.string().default(""),
   }),
+
   cta: z.object({
     eyebrow: z.string(),
     headline: z.string(),

@@ -17,7 +17,10 @@ type Content = Partial<typeof PAGE_DEFAULTS.home_instagram>;
 export function InstagramStrip({ content }: { content?: Content | null } = {}) {
   const base = { ...PAGE_DEFAULTS.home_instagram, ...(content ?? {}) };
   const c: any = usePreviewMerge("home_instagram", base);
-  const imgs = defaultImgs.map((d, i) => (c[`image_${i + 1}_url`] as string) || d);
+  const photos = defaultImgs.map((d, i) => ({
+    src: (c[`image_${i + 1}_url`] as string) || d,
+    caption: (c[`image_${i + 1}_caption`] as string) || "",
+  }));
   return (
     <section className="bg-forest text-forest-foreground py-6">
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 flex flex-col lg:flex-row items-center gap-6">
@@ -31,17 +34,19 @@ export function InstagramStrip({ content }: { content?: Content | null } = {}) {
           </div>
         </div>
         <div className="flex-1 flex gap-2 overflow-x-auto lg:overflow-visible">
-          {imgs.map((src, i) => (
+          {photos.map((p, i) => (
             <a
               key={i}
               href={c.url}
               target="_blank"
               rel="noreferrer"
+              title={p.caption || undefined}
+              aria-label={p.caption || `Instagram photo ${i + 1}`}
               className="shrink-0 w-20 h-20 md:w-24 md:h-24 overflow-hidden block"
             >
               <img
-                src={src}
-                alt=""
+                src={p.src}
+                alt={p.caption || ""}
                 loading="lazy"
                 className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
               />
@@ -49,6 +54,7 @@ export function InstagramStrip({ content }: { content?: Content | null } = {}) {
           ))}
         </div>
       </div>
+
 
     </section>
   );

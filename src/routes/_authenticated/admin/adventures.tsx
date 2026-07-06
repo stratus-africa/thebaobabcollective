@@ -143,8 +143,23 @@ function AdminAdventures() {
               value={draft.hero.image}
               onChange={(url) => setDraft({ ...draft, hero: { ...draft.hero, image: url } })}
             />
+            {draft.hero.image && (
+              <img
+                src={draft.hero.image}
+                alt={draft.hero.imageAlt || "Hero preview"}
+                className="mt-3 w-full max-h-64 object-cover rounded border border-border"
+              />
+            )}
+          </Field>
+          <Field label="Hero image — alt text (for accessibility & SEO)">
+            <Input
+              value={draft.hero.imageAlt ?? ""}
+              placeholder="Describe the hero image"
+              onChange={(e) => setDraft({ ...draft, hero: { ...draft.hero, imageAlt: e.target.value } })}
+            />
           </Field>
         </Card>
+
 
         <Card id="cta" title="Closing CTA" icon={Megaphone} description="The final invitation at the bottom of the page.">
           <div className="grid md:grid-cols-2 gap-4">

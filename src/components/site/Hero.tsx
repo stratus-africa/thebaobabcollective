@@ -63,7 +63,6 @@ export function Hero({ content }: { content?: HeroContent | null } = {}) {
                 alt="Baobab safari hero"
                 className="absolute inset-0 h-full w-full object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-r from-forest/85 via-forest/60 to-forest/30" />
             </>
           )}
 

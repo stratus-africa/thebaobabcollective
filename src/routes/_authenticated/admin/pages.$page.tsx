@@ -499,3 +499,66 @@ function FieldRow({
     </div>
   );
 }
+
+function ReorderableGroups({
+  page,
+  group,
+  schema,
+  draft,
+  setDraft,
+}: {
+  page: PageKey;
+  group: { count: number; suffixes: string[]; label: (i: number) => string };
+  schema: { fields: FieldDef[] };
+  draft: Record<string, any>;
+  setDraft: (fn: (d: Record<string, any>) => Record<string, any>) => void;
+}) {
+  const move = (i: number, dir: -1 | 1) => {
+    const j = i + dir;
+    if (j < 1 || j > group.count) return;
+    setDraft((d) => swapGroup(d, group.suffixes, i, j));
+  };
+
+  return (
+    <div className="space-y-4 pt-4 border-t border-border">
+      <p className="text-[11px] tracking-[0.2em] uppercase text-foreground/60">Items — drag with arrows to reorder</p>
+      {Array.from({ length: group.count }, (_, k) => k + 1).map((i) => {
+        const fields = group.suffixes
+          .map((s) => schema.fields.find((f) => f.name === `image_${i}_${s}`))
+          .filter(Boolean) as FieldDef[];
+        return (
+          <div key={i} className="border border-border rounded-md p-4 bg-cream/30 space-y-3">
+            <div className="flex items-center justify-between">
+              <p className="font-medium text-sm">{group.label(i)}</p>
+              <div className="flex items-center gap-1">
+                <Button
+                  type="button" size="icon" variant="outline"
+                  onClick={() => move(i, -1)} disabled={i === 1}
+                  aria-label="Move up"
+                >
+                  <ArrowUp className="w-4 h-4" />
+                </Button>
+                <Button
+                  type="button" size="icon" variant="outline"
+                  onClick={() => move(i, 1)} disabled={i === group.count}
+                  aria-label="Move down"
+                >
+                  <ArrowDown className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+            {fields.map((f) => (
+              <FieldRow
+                key={f.name}
+                field={f}
+                value={draft[f.name] ?? ""}
+                onChange={(v) => setDraft((d) => ({ ...d, [f.name]: v }))}
+              />
+            ))}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+

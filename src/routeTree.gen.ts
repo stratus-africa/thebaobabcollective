@@ -22,6 +22,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as LodgesIndexRouteImport } from './routes/lodges.index'
 import { Route as JourneysIndexRouteImport } from './routes/journeys.index'
 import { Route as DestinationsIndexRouteImport } from './routes/destinations.index'
+import { Route as AdventuresIndexRouteImport } from './routes/adventures.index'
 import { Route as LodgesSlugRouteImport } from './routes/lodges.$slug'
 import { Route as JourneysSlugRouteImport } from './routes/journeys.$slug'
 import { Route as JournalSlugRouteImport } from './routes/journal.$slug'
@@ -115,6 +116,11 @@ const DestinationsIndexRoute = DestinationsIndexRouteImport.update({
   id: '/destinations/',
   path: '/destinations/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AdventuresIndexRoute = AdventuresIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdventuresRoute,
 } as any)
 const LodgesSlugRoute = LodgesSlugRouteImport.update({
   id: '/lodges/$slug',
@@ -295,6 +301,7 @@ export interface FileRoutesByFullPath {
   '/journal/$slug': typeof JournalSlugRoute
   '/journeys/$slug': typeof JourneysSlugRoute
   '/lodges/$slug': typeof LodgesSlugRoute
+  '/adventures/': typeof AdventuresIndexRoute
   '/destinations/': typeof DestinationsIndexRoute
   '/journeys/': typeof JourneysIndexRoute
   '/lodges/': typeof LodgesIndexRoute
@@ -321,7 +328,6 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/adventures': typeof AdventuresRouteWithChildren
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
   '/faq': typeof FaqRoute
@@ -337,6 +343,7 @@ export interface FileRoutesByTo {
   '/journal/$slug': typeof JournalSlugRoute
   '/journeys/$slug': typeof JourneysSlugRoute
   '/lodges/$slug': typeof LodgesSlugRoute
+  '/adventures': typeof AdventuresIndexRoute
   '/destinations': typeof DestinationsIndexRoute
   '/journeys': typeof JourneysIndexRoute
   '/lodges': typeof LodgesIndexRoute
@@ -382,6 +389,7 @@ export interface FileRoutesById {
   '/journal/$slug': typeof JournalSlugRoute
   '/journeys/$slug': typeof JourneysSlugRoute
   '/lodges/$slug': typeof LodgesSlugRoute
+  '/adventures/': typeof AdventuresIndexRoute
   '/destinations/': typeof DestinationsIndexRoute
   '/journeys/': typeof JourneysIndexRoute
   '/lodges/': typeof LodgesIndexRoute
@@ -427,6 +435,7 @@ export interface FileRouteTypes {
     | '/journal/$slug'
     | '/journeys/$slug'
     | '/lodges/$slug'
+    | '/adventures/'
     | '/destinations/'
     | '/journeys/'
     | '/lodges/'
@@ -453,7 +462,6 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
-    | '/adventures'
     | '/auth'
     | '/contact'
     | '/faq'
@@ -469,6 +477,7 @@ export interface FileRouteTypes {
     | '/journal/$slug'
     | '/journeys/$slug'
     | '/lodges/$slug'
+    | '/adventures'
     | '/destinations'
     | '/journeys'
     | '/lodges'
@@ -513,6 +522,7 @@ export interface FileRouteTypes {
     | '/journal/$slug'
     | '/journeys/$slug'
     | '/lodges/$slug'
+    | '/adventures/'
     | '/destinations/'
     | '/journeys/'
     | '/lodges/'
@@ -660,6 +670,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/destinations/'
       preLoaderRoute: typeof DestinationsIndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/adventures/': {
+      id: '/adventures/'
+      path: '/'
+      fullPath: '/adventures/'
+      preLoaderRoute: typeof AdventuresIndexRouteImport
+      parentRoute: typeof AdventuresRoute
     }
     '/lodges/$slug': {
       id: '/lodges/$slug'
@@ -914,10 +931,12 @@ const AuthenticatedRouteRouteWithChildren =
 
 interface AdventuresRouteChildren {
   AdventuresSlugRoute: typeof AdventuresSlugRoute
+  AdventuresIndexRoute: typeof AdventuresIndexRoute
 }
 
 const AdventuresRouteChildren: AdventuresRouteChildren = {
   AdventuresSlugRoute: AdventuresSlugRoute,
+  AdventuresIndexRoute: AdventuresIndexRoute,
 }
 
 const AdventuresRouteWithChildren = AdventuresRoute._addFileChildren(
@@ -968,13 +987,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

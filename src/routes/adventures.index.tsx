@@ -47,7 +47,7 @@ const searchSchema = z.object({
   difficulty: fallback(z.string(), "").default(""),
 });
 
-export const Route = createFileRoute("/adventures")({
+export const Route = createFileRoute("/adventures/")({
   validateSearch: zodValidator(searchSchema),
   head: () => ({
     meta: [

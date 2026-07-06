@@ -8,7 +8,6 @@ export const PAGE_DEFAULTS = {
     hero_cta_secondary: "Plan With Us",
     hero_proof_text: "Trusted by travellers across 24 countries this season",
     hero_image_url: "",
-    quick_explore_hidden: false,
   },
   about: {
     eyebrow: "The Baobab Collective",

@@ -615,10 +615,10 @@ function SortableItem({
   canDown: boolean;
   onUp: () => void;
   onDown: () => void;
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
-  const style: React.CSSProperties = {
+  const style: CSSProperties = {
     transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging ? 0.6 : 1,

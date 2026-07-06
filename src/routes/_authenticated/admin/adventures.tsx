@@ -79,10 +79,7 @@ function AdminAdventures() {
 
   const sections = [
     { id: "hero", label: "Hero", icon: Sparkles },
-    { id: "philosophy", label: "Philosophy", icon: Compass },
     { id: "cta", label: "Closing CTA", icon: Megaphone },
-    { id: "terrains", label: "Terrains", icon: Mountain, count: draft.terrains.length },
-    { id: "styles", label: "Styles", icon: Footprints, count: draft.styles.length },
     { id: "signatures", label: "Signature itineraries", icon: MapIcon, count: draft.signatures.length },
   ];
 

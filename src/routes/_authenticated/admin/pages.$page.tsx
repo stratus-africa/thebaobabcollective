@@ -80,7 +80,7 @@ const SCHEMAS: Record<PageKey, { title: string; description: string; preview: st
   },
   about_team: {
     title: "About — Team",
-    description: "Team intro and photos shown on the About page.",
+    description: "Team intro and photos shown on the About page. Use the arrows to reorder members.",
     preview: "/about",
     fields: [
       { name: "eyebrow", label: "Eyebrow", type: "text" },
@@ -89,17 +89,22 @@ const SCHEMAS: Record<PageKey, { title: string; description: string; preview: st
       { name: "image_1_url", label: "Member 1 — Photo", type: "image" },
       { name: "image_1_name", label: "Member 1 — Name", type: "text" },
       { name: "image_1_role", label: "Member 1 — Role", type: "text" },
+      { name: "image_1_bio", label: "Member 1 — Brief Bio", type: "textarea" },
       { name: "image_2_url", label: "Member 2 — Photo", type: "image" },
       { name: "image_2_name", label: "Member 2 — Name", type: "text" },
       { name: "image_2_role", label: "Member 2 — Role", type: "text" },
+      { name: "image_2_bio", label: "Member 2 — Brief Bio", type: "textarea" },
       { name: "image_3_url", label: "Member 3 — Photo", type: "image" },
       { name: "image_3_name", label: "Member 3 — Name", type: "text" },
       { name: "image_3_role", label: "Member 3 — Role", type: "text" },
+      { name: "image_3_bio", label: "Member 3 — Brief Bio", type: "textarea" },
       { name: "image_4_url", label: "Member 4 — Photo", type: "image" },
       { name: "image_4_name", label: "Member 4 — Name", type: "text" },
       { name: "image_4_role", label: "Member 4 — Role", type: "text" },
+      { name: "image_4_bio", label: "Member 4 — Brief Bio", type: "textarea" },
     ],
   },
+
   private_travel: {
     title: "Private Travel Page",
     description: "Headline, subtitle and confirmation copy for the bespoke travel form.",

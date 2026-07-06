@@ -9,6 +9,8 @@ export const PAGE_DEFAULTS = {
     hero_proof_text: "Trusted by travellers across 24 countries this season",
     hero_image_url: "",
     hero_image_as_background: false,
+    hero_hide_search: false,
+
 
   },
   about: {

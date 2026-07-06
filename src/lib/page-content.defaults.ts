@@ -99,13 +99,21 @@ export const PAGE_DEFAULTS = {
     handle: "@thebaobabcollective",
     url: "https://instagram.com/thebaobabcollective",
     image_1_url: "",
+    image_1_caption: "",
     image_2_url: "",
+    image_2_caption: "",
     image_3_url: "",
+    image_3_caption: "",
     image_4_url: "",
+    image_4_caption: "",
     image_5_url: "",
+    image_5_caption: "",
     image_6_url: "",
+    image_6_caption: "",
     image_7_url: "",
+    image_7_caption: "",
   },
+
 
   top_bar: {
     text: "Curated Safari Journeys. Authentic Connections. Extraordinary Experiences.",

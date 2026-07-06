@@ -149,7 +149,13 @@ export function Hero({ content }: { content?: HeroContent | null } = {}) {
 }
 
 
-function SearchCapsule({ onSubmit }: { onSubmit: (fd: FormData) => void }) {
+function SearchCapsule({
+  onSubmit,
+  adventures,
+}: {
+  onSubmit: (fd: FormData) => void;
+  adventures: { slug: string; name: string }[];
+}) {
   const [travellers, setTravellers] = useState(2);
   return (
     <form
@@ -160,14 +166,19 @@ function SearchCapsule({ onSubmit }: { onSubmit: (fd: FormData) => void }) {
       className="flex flex-col sm:flex-row sm:items-center gap-2 bg-cream text-forest rounded-3xl sm:rounded-full pl-4 sm:pl-6 pr-2 py-2 shadow-2xl w-full max-w-2xl"
     >
       <label className="flex-1 min-w-0 flex items-center gap-3 py-2">
-        <MapPin className="h-4 w-4 text-gold shrink-0" strokeWidth={1.75} />
+        <Compass className="h-4 w-4 text-gold shrink-0" strokeWidth={1.75} />
         <span className="flex flex-col min-w-0 flex-1">
-          <span className="text-[10px] uppercase tracking-[0.2em] font-semibold text-forest">Location</span>
-          <input
-            name="location"
-            placeholder="All destinations"
-            className="bg-transparent outline-none text-sm text-forest placeholder:text-forest/50 w-full"
-          />
+          <span className="text-[10px] uppercase tracking-[0.2em] font-semibold text-forest">Adventure</span>
+          <select
+            name="adventure"
+            defaultValue=""
+            className="bg-transparent outline-none text-sm text-forest w-full appearance-none cursor-pointer"
+          >
+            <option value="">All adventures</option>
+            {adventures.map((a) => (
+              <option key={a.slug} value={a.slug}>{a.name}</option>
+            ))}
+          </select>
         </span>
       </label>
       <span className="hidden sm:block h-8 w-px bg-forest/15" />

@@ -231,56 +231,8 @@ function SignaturesSection({ signatures }: { signatures: AdventuresPage["signatu
           </p>
         </div>
 
-        {/* Filter bar */}
-        <div className="bg-cream border border-border/50 p-5 md:p-6 mb-12 sticky top-[80px] z-30">
-          <div className="grid md:grid-cols-12 gap-3 items-end">
-            <div className="md:col-span-4">
-              <Label className="text-[10px] tracking-[0.25em] uppercase text-foreground/60 mb-1.5 block">
-                Search
-              </Label>
-              <div className="relative">
-                <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-foreground/40" />
-                <Input
-                  value={search.q}
-                  onChange={(e) => setParam("q", e.target.value)}
-                  placeholder="e.g. walking, Okavango, gorilla"
-                  className="pl-9 bg-background"
-                />
-              </div>
-            </div>
-            <FilterSelect
-              label="Region"
-              value={search.region}
-              onChange={(v) => setParam("region", v)}
-              options={regions}
-            />
-            <FilterSelect
-              label="Terrain"
-              value={search.terrain}
-              onChange={(v) => setParam("terrain", v)}
-              options={terrains}
-            />
-            <FilterSelect
-              label="Difficulty"
-              value={search.difficulty}
-              onChange={(v) => setParam("difficulty", v)}
-              options={difficulties}
-            />
-          </div>
-          <div className="flex items-center justify-between mt-4 pt-4 border-t border-border/40">
-            <p className="text-xs text-foreground/60">
-              Showing {filtered.length} of {signatures.length} adventures
-            </p>
-            {hasFilters && (
-              <button
-                onClick={clearAll}
-                className="text-[11px] tracking-[0.2em] uppercase text-foreground/70 hover:text-gold inline-flex items-center gap-1.5"
-              >
-                <X className="w-3 h-3" /> Clear filters
-              </button>
-            )}
-          </div>
-        </div>
+        <div className="mb-12" />
+
 
         {filtered.length === 0 ? (
           <div className="text-center py-20 border border-dashed border-border/60 bg-cream/40">

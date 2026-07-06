@@ -102,3 +102,21 @@ index ccb719c..65c0165 100644
        queued_at: new Date().toISOString(),
      },
    })
+diff --git a/src/routes/lovable/email/auth/webhook.ts b/src/routes/lovable/email/auth/webhook.ts
+index 278c216..ea23b50 100644
+--- a/src/routes/lovable/email/auth/webhook.ts
++++ b/src/routes/lovable/email/auth/webhook.ts
+@@ -182,7 +182,12 @@ export const Route = createFileRoute("/lovable/email/auth/webhook")({
+             subject: EMAIL_SUBJECTS[emailType] || 'Notification',
+             html,
+             text,
+-            purpose: 'transactional',
++            // These are Supabase auth emails (signup confirmation, magic link,
++            // recovery, invite, email change, reauthentication) sent through the
++            // auth_emails queue. They are exempt from the unsubscribe_token
++            // requirement that applies to purpose: 'transactional' emails —
++            // mislabeling them as 'transactional' caused missing_unsubscribe 400s.
++            purpose: 'auth',
+             label: emailType,
+             queued_at: new Date().toISOString(),
+           },

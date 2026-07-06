@@ -249,8 +249,10 @@ export function Navbar() {
         )}
       </div>
     </header>
+    </>
   );
 }
+
 
 function PrimaryWithSubmenu({
   item,

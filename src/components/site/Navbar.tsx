@@ -59,11 +59,14 @@ export function Navbar() {
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 py-1 flex items-center justify-between gap-4 lg:gap-6">
           <Link to="/" className="flex items-center gap-3 shrink-0 -my-2" aria-label="The Baobab Collective home">
             {logoUrl ? (
-              <img src={logoUrl} alt="" className="w-24 h-24 sm:w-32 sm:h-32 lg:w-44 lg:h-44 object-contain" />
+              <img src={logoUrl} alt="The Baobab Collective" className="w-auto h-16 sm:h-20 lg:h-28 object-contain" />
             ) : (
-              <BaobabLogo className="w-24 h-24 sm:w-32 sm:h-32 lg:w-44 lg:h-44" />
+              <span className="font-serif text-lg sm:text-xl lg:text-2xl leading-tight text-foreground">
+                The Baobab<br />Collective
+              </span>
             )}
           </Link>
+
 
           <nav aria-label="Primary" className="hidden lg:flex items-center gap-6 xl:gap-7">
             {primaryItems.map((item, i) => (

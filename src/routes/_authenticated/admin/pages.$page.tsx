@@ -226,21 +226,10 @@ const SCHEMAS: Record<PageKey, { title: string; description: string; preview: st
       { name: "related_title", label: "Related Section Title", type: "text" },
     ],
   },
-  },
   detail_lodge: {
     title: "Lodge Detail Template",
     description: "Shared copy across all lodge detail pages.",
     preview: "/lodges",
-    fields: [
-      { name: "intro_eyebrow", label: "Intro Eyebrow", type: "text" },
-      { name: "enquire_cta", label: "Enquire CTA Label", type: "text" },
-      { name: "related_title", label: "Related Section Title", type: "text" },
-    ],
-  },
-  detail_destination: {
-    title: "Destination Detail Template",
-    description: "Shared copy across all destination detail pages.",
-    preview: "/destinations",
     fields: [
       { name: "intro_eyebrow", label: "Intro Eyebrow", type: "text" },
       { name: "enquire_cta", label: "Enquire CTA Label", type: "text" },

@@ -113,16 +113,6 @@ const SCHEMAS: Record<PageKey, { title: string; description: string; preview: st
       { name: "success_body", label: "Success Body", type: "textarea" },
     ],
   },
-  home_journeys: {
-    title: "Home — Journeys Strip",
-    description: "The 'Our Journeys' section on the homepage.",
-    preview: "/",
-    fields: [
-      { name: "eyebrow", label: "Eyebrow", type: "text" },
-      { name: "title", label: "Title", type: "text" },
-      { name: "body", label: "Body", type: "textarea" },
-    ],
-  },
   home_adventures: {
     title: "Home — Adventures Strip",
     description: "The Adventures strip on the homepage.",

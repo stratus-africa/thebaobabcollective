@@ -75,7 +75,7 @@ function JourneysIndex() {
       <Navbar />
       <main>
         <section className="bg-cream py-20 md:py-28">
-          <div className="max-w-[1440px] mx-auto px-6 lg:px-10 text-center">
+          <div className="max-w-[1920px] mx-auto px-6 lg:px-10 text-center">
             <p className="text-[11px] tracking-[0.3em] uppercase text-terracotta mb-5">Curated Safari Journeys</p>
             <h1 className="font-serif text-5xl md:text-6xl text-foreground mb-6 tracking-wider">OUR JOURNEYS</h1>
             <p className="text-foreground/75 max-w-2xl mx-auto">
@@ -85,7 +85,7 @@ function JourneysIndex() {
         </section>
 
         <section className="py-12 md:py-16">
-          <div className="max-w-[1440px] mx-auto px-6 lg:px-10 space-y-8">
+          <div className="max-w-[1920px] mx-auto px-6 lg:px-10 space-y-8">
             <FilterBar
               query={q}
               onQueryChange={(v) => setSearch({ q: v || undefined })}

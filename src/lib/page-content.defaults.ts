@@ -4,7 +4,7 @@ export const PAGE_DEFAULTS = {
     hero_title_line1: "JOURNEYS",
     hero_title_line2: "THAT CONNECT",
     hero_subtitle: "Curated safari experiences that immerse, inspire and leave a lasting impact.",
-    hero_cta_primary: "Explore Journeys",
+    hero_cta_primary: "Explore Adventures",
     hero_cta_secondary: "Plan With Us",
     hero_proof_text: "Trusted by travellers across 24 countries this season",
     hero_image_url: "",

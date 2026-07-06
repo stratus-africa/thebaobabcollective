@@ -33,7 +33,7 @@ function MissionSection({ content }: { content: any }) {
   const c = usePreviewMerge("about_mission", { ...PAGE_DEFAULTS.about_mission, ...(content ?? {}) });
   return (
     <section className="bg-background py-20">
-      <div className="max-w-[1440px] mx-auto px-6 lg:px-10 max-w-3xl text-center">
+      <div className="max-w-[1920px] mx-auto px-6 lg:px-10 max-w-3xl text-center">
         <p className="text-[11px] tracking-[0.3em] uppercase text-foreground/70 mb-3">{c.eyebrow}</p>
         <h2 className="font-serif text-3xl md:text-4xl mb-6">{c.title}</h2>
         <p className="text-foreground/75 leading-relaxed">{c.body}</p>
@@ -50,7 +50,7 @@ function ValuesSection({ content }: { content: any }) {
   }));
   return (
     <section className="bg-cream py-20">
-      <div className="max-w-[1440px] mx-auto px-6 lg:px-10">
+      <div className="max-w-[1920px] mx-auto px-6 lg:px-10">
         <div className="text-center mb-12">
           <p className="text-[11px] tracking-[0.3em] uppercase text-foreground/70 mb-3">{c.eyebrow}</p>
           <h2 className="font-serif text-3xl md:text-4xl">{c.title}</h2>
@@ -80,7 +80,7 @@ function TeamSection({ content }: { content: any }) {
     .filter((m) => m.url || m.name);
   return (
     <section className="bg-background py-20">
-      <div className="max-w-[1440px] mx-auto px-6 lg:px-10">
+      <div className="max-w-[1920px] mx-auto px-6 lg:px-10">
         <div className="max-w-3xl mx-auto text-center mb-12">
           <p className="text-[11px] tracking-[0.3em] uppercase text-foreground/70 mb-3">{c.eyebrow}</p>
           <h2 className="font-serif text-3xl md:text-4xl mb-6">{c.title}</h2>

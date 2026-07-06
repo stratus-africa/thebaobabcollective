@@ -18,6 +18,7 @@ export type FooterColumn = {
 export type MenuConfig = {
   topBarText: string;
   topBarEnabled: boolean;
+  transparentOverHero: boolean;
   primary: NavItem[];
   more: { label: string; to: string; hidden?: boolean }[];
   ctaLabel: string;
@@ -29,6 +30,7 @@ export type MenuConfig = {
 export const MENU_DEFAULTS: MenuConfig = {
   topBarText: "Curated Safari Journeys. Authentic Connections. Extraordinary Experiences.",
   topBarEnabled: true,
+  transparentOverHero: false,
   primary: [
     { label: "Home", to: "/" },
     { label: "Adventures", to: "/adventures", children: [{ label: "Destinations", to: "/destinations" }] },
@@ -84,6 +86,7 @@ const FooterColumnSchema = z.object({
 const MenuSchema = z.object({
   topBarText: z.string().default(""),
   topBarEnabled: z.boolean().default(true),
+  transparentOverHero: z.boolean().default(false),
   primary: z.array(NavSchema).default([]),
   more: z.array(ChildSchema).default([]),
   ctaLabel: z.string().default("Enquire"),

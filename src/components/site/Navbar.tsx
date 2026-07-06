@@ -47,37 +47,50 @@ export function Navbar() {
     navigate({ to: "/" });
   };
 
+  const overlay = !!menu.transparentOverHero;
+  const linkBase =
+    "text-[13px] tracking-[0.24em] uppercase font-semibold px-1 transition-colors";
+  const linkColor = overlay
+    ? "text-cream/85 hover:text-cream"
+    : "text-foreground/80 hover:text-foreground";
+
   return (
-    <header className="sticky top-0 z-50">
+    <header className={overlay ? "absolute top-0 left-0 right-0 z-50" : "sticky top-0 z-50"}>
       {menu.topBarEnabled && menu.topBarText && (
-        <div className="bg-forest text-forest-foreground py-2 px-4 text-center text-[11px] tracking-luxury uppercase">
+        <div
+          className={
+            overlay
+              ? "bg-transparent text-cream py-2 px-4 text-center text-[11px] tracking-luxury uppercase"
+              : "bg-forest text-forest-foreground py-2 px-4 text-center text-[11px] tracking-luxury uppercase"
+          }
+        >
           {menu.topBarText}
         </div>
       )}
 
-      <div className="bg-background border-b border-border/40">
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 py-1 flex items-center gap-4 lg:gap-6">
+      <div className={overlay ? "bg-transparent" : "bg-background border-b border-border/40"}>
+        <div className="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-10 py-1 flex items-center gap-4 lg:gap-6">
           <Link to="/" className="flex items-center gap-3 shrink-0 -my-2" aria-label="The Baobab Collective home">
             {logoUrl ? (
               <img src={logoUrl} alt="The Baobab Collective" className="w-auto h-16 sm:h-20 lg:h-28 object-contain" />
             ) : (
-              <span className="font-serif text-lg sm:text-xl lg:text-2xl leading-tight text-foreground">
+              <span className={`font-serif text-lg sm:text-xl lg:text-2xl leading-tight ${overlay ? "text-cream" : "text-foreground"}`}>
                 The Baobab<br />Collective
               </span>
             )}
           </Link>
 
-          <nav aria-label="Primary" className="hidden lg:flex flex-1 items-center justify-center gap-7 xl:gap-9">
+          <nav aria-label="Primary" className="hidden lg:flex flex-1 items-center justify-center gap-8 xl:gap-12">
             {primaryItems.map((item, i) => (
               item.children && item.children.length ? (
-                <PrimaryWithSubmenu key={`${item.to}-${i}`} item={item} />
+                <PrimaryWithSubmenu key={`${item.to}-${i}`} item={item} overlay={overlay} />
               ) : (
                 <Link
                   key={`${item.to}-${i}`}
                   to={item.to as any}
                   activeOptions={{ exact: item.to === "/" }}
-                  className="text-[12px] tracking-[0.2em] uppercase text-foreground/70 hover:text-foreground"
-                  activeProps={{ className: "text-foreground" }}
+                  className={`${linkBase} ${linkColor}`}
+                  activeProps={{ className: overlay ? "text-cream" : "text-foreground" }}
                 >
                   {item.label}
                 </Link>
@@ -89,19 +102,19 @@ export function Navbar() {
                 <button
                   onMouseEnter={() => setMoreOpen(true)}
                   onClick={() => setMoreOpen((o) => !o)}
-                  className="text-[12px] tracking-[0.2em] uppercase text-foreground/70 hover:text-foreground inline-flex items-center gap-1"
+                  className={`${linkBase} ${linkColor} inline-flex items-center gap-1`}
                 >
                   More <ChevronDown className="w-3 h-3" />
                 </button>
                 {moreOpen && (
                   <div className="absolute right-0 top-full pt-2">
-                    <div className="bg-background border border-border shadow-lg py-2 min-w-[200px]">
+                    <div className="bg-background border border-border shadow-lg py-2 min-w-[220px]">
                       {moreItems.map((m, i) => (
                         <Link
                           key={`${m.to}-${i}`}
                           to={m.to as any}
                           onClick={() => setMoreOpen(false)}
-                          className="block px-5 py-2 text-[12px] tracking-[0.15em] uppercase text-foreground/75 hover:text-foreground hover:bg-cream"
+                          className="block px-5 py-2 text-[12px] tracking-[0.2em] uppercase font-semibold text-foreground/80 hover:text-foreground hover:bg-cream"
                         >
                           {m.label}
                         </Link>
@@ -112,6 +125,7 @@ export function Navbar() {
               </div>
             )}
           </nav>
+
 
           <div className="hidden lg:flex items-center gap-4 shrink-0">
             {user && isAdmin && (
@@ -239,8 +253,10 @@ export function Navbar() {
 
 function PrimaryWithSubmenu({
   item,
+  overlay,
 }: {
   item: { label: string; to: string; children?: { label: string; to: string; hidden?: boolean }[] };
+  overlay?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const kids = (item.children ?? []).filter((c) => !c.hidden);
@@ -248,20 +264,22 @@ function PrimaryWithSubmenu({
     <div className="relative" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
       <Link
         to={item.to as any}
-        className="text-[12px] tracking-[0.2em] uppercase text-foreground/70 hover:text-foreground inline-flex items-center gap-1"
-        activeProps={{ className: "text-foreground" }}
+        className={`text-[13px] tracking-[0.24em] uppercase font-semibold inline-flex items-center gap-1 ${
+          overlay ? "text-cream/85 hover:text-cream" : "text-foreground/80 hover:text-foreground"
+        }`}
+        activeProps={{ className: overlay ? "text-cream" : "text-foreground" }}
       >
         {item.label} <ChevronDown className="w-3 h-3" />
       </Link>
       {open && kids.length > 0 && (
         <div className="absolute left-0 top-full pt-2">
-          <div className="bg-background border border-border shadow-lg py-2 min-w-[200px]">
+          <div className="bg-background border border-border shadow-lg py-2 min-w-[220px]">
             {kids.map((c) => (
               <Link
                 key={c.to}
                 to={c.to as any}
                 onClick={() => setOpen(false)}
-                className="block px-5 py-2 text-[12px] tracking-[0.15em] uppercase text-foreground/75 hover:text-foreground hover:bg-cream"
+                className="block px-5 py-2 text-[12px] tracking-[0.2em] uppercase font-semibold text-foreground/80 hover:text-foreground hover:bg-cream"
               >
                 {c.label}
               </Link>

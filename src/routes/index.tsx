@@ -109,7 +109,7 @@ function HomeStrips({
 }) {
   return (
     <section className="bg-cream py-16 md:py-20">
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">
+      <div className="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-10">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <StripCard content={adventures} keyName="home_adventures" linkTo="/adventures" />
           <StripCard content={destinations} keyName="home_destinations" linkTo="/destinations" />

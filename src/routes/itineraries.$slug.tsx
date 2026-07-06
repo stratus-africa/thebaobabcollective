@@ -82,7 +82,7 @@ function ItineraryPage() {
         <section className="relative h-[70vh] min-h-[480px] flex items-end">
           <img src={itinerary.image} alt={itinerary.name} className="absolute inset-0 w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
-          <div className="relative max-w-[1440px] mx-auto px-6 lg:px-10 pb-16 text-background w-full">
+          <div className="relative max-w-[1920px] mx-auto px-6 lg:px-10 pb-16 text-background w-full">
             {cat && (
               <Link
                 to="/journeys/$slug"
@@ -105,7 +105,7 @@ function ItineraryPage() {
 
         {/* Overview + Sidebar */}
         <section className="py-20 md:py-24">
-          <div className="max-w-[1440px] mx-auto px-6 lg:px-10 grid lg:grid-cols-3 gap-12">
+          <div className="max-w-[1920px] mx-auto px-6 lg:px-10 grid lg:grid-cols-3 gap-12">
             <div className="lg:col-span-2 space-y-10">
               <div>
                 <p className="text-[11px] tracking-[0.3em] uppercase text-terracotta mb-4">Overview</p>
@@ -195,7 +195,7 @@ function ItineraryPage() {
 
         {/* Share */}
         <section className="border-t border-border/40 py-10">
-          <div className="max-w-[1440px] mx-auto px-6 lg:px-10 flex flex-wrap items-center justify-between gap-6">
+          <div className="max-w-[1920px] mx-auto px-6 lg:px-10 flex flex-wrap items-center justify-between gap-6">
             <p className="font-serif text-xl text-foreground">Inspired? Share {itinerary.name} with a fellow traveller.</p>
             <ShareButtons
               title={`${itinerary.name} — The Baobab Collective`}

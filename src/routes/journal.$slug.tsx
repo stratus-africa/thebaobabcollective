@@ -142,7 +142,7 @@ function ArticlePage() {
 
         {related.length > 0 && (
           <section aria-labelledby="related" className="bg-cream py-20">
-            <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">
+            <div className="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-10">
               <h2 id="related" className="font-serif text-3xl text-foreground text-center mb-12">Related Articles</h2>
               <div className="grid md:grid-cols-2 gap-10">
                 {related.map((a) => (

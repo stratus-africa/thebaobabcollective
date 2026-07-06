@@ -74,6 +74,20 @@ function MenuEditor() {
             <Input value={draft.topBarText} onChange={(e) => setDraft({ ...draft, topBarText: e.target.value })} />
           </Section>
 
+          <Section title="Header Style">
+            <div className="flex items-center gap-3">
+              <Switch
+                checked={draft.transparentOverHero}
+                onCheckedChange={(v) => setDraft({ ...draft, transparentOverHero: v })}
+              />
+              <Label>Overlay menu on hero (clear background)</Label>
+            </div>
+            <p className="text-xs text-foreground/60 mt-2">
+              When enabled, the main menu floats on top of hero sections with a transparent background across all pages.
+            </p>
+          </Section>
+
+
           {/* Primary nav */}
           <Section title="Main Navigation">
             <ItemList

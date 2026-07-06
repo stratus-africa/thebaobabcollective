@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -12,7 +12,24 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
-import { Loader2, RefreshCw, ExternalLink, Save, Eye, EyeOff, ArrowUp, ArrowDown } from "lucide-react";
+import { Loader2, RefreshCw, ExternalLink, Save, Eye, EyeOff, ArrowUp, ArrowDown, GripVertical } from "lucide-react";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+  arrayMove,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 // Pages whose fields group by index (image_1_*, image_2_* ...) and support reordering.
 const REORDER_GROUPS: Partial<Record<PageKey, { count: number; suffixes: string[]; label: (i: number) => string }>> = {
@@ -28,19 +45,23 @@ const REORDER_GROUPS: Partial<Record<PageKey, { count: number; suffixes: string[
   },
 };
 
-function swapGroup(
+// Reorder all group values by applying an old->new index permutation.
+// order[newPos-1] = oldPos (1-indexed).
+function reorderGroup(
   draft: Record<string, any>,
   suffixes: string[],
-  a: number,
-  b: number,
+  order: number[],
 ): Record<string, any> {
   const next = { ...draft };
   for (const s of suffixes) {
-    const ka = `image_${a}_${s}`;
-    const kb = `image_${b}_${s}`;
-    const tmp = next[ka];
-    next[ka] = next[kb];
-    next[kb] = tmp;
+    const snapshot: Record<number, any> = {};
+    for (let i = 1; i <= order.length; i++) {
+      snapshot[i] = draft[`image_${i}_${s}`];
+    }
+    for (let newPos = 1; newPos <= order.length; newPos++) {
+      const oldPos = order[newPos - 1];
+      next[`image_${newPos}_${s}`] = snapshot[oldPos];
+    }
   }
   return next;
 }
@@ -513,52 +534,127 @@ function ReorderableGroups({
   draft: Record<string, any>;
   setDraft: (fn: (d: Record<string, any>) => Record<string, any>) => void;
 }) {
+  const ids = Array.from({ length: group.count }, (_, k) => `slot-${k + 1}`);
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+  );
+
   const move = (i: number, dir: -1 | 1) => {
     const j = i + dir;
     if (j < 1 || j > group.count) return;
-    setDraft((d) => swapGroup(d, group.suffixes, i, j));
+    const order = Array.from({ length: group.count }, (_, k) => k + 1);
+    [order[i - 1], order[j - 1]] = [order[j - 1], order[i - 1]];
+    setDraft((d) => reorderGroup(d, group.suffixes, order));
+  };
+
+  const onDragEnd = (e: DragEndEvent) => {
+    const { active, over } = e;
+    if (!over || active.id === over.id) return;
+    const oldIdx = ids.indexOf(String(active.id));
+    const newIdx = ids.indexOf(String(over.id));
+    if (oldIdx < 0 || newIdx < 0) return;
+    const baseOrder = Array.from({ length: group.count }, (_, k) => k + 1);
+    const nextOrder = arrayMove(baseOrder, oldIdx, newIdx);
+    setDraft((d) => reorderGroup(d, group.suffixes, nextOrder));
   };
 
   return (
     <div className="space-y-4 pt-4 border-t border-border">
-      <p className="text-[11px] tracking-[0.2em] uppercase text-foreground/60">Items — drag with arrows to reorder</p>
-      {Array.from({ length: group.count }, (_, k) => k + 1).map((i) => {
-        const fields = group.suffixes
-          .map((s) => schema.fields.find((f) => f.name === `image_${i}_${s}`))
-          .filter(Boolean) as FieldDef[];
-        return (
-          <div key={i} className="border border-border rounded-md p-4 bg-cream/30 space-y-3">
-            <div className="flex items-center justify-between">
-              <p className="font-medium text-sm">{group.label(i)}</p>
-              <div className="flex items-center gap-1">
-                <Button
-                  type="button" size="icon" variant="outline"
-                  onClick={() => move(i, -1)} disabled={i === 1}
-                  aria-label="Move up"
+      <p className="text-[11px] tracking-[0.2em] uppercase text-foreground/60">
+        Items — drag the handle to reorder (or use ↑/↓)
+      </p>
+      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
+        <SortableContext items={ids} strategy={verticalListSortingStrategy}>
+          <div className="space-y-4">
+            {ids.map((id, idx) => {
+              const i = idx + 1;
+              const fields = group.suffixes
+                .map((s) => schema.fields.find((f) => f.name === `image_${i}_${s}`))
+                .filter(Boolean) as FieldDef[];
+              return (
+                <SortableItem
+                  key={id}
+                  id={id}
+                  label={group.label(i)}
+                  canUp={i > 1}
+                  canDown={i < group.count}
+                  onUp={() => move(i, -1)}
+                  onDown={() => move(i, 1)}
                 >
-                  <ArrowUp className="w-4 h-4" />
-                </Button>
-                <Button
-                  type="button" size="icon" variant="outline"
-                  onClick={() => move(i, 1)} disabled={i === group.count}
-                  aria-label="Move down"
-                >
-                  <ArrowDown className="w-4 h-4" />
-                </Button>
-              </div>
-            </div>
-            {fields.map((f) => (
-              <FieldRow
-                key={f.name}
-                field={f}
-                value={draft[f.name] ?? ""}
-                onChange={(v) => setDraft((d) => ({ ...d, [f.name]: v }))}
-              />
-            ))}
+                  {fields.map((f) => (
+                    <FieldRow
+                      key={f.name}
+                      field={f}
+                      value={draft[f.name] ?? ""}
+                      onChange={(v) => setDraft((d) => ({ ...d, [f.name]: v }))}
+                    />
+                  ))}
+                </SortableItem>
+              );
+            })}
           </div>
-        );
-      })}
+        </SortableContext>
+      </DndContext>
     </div>
   );
 }
+
+function SortableItem({
+  id,
+  label,
+  canUp,
+  canDown,
+  onUp,
+  onDown,
+  children,
+}: {
+  id: string;
+  label: string;
+  canUp: boolean;
+  canDown: boolean;
+  onUp: () => void;
+  onDown: () => void;
+  children: ReactNode;
+}) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
+  const style: CSSProperties = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.6 : 1,
+    zIndex: isDragging ? 10 : "auto",
+  };
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className="border border-border rounded-md p-4 bg-cream/30 space-y-3"
+    >
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            className="cursor-grab active:cursor-grabbing touch-none text-foreground/50 hover:text-foreground p-1 -ml-1"
+            aria-label={`Drag ${label}`}
+            {...attributes}
+            {...listeners}
+          >
+            <GripVertical className="w-4 h-4" />
+          </button>
+          <p className="font-medium text-sm">{label}</p>
+        </div>
+        <div className="flex items-center gap-1">
+          <Button type="button" size="icon" variant="outline" onClick={onUp} disabled={!canUp} aria-label="Move up">
+            <ArrowUp className="w-4 h-4" />
+          </Button>
+          <Button type="button" size="icon" variant="outline" onClick={onDown} disabled={!canDown} aria-label="Move down">
+            <ArrowDown className="w-4 h-4" />
+          </Button>
+        </div>
+      </div>
+      {children}
+    </div>
+  );
+}
+
 

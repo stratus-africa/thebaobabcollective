@@ -487,4 +487,4 @@ function ImageUpload({ value, onChange }: { value: string; onChange: (url: strin
 }
 
 // Silence type imports
-void (null as unknown as AdventuresTerrain | AdventuresStyle | AdventuresSignature);
+void (null as unknown as AdventuresSignature);

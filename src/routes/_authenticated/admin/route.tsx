@@ -65,6 +65,27 @@ const groups: NavGroup[] = [
       { to: "/admin/pages/footer", label: "Footer", icon: LayoutDashboard },
     ],
   },
+  {
+    label: "Content",
+    items: [
+      { to: "/admin/journal", label: "Journal", icon: FileText },
+      { to: "/admin/content/testimonials", label: "Testimonials", icon: Star },
+      { to: "/admin/content/faqs", label: "FAQs", icon: HelpCircle },
+    ],
+  },
+  {
+    label: "System",
+    items: [
+      { to: "/admin/menu", label: "Menu & Navigation", icon: Menu },
+      { to: "/admin/pages/seo", label: "Global SEO", icon: Globe },
+      { to: "/admin/pages/auth_page", label: "Admin Sign-in Page", icon: HelpCircle },
+      { to: "/admin/pages/not_found", label: "404 Page", icon: HelpCircle },
+      { to: "/admin/settings", label: "Settings", icon: Settings },
+    ],
+  },
+];
+
+
 
 
 export const Route = createFileRoute("/_authenticated/admin")({

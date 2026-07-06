@@ -83,7 +83,9 @@ const SavePayload = z.object({
     headline: z.string(),
     subhead: z.string(),
     image: z.string().default(""),
+    imageAlt: z.string().default(""),
   }),
+
   cta: z.object({
     eyebrow: z.string(),
     headline: z.string(),

@@ -312,7 +312,7 @@ function PageEditor() {
   const saveFn = useServerFn(savePageContent);
   const qc = useQueryClient();
   const schema = SCHEMAS[page];
-  const [showPreview, setShowPreview] = useState(true);
+  const [showPreview, setShowPreview] = useState(false);
 
   const { data, isLoading } = useQuery({
     queryKey: ["page-content", page],

@@ -56,10 +56,7 @@ function AdminAdventures() {
       await saveFn({
         data: {
           hero: draft.hero,
-          philosophy: draft.philosophy,
           cta: draft.cta,
-          terrains: draft.terrains,
-          styles: draft.styles,
           signatures: draft.signatures,
         },
       });

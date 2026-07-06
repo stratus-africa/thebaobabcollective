@@ -538,25 +538,35 @@ function ReorderableGroups({
   schema,
   draft,
   setDraft,
+  onReorderCommit,
 }: {
   page: PageKey;
   group: { count: number; suffixes: string[]; label: (i: number) => string };
   schema: { fields: FieldDef[] };
   draft: Record<string, any>;
   setDraft: (fn: (d: Record<string, any>) => Record<string, any>) => void;
+  onReorderCommit: (next: Record<string, any>) => void;
 }) {
   const ids = Array.from({ length: group.count }, (_, k) => `slot-${k + 1}`);
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
+    // On touch devices, require a short hold before dragging so vertical page
+    // scrolling still works when the user swipes over a slot.
+    useSensor(TouchSensor, { activationConstraint: { delay: 180, tolerance: 6 } }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
   );
+
+  const commit = (nextDraft: Record<string, any>) => {
+    setDraft(() => nextDraft);
+    onReorderCommit(nextDraft);
+  };
 
   const move = (i: number, dir: -1 | 1) => {
     const j = i + dir;
     if (j < 1 || j > group.count) return;
     const order = Array.from({ length: group.count }, (_, k) => k + 1);
     [order[i - 1], order[j - 1]] = [order[j - 1], order[i - 1]];
-    setDraft((d) => reorderGroup(d, group.suffixes, order));
+    commit(reorderGroup(draft, group.suffixes, order));
   };
 
   const onDragEnd = (e: DragEndEvent) => {
@@ -567,15 +577,20 @@ function ReorderableGroups({
     if (oldIdx < 0 || newIdx < 0) return;
     const baseOrder = Array.from({ length: group.count }, (_, k) => k + 1);
     const nextOrder = arrayMove(baseOrder, oldIdx, newIdx);
-    setDraft((d) => reorderGroup(d, group.suffixes, nextOrder));
+    commit(reorderGroup(draft, group.suffixes, nextOrder));
   };
 
   return (
     <div className="space-y-4 pt-4 border-t border-border">
       <p className="text-[11px] tracking-[0.2em] uppercase text-foreground/60">
-        Items — drag the handle to reorder (or use ↑/↓)
+        Items — drag the handle to reorder (or use ↑/↓). Changes save automatically.
       </p>
-      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragEnd={onDragEnd}
+        modifiers={[restrictToVerticalAxis, restrictToParentElement]}
+      >
         <SortableContext items={ids} strategy={verticalListSortingStrategy}>
           <div className="space-y-4">
             {ids.map((id, idx) => {
@@ -645,20 +660,20 @@ function SortableItem({
         <div className="flex items-center gap-2">
           <button
             type="button"
-            className="cursor-grab active:cursor-grabbing touch-none text-foreground/50 hover:text-foreground p-1 -ml-1"
-            aria-label={`Drag ${label}`}
+            className="cursor-grab active:cursor-grabbing touch-none select-none text-foreground/60 hover:text-foreground bg-background border border-border rounded-md h-10 w-10 md:h-9 md:w-9 flex items-center justify-center"
+            aria-label={`Drag ${label} to reorder`}
             {...attributes}
             {...listeners}
           >
-            <GripVertical className="w-4 h-4" />
+            <GripVertical className="w-5 h-5" />
           </button>
           <p className="font-medium text-sm">{label}</p>
         </div>
         <div className="flex items-center gap-1">
-          <Button type="button" size="icon" variant="outline" onClick={onUp} disabled={!canUp} aria-label="Move up">
+          <Button type="button" size="icon" variant="outline" onClick={onUp} disabled={!canUp} aria-label="Move up" className="h-10 w-10 md:h-9 md:w-9">
             <ArrowUp className="w-4 h-4" />
           </Button>
-          <Button type="button" size="icon" variant="outline" onClick={onDown} disabled={!canDown} aria-label="Move down">
+          <Button type="button" size="icon" variant="outline" onClick={onDown} disabled={!canDown} aria-label="Move down" className="h-10 w-10 md:h-9 md:w-9">
             <ArrowDown className="w-4 h-4" />
           </Button>
         </div>
@@ -667,5 +682,6 @@ function SortableItem({
     </div>
   );
 }
+
 
 

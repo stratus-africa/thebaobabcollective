@@ -132,20 +132,10 @@ export const PAGE_DEFAULTS = {
     intro_eyebrow: "The Journey",
     related_title: "Other journeys you might love",
   },
-  detail_adventure: {
-    enquire_cta: "Enquire about this adventure",
-    intro_eyebrow: "The Adventure",
-    related_title: "More adventures",
-  },
   detail_lodge: {
     enquire_cta: "Enquire about this lodge",
     intro_eyebrow: "The Lodge",
     related_title: "Similar lodges",
-  },
-  detail_destination: {
-    enquire_cta: "Plan a trip here",
-    intro_eyebrow: "The Destination",
-    related_title: "Nearby destinations",
   },
   // Footer copy (columns/socials are managed via Menu editor)
   footer: {

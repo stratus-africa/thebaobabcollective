@@ -91,8 +91,9 @@ const SCHEMAS: Record<PageKey, { title: string; description: string; preview: st
       { name: "hero_proof_text", label: "Social Proof Text", type: "text" },
       { name: "hero_image_as_background", label: "Use Hero Image as Full Background", type: "boolean" },
       { name: "hero_hide_search", label: "Hide Search Filter", type: "boolean" },
-
-
+      { name: "hero_focal_x", label: "Hero focal point — Horizontal (0=left, 100=right)", type: "text", placeholder: "50" },
+      { name: "hero_focal_y", label: "Hero focal point — Vertical (0=top, 100=bottom)", type: "text", placeholder: "50" },
+      { name: "hero_bg_size", label: "Background size ('cover' or 'contain')", type: "text", placeholder: "cover" },
     ],
   },
   about: {

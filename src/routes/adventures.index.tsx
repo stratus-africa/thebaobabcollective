@@ -129,7 +129,6 @@ function AdventuresPage() {
         <HeroSection hero={page.hero} />
         <SignaturesSection signatures={page.signatures} />
         <RhythmSection />
-        <PlanningGuideSection />
         <CtaSection cta={page.cta} />
       </main>
       <Footer />

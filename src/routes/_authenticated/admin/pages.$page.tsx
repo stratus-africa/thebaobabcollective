@@ -347,7 +347,7 @@ const SCHEMAS: Record<PageKey, { title: string; description: string; preview: st
   },
   footer: {
     title: "Footer",
-    description: "Newsletter copy, contact heading, and copyright line. Footer columns are managed under Menu & Navigation.",
+    description: "Newsletter copy, contact heading, copyright line, and social media icons. Footer columns are managed under Menu & Navigation.",
     preview: "/",
     fields: [
       { name: "contact_heading", label: "Contact Column Heading", type: "text" },
@@ -355,6 +355,11 @@ const SCHEMAS: Record<PageKey, { title: string; description: string; preview: st
       { name: "newsletter_body", label: "Newsletter Body", type: "textarea" },
       { name: "newsletter_placeholder", label: "Email Input Placeholder", type: "text" },
       { name: "copyright", label: "Copyright Line ({year} auto-fills)", type: "text" },
+      { name: "instagram_url", label: "Instagram URL (blank to hide icon)", type: "text" },
+      { name: "facebook_url", label: "Facebook URL (blank to hide icon)", type: "text" },
+      { name: "linkedin_url", label: "LinkedIn URL (blank to hide icon)", type: "text" },
+      { name: "twitter_url", label: "X / Twitter URL (blank to hide icon)", type: "text" },
+      { name: "youtube_url", label: "YouTube URL (blank to hide icon)", type: "text" },
     ],
   },
   not_found: {

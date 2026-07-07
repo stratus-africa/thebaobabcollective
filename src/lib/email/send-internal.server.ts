@@ -1,13 +1,12 @@
 import React from 'react'
 import { render } from '@react-email/components'
 import { createClient } from '@supabase/supabase-js'
-import { getEmailTemplate } from './email-registry.server'
+import { TEMPLATES } from '@/lib/email-templates/registry'
 
-const SITE_NAME = 'thebaobabcollective'
+const SITE_NAME = 'The Baobab Collective'
 const SENDER_DOMAIN = 'notify.thebaobabcollective.co.uk'
 const FROM_DOMAIN = 'notify.thebaobabcollective.co.uk'
 
-// Generate a cryptographically random 32-byte hex token
 function generateToken(): string {
   const bytes = new Uint8Array(32)
   crypto.getRandomValues(bytes)
@@ -16,120 +15,81 @@ function generateToken(): string {
     .join('')
 }
 
-// Get the existing unused unsubscribe token for this email, or create one.
-// This satisfies the email API's `missing_unsubscribe_token` requirement for
-// transactional emails. Reuses tokens when possible to minimize DB writes.
 async function getOrCreateUnsubscribeToken(
   supabaseAdmin: any,
-  normalizedEmail: string
+  normalizedEmail: string,
 ): Promise<{ ok: true; token: string } | { ok: false; reason: string }> {
-  const { data: existingToken, error: tokenLookupError } = await supabaseAdmin
+  const { data: existingToken, error: lookupErr } = await supabaseAdmin
     .from('email_unsubscribe_tokens')
     .select('token, used_at')
     .eq('email', normalizedEmail)
     .maybeSingle()
-
-  if (tokenLookupError) {
-    console.error('getOrCreateUnsubscribeToken: lookup failed', { error: tokenLookupError })
-    return { ok: false, reason: 'token_lookup_failed' }
-  }
-
-  // Reuse existing unused tokens
-  if (existingToken && !existingToken.used_at) {
-    return { ok: true, token: existingToken.token }
-  }
-
-  if (existingToken && existingToken.used_at) {
-    // Token exists but was already used to unsubscribe. This email should have
-    // been caught by the suppression check before we get here.
-    console.warn('getOrCreateUnsubscribeToken: token already used but email not suppressed', {
-      email: normalizedEmail,
-    })
-    return { ok: false, reason: 'unsubscribe_token_used' }
-  }
+  if (lookupErr) return { ok: false, reason: 'token_lookup_failed' }
+  if (existingToken && !existingToken.used_at) return { ok: true, token: existingToken.token }
 
   const newToken = generateToken()
-  const { error: tokenError } = await supabaseAdmin
+  const { error: tokenErr } = await supabaseAdmin
     .from('email_unsubscribe_tokens')
     .upsert(
       { token: newToken, email: normalizedEmail },
-      { onConflict: 'email', ignoreDuplicates: true }
+      { onConflict: 'email', ignoreDuplicates: true },
     )
+  if (tokenErr) return { ok: false, reason: 'token_create_failed' }
 
-  if (tokenError) {
-    console.error('getOrCreateUnsubscribeToken: failed to create token', { error: tokenError })
-    return { ok: false, reason: 'token_create_failed' }
-  }
-
-  // If another request raced us, our upsert was silently ignored — re-read to
-  // get the token that actually ended up stored.
-  const { data: storedToken, error: reReadError } = await supabaseAdmin
+  const { data: stored } = await supabaseAdmin
     .from('email_unsubscribe_tokens')
     .select('token')
     .eq('email', normalizedEmail)
     .maybeSingle()
-
-  if (reReadError || !storedToken) {
-    console.error('getOrCreateUnsubscribeToken: failed to read back token', { error: reReadError })
-    return { ok: false, reason: 'token_readback_failed' }
-  }
-
-  return { ok: true, token: storedToken.token }
+  if (!stored) return { ok: false, reason: 'token_readback_failed' }
+  return { ok: true, token: stored.token }
 }
 
 export async function enqueueInternalEmail(args: {
   templateName: string
   recipientEmail?: string
+  idempotencyKey?: string
   templateData?: Record<string, any>
 }): Promise<{ ok: boolean; reason?: string }> {
-  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
+  const supabaseUrl = process.env.SUPABASE_URL
   const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-
   if (!supabaseUrl || !supabaseServiceKey) {
-    console.error('Missing Supabase environment variables')
+    console.error('enqueueInternalEmail: missing Supabase env')
     return { ok: false, reason: 'missing_env' }
   }
 
-  const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey)
-  const template = getEmailTemplate(args.templateName)
-
+  const template = TEMPLATES[args.templateName]
   if (!template) {
-    console.error('Unknown email template', { templateName: args.templateName })
+    console.error('enqueueInternalEmail: unknown template', args.templateName)
     return { ok: false, reason: 'unknown_template' }
   }
 
-  const normalized = (args.recipientEmail || '').toLowerCase().trim()
-  const templateData = args.templateData || {}
+  const recipient = template.to ?? args.recipientEmail
+  if (!recipient) return { ok: false, reason: 'missing_recipient' }
 
-  // Check if email is suppressed
+  const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey)
+  const normalized = recipient.toLowerCase().trim()
+  const templateData = args.templateData ?? {}
+
+  // Suppression check
   const { data: suppressed } = await supabaseAdmin
-    .from('email_suppressions')
-    .select('id')
+    .from('suppressed_emails')
+    .select('email')
     .eq('email', normalized)
     .maybeSingle()
+  if (suppressed) return { ok: false, reason: 'suppressed' }
 
-  if (suppressed) {
-    console.log('Email suppressed, skipping send', { email: normalized })
-    return { ok: false, reason: 'suppressed' }
-  }
-
-  // Get or create unsubscribe token for this email
   const tokenResult = await getOrCreateUnsubscribeToken(supabaseAdmin, normalized)
-  if (!tokenResult.ok) {
-    console.error('enqueueInternalEmail: could not prepare unsubscribe token', {
-      reason: tokenResult.reason,
-    })
-    return { ok: false, reason: tokenResult.reason }
-  }
-  const unsubscribeToken = tokenResult.token
+  if (!tokenResult.ok) return { ok: false, reason: tokenResult.reason }
 
   const element = React.createElement(template.component, templateData as any)
   const html = await render(element)
   const text = await render(element, { plainText: true })
+  const subject =
+    typeof template.subject === 'function' ? template.subject(templateData) : template.subject
 
-  const messageId = crypto.randomUUID()
+  const messageId = args.idempotencyKey ?? crypto.randomUUID()
 
-  // Log pending BEFORE enqueue so we have a record even if enqueue crashes
   await supabaseAdmin.from('email_send_log').insert({
     message_id: messageId,
     template_name: args.templateName,
@@ -144,19 +104,19 @@ export async function enqueueInternalEmail(args: {
       to: normalized,
       from: `${SITE_NAME} <noreply@${FROM_DOMAIN}>`,
       sender_domain: SENDER_DOMAIN,
-      subject: template.subject,
+      subject,
       html,
       text,
       purpose: 'transactional',
       label: args.templateName,
       idempotency_key: messageId,
-      unsubscribe_token: unsubscribeToken,
+      unsubscribe_token: tokenResult.token,
       queued_at: new Date().toISOString(),
     },
   })
 
   if (enqueueError) {
-    console.error('Failed to enqueue email', { error: enqueueError, templateName: args.templateName })
+    console.error('enqueueInternalEmail: enqueue failed', enqueueError)
     await supabaseAdmin.from('email_send_log').insert({
       message_id: messageId,
       template_name: args.templateName,
@@ -167,6 +127,5 @@ export async function enqueueInternalEmail(args: {
     return { ok: false, reason: 'enqueue_failed' }
   }
 
-  console.log('Email enqueued', { templateName: args.templateName, email: normalized })
   return { ok: true }
 }

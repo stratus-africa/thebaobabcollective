@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Instagram, Facebook, ArrowRight, Loader2 } from "lucide-react";
+import { Instagram, Facebook, Linkedin, Twitter, Youtube, ArrowRight, Loader2 } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { BaobabLogo } from "./Logo";
@@ -17,7 +17,7 @@ export function Footer({ content }: { content?: FooterContent | null } = {}) {
   const { email: contactEmail, phone: contactPhone, phoneTel: contactPhoneTel, logoUrl } = useSiteSettings();
   const menu = useMenuConfig();
   const base = { ...PAGE_DEFAULTS.footer, ...(content ?? {}) };
-  const f = usePreviewMerge("footer", base);
+  const f: any = usePreviewMerge("footer", base);
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -40,6 +40,14 @@ export function Footer({ content }: { content?: FooterContent | null } = {}) {
   };
 
   const cols = menu.footerColumns ?? [];
+
+  const socials: { url: string; label: string; Icon: any }[] = [
+    { url: f.instagram_url, label: "Instagram", Icon: Instagram },
+    { url: f.facebook_url, label: "Facebook", Icon: Facebook },
+    { url: f.linkedin_url, label: "LinkedIn", Icon: Linkedin },
+    { url: f.twitter_url, label: "X / Twitter", Icon: Twitter },
+    { url: f.youtube_url, label: "YouTube", Icon: Youtube },
+  ].filter((s) => !!s.url);
 
   return (
     <footer id="contact" className="bg-cream pt-16 pb-6">
@@ -83,10 +91,22 @@ export function Footer({ content }: { content?: FooterContent | null } = {}) {
           <p className="text-sm text-foreground/75 mb-5">
             <a href={`tel:${contactPhoneTel}`} className="hover:text-gold">{contactPhone}</a>
           </p>
-          <div className="flex items-center gap-4 text-foreground/70">
-            <a href="https://instagram.com" aria-label="Instagram" className="hover:text-gold"><Instagram className="w-4 h-4" /></a>
-            <a href="https://facebook.com" aria-label="Facebook" className="hover:text-gold"><Facebook className="w-4 h-4" /></a>
-          </div>
+          {socials.length > 0 && (
+            <div className="flex items-center gap-4 text-foreground/70">
+              {socials.map(({ url, label, Icon }) => (
+                <a
+                  key={label}
+                  href={url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={label}
+                  className="hover:text-gold"
+                >
+                  <Icon className="w-4 h-4" />
+                </a>
+              ))}
+            </div>
+          )}
         </address>
 
         <div>

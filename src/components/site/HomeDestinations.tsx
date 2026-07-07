@@ -7,7 +7,8 @@ type Content = Partial<typeof PAGE_DEFAULTS.home_destinations>;
 
 export function HomeDestinations({ content }: { content?: Content | null } = {}) {
   const base = { ...PAGE_DEFAULTS.home_destinations, ...(content ?? {}) };
-  const c = usePreviewMerge("home_destinations", base);
+  const c: any = usePreviewMerge("home_destinations", base);
+  if (c.hidden) return null;
   return (
     <section className="bg-background py-16 md:py-20">
       <div className="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-10 text-center">

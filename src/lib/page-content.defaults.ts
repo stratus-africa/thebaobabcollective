@@ -10,8 +10,9 @@ export const PAGE_DEFAULTS = {
     hero_image_url: "",
     hero_image_as_background: false,
     hero_hide_search: false,
-
-
+    hero_focal_x: 50, // 0 = left, 100 = right
+    hero_focal_y: 50, // 0 = top,  100 = bottom
+    hero_bg_size: "cover" as "cover" | "contain",
   },
   about: {
     eyebrow: "The Baobab Collective",
@@ -19,7 +20,6 @@ export const PAGE_DEFAULTS = {
     title_line2: "CONSCIOUS.",
     title_line3: "EXTRAORDINARY.",
     body: "We design journeys that connect you to the heart of Africa — its landscapes, wildlife, people and stories.",
-    cta_label: "Learn more about us",
     image_left_url: "",
     image_right_url: "",
   },
@@ -83,6 +83,7 @@ export const PAGE_DEFAULTS = {
     title: "DESTINATIONS",
     body: "From the deltas of Botswana to the highlands of Ethiopia — explore where each journey could take you.",
     cta_label: "Explore destinations",
+    hidden: false,
   },
   home_lodges: {
     eyebrow: "Where you'll stay",
@@ -150,6 +151,31 @@ export const PAGE_DEFAULTS = {
     eyebrow: "Signature Adventures",
     title: "Wild Africa, Deeply Lived",
     subtitle: "Walking safaris, mokoro expeditions, desert traverses, gorilla treks and migration chases.",
+    // Rhythm section (editable)
+    rhythm_eyebrow: "A Day in the Field",
+    rhythm_title: "The rhythm of an adventure day.",
+    rhythm_body: "No two days repeat — but the cadence is the same. Up before the bush, slow through the heat, alive again at dusk.",
+    // Signature section header
+    signature_eyebrow: "Signature Adventures",
+    signature_title: "Journeys we'd take ourselves.",
+    signature_body: "Each is a starting point — every detail is reshaped around you, your dates and your pace.",
+    // Show/hide sections
+    show_rhythm: true,
+    show_enquiry_cta: true,
+  },
+  testimonials_page: {
+    eyebrow: "Guest Stories",
+    title: "In their words",
+    subtitle: "The clearest measure of a journey is how it stays with you afterwards.",
+    show_metrics: true,
+    metric_1_value: "12+",
+    metric_1_label: "Years of journeys",
+    metric_2_value: "800+",
+    metric_2_label: "Travellers hosted",
+    metric_3_value: "40+",
+    metric_3_label: "Lodge partners",
+    cta_title: "Let your story begin here",
+    cta_button: "Start planning",
   },
   // Detail-page templates (shared intros / CTAs)
   detail_journey: {
@@ -162,13 +188,18 @@ export const PAGE_DEFAULTS = {
     intro_eyebrow: "The Lodge",
     related_title: "Similar lodges",
   },
-  // Footer copy (columns/socials are managed via Menu editor)
+  // Footer copy (columns are managed via Menu editor; socials are editable here)
   footer: {
     newsletter_title: "Newsletter",
     newsletter_body: "Receive travel inspiration and special offers.",
     newsletter_placeholder: "Your email address",
     copyright: "© The Baobab Collective {year} | All Rights Reserved",
     contact_heading: "Get in Touch",
+    instagram_url: "https://instagram.com",
+    facebook_url: "https://facebook.com",
+    linkedin_url: "",
+    twitter_url: "",
+    youtube_url: "",
   },
   // 404 / Auth / global SEO
   not_found: {

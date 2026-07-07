@@ -129,7 +129,6 @@ function AdventuresPage() {
         <HeroSection hero={page.hero} />
         <SignaturesSection signatures={page.signatures} />
         <RhythmSection />
-        <PlanningGuideSection />
         <CtaSection cta={page.cta} />
       </main>
       <Footer />
@@ -163,12 +162,18 @@ function HeroSection({ hero }: { hero: AdventuresPage["hero"] }) {
           >
             Featured Adventures <ArrowRight className="w-3 h-3" />
           </a>
-          <a
-            href="#planning-guide"
-            className="inline-flex items-center gap-2 border border-background/70 text-background uppercase tracking-[0.25em] text-[11px] px-7 py-4 hover:bg-background hover:text-foreground transition-colors"
-          >
-            <Download className="w-3 h-3" /> Planning Guide
-          </a>
+          <EnquireDialog
+            sourceUrl="/adventures"
+            autosaveKey="enquire:adventures-hero"
+            trigger={
+              <button
+                type="button"
+                className="inline-flex items-center gap-2 border border-background/70 text-background uppercase tracking-[0.25em] text-[11px] px-7 py-4 hover:bg-background hover:text-foreground transition-colors"
+              >
+                Start Your Enquiry
+              </button>
+            }
+          />
         </div>
       </div>
     </section>

@@ -91,8 +91,9 @@ const SCHEMAS: Record<PageKey, { title: string; description: string; preview: st
       { name: "hero_proof_text", label: "Social Proof Text", type: "text" },
       { name: "hero_image_as_background", label: "Use Hero Image as Full Background", type: "boolean" },
       { name: "hero_hide_search", label: "Hide Search Filter", type: "boolean" },
-
-
+      { name: "hero_focal_x", label: "Hero focal point — Horizontal (0=left, 100=right)", type: "text", placeholder: "50" },
+      { name: "hero_focal_y", label: "Hero focal point — Vertical (0=top, 100=bottom)", type: "text", placeholder: "50" },
+      { name: "hero_bg_size", label: "Background size ('cover' or 'contain')", type: "text", placeholder: "cover" },
     ],
   },
   about: {
@@ -105,7 +106,6 @@ const SCHEMAS: Record<PageKey, { title: string; description: string; preview: st
       { name: "title_line2", label: "Title — Line 2", type: "text" },
       { name: "title_line3", label: "Title — Line 3", type: "text" },
       { name: "body", label: "Body Paragraph", type: "textarea" },
-      { name: "cta_label", label: "CTA Label", type: "text" },
       { name: "image_left_url", label: "Image — Left", type: "image" },
       { name: "image_right_url", label: "Image — Right", type: "image" },
     ],
@@ -190,9 +190,10 @@ const SCHEMAS: Record<PageKey, { title: string; description: string; preview: st
   },
   home_destinations: {
     title: "Home — Destinations Strip",
-    description: "The Destinations strip on the homepage.",
+    description: "The Destinations strip on the homepage. Toggle Hide to remove it from the homepage entirely.",
     preview: "/",
     fields: [
+      { name: "hidden", label: "Hide this section on the homepage", type: "boolean" },
       { name: "eyebrow", label: "Eyebrow", type: "text" },
       { name: "title", label: "Title", type: "text" },
       { name: "body", label: "Body", type: "textarea" },
@@ -288,12 +289,39 @@ const SCHEMAS: Record<PageKey, { title: string; description: string; preview: st
   },
   adventures_index: {
     title: "Adventures — Landing",
-    description: "Intro band on the /adventures listing page.",
+    description: "All editable sections on the /adventures listing page.",
     preview: "/adventures",
+    fields: [
+      { name: "eyebrow", label: "Hero Eyebrow", type: "text" },
+      { name: "title", label: "Hero Title", type: "text" },
+      { name: "subtitle", label: "Hero Subtitle", type: "textarea" },
+      { name: "signature_eyebrow", label: "Signature Section — Eyebrow", type: "text" },
+      { name: "signature_title", label: "Signature Section — Title", type: "text" },
+      { name: "signature_body", label: "Signature Section — Body", type: "textarea" },
+      { name: "show_rhythm", label: "Show 'Rhythm of an adventure day' section", type: "boolean" },
+      { name: "rhythm_eyebrow", label: "Rhythm — Eyebrow", type: "text" },
+      { name: "rhythm_title", label: "Rhythm — Title", type: "text" },
+      { name: "rhythm_body", label: "Rhythm — Body", type: "textarea" },
+      { name: "show_enquiry_cta", label: "Show closing Enquiry CTA section", type: "boolean" },
+    ],
+  },
+  testimonials_page: {
+    title: "Testimonials Page",
+    description: "Copy and metric cards on the /testimonials page.",
+    preview: "/testimonials",
     fields: [
       { name: "eyebrow", label: "Eyebrow", type: "text" },
       { name: "title", label: "Title", type: "text" },
       { name: "subtitle", label: "Subtitle", type: "textarea" },
+      { name: "show_metrics", label: "Show metric cards (12+ / 800+ / 40+)", type: "boolean" },
+      { name: "metric_1_value", label: "Metric 1 — Value", type: "text" },
+      { name: "metric_1_label", label: "Metric 1 — Label", type: "text" },
+      { name: "metric_2_value", label: "Metric 2 — Value", type: "text" },
+      { name: "metric_2_label", label: "Metric 2 — Label", type: "text" },
+      { name: "metric_3_value", label: "Metric 3 — Value", type: "text" },
+      { name: "metric_3_label", label: "Metric 3 — Label", type: "text" },
+      { name: "cta_title", label: "CTA — Title", type: "text" },
+      { name: "cta_button", label: "CTA — Button Label", type: "text" },
     ],
   },
   detail_journey: {
@@ -319,7 +347,7 @@ const SCHEMAS: Record<PageKey, { title: string; description: string; preview: st
   },
   footer: {
     title: "Footer",
-    description: "Newsletter copy, contact heading, and copyright line. Footer columns are managed under Menu & Navigation.",
+    description: "Newsletter copy, contact heading, copyright line, and social media icons. Footer columns are managed under Menu & Navigation.",
     preview: "/",
     fields: [
       { name: "contact_heading", label: "Contact Column Heading", type: "text" },
@@ -327,6 +355,11 @@ const SCHEMAS: Record<PageKey, { title: string; description: string; preview: st
       { name: "newsletter_body", label: "Newsletter Body", type: "textarea" },
       { name: "newsletter_placeholder", label: "Email Input Placeholder", type: "text" },
       { name: "copyright", label: "Copyright Line ({year} auto-fills)", type: "text" },
+      { name: "instagram_url", label: "Instagram URL (blank to hide icon)", type: "text" },
+      { name: "facebook_url", label: "Facebook URL (blank to hide icon)", type: "text" },
+      { name: "linkedin_url", label: "LinkedIn URL (blank to hide icon)", type: "text" },
+      { name: "twitter_url", label: "X / Twitter URL (blank to hide icon)", type: "text" },
+      { name: "youtube_url", label: "YouTube URL (blank to hide icon)", type: "text" },
     ],
   },
   not_found: {

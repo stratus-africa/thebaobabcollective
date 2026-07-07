@@ -11,6 +11,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { submitPrivateTravelRequest } from "@/lib/private-travel.functions";
 import { getPageContent } from "@/lib/page-content.functions";
 import { PAGE_DEFAULTS } from "@/lib/page-content.defaults";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { toast } from "sonner";
 import { Check } from "lucide-react";
 
@@ -44,6 +45,7 @@ export const Route = createFileRoute("/private-travel")({
 function PrivateTravelPage() {
   const { content: c } = Route.useLoaderData();
   const submit = useServerFn(submitPrivateTravelRequest);
+  const { currencyCode, currencySymbol } = useSiteSettings();
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
   const [form, setForm] = useState({
@@ -127,15 +129,17 @@ function PrivateTravelPage() {
                   <Input id="dates" placeholder="e.g. Aug 2026, flexible" value={form.travel_dates} onChange={(e) => setForm((f) => ({ ...f, travel_dates: e.target.value }))} />
                 </div>
                 <div>
-                  <Label htmlFor="budget">Budget per person (USD)</Label>
-                  <Input id="budget" placeholder="e.g. $8,000+" value={form.budget_usd} onChange={(e) => setForm((f) => ({ ...f, budget_usd: e.target.value }))} />
+                  <Label htmlFor="budget">Budget per person ({currencyCode})</Label>
+                  <Input
+                    id="budget"
+                    placeholder={`e.g. ${currencySymbol}8,000+`}
+                    value={form.budget_usd}
+                    onChange={(e) => setForm((f) => ({ ...f, budget_usd: e.target.value }))}
+                  />
                 </div>
               </div>
 
-              <div>
-                <Label htmlFor="dest">Dream destinations</Label>
-                <Input id="dest" placeholder="e.g. Botswana, Rwanda, Namibia…" value={form.destinations} onChange={(e) => setForm((f) => ({ ...f, destinations: e.target.value }))} />
-              </div>
+              {/* "Dream destinations" field removed per spec */}
 
               <div>
                 <Label className="block mb-3">Your interests</Label>

@@ -5,6 +5,7 @@ import { About } from "@/components/site/About";
 import { getPageContent } from "@/lib/page-content.functions";
 import { PAGE_DEFAULTS } from "@/lib/page-content.defaults";
 import { usePreviewMerge } from "@/lib/preview-overrides";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 
 export const Route = createFileRoute("/about")({
   loader: async () => {
@@ -87,29 +88,39 @@ function TeamSection({ content }: { content: any }) {
           <p className="text-foreground/75 leading-relaxed">{c.body}</p>
         </div>
         {members.length > 0 && (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="flex flex-wrap justify-center gap-6 md:gap-8">
             {members.map((m, i) => (
-              <div key={i} className="text-center">
-                {m.url ? (
-                  <img
-                    src={m.url}
-                    alt={m.name || `Team member ${i + 1}`}
-                    loading="lazy"
-                    className="w-full aspect-[3/4] object-cover mb-4 bg-cream"
-                  />
-                ) : (
-                  <div className="w-full aspect-[3/4] bg-cream mb-4" />
-                )}
-                {m.name && <p className="font-serif text-lg text-foreground">{m.name}</p>}
-                {m.role && (
-                  <p className="text-[11px] tracking-[0.2em] uppercase text-foreground/60 mt-1">
-                    {m.role}
-                  </p>
-                )}
-                {m.bio && (
-                  <p className="text-sm text-foreground/70 mt-3 leading-relaxed">{m.bio}</p>
-                )}
-              </div>
+              <HoverCard key={i} openDelay={80} closeDelay={100}>
+                <HoverCardTrigger asChild>
+                  <div className="text-center w-[220px] cursor-pointer group">
+                    {m.url ? (
+                      <img
+                        src={m.url}
+                        alt={m.name || `Team member ${i + 1}`}
+                        loading="lazy"
+                        className="w-full aspect-[3/4] object-cover mb-4 bg-cream transition-transform duration-500 group-hover:scale-[1.02]"
+                      />
+                    ) : (
+                      <div className="w-full aspect-[3/4] bg-cream mb-4" />
+                    )}
+                    {m.name && <p className="font-serif text-lg text-foreground">{m.name}</p>}
+                    {m.role && (
+                      <p className="text-[11px] tracking-[0.2em] uppercase text-foreground/60 mt-1">
+                        {m.role}
+                      </p>
+                    )}
+                  </div>
+                </HoverCardTrigger>
+                <HoverCardContent align="center" className="w-72 bg-cream border-gold/40">
+                  {m.name && <p className="font-serif text-lg text-foreground mb-1">{m.name}</p>}
+                  {m.role && (
+                    <p className="text-[10px] tracking-[0.2em] uppercase text-gold mb-3">{m.role}</p>
+                  )}
+                  {m.bio && (
+                    <p className="text-sm text-foreground/75 leading-relaxed">{m.bio}</p>
+                  )}
+                </HoverCardContent>
+              </HoverCard>
             ))}
           </div>
         )}

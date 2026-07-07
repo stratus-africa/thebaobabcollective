@@ -11,6 +11,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { submitPrivateTravelRequest } from "@/lib/private-travel.functions";
 import { getPageContent } from "@/lib/page-content.functions";
 import { PAGE_DEFAULTS } from "@/lib/page-content.defaults";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { toast } from "sonner";
 import { Check } from "lucide-react";
 

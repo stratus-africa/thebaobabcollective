@@ -5,6 +5,7 @@ import { About } from "@/components/site/About";
 import { getPageContent } from "@/lib/page-content.functions";
 import { PAGE_DEFAULTS } from "@/lib/page-content.defaults";
 import { usePreviewMerge } from "@/lib/preview-overrides";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 
 export const Route = createFileRoute("/about")({
   loader: async () => {

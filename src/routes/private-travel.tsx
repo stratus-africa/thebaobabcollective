@@ -45,6 +45,7 @@ export const Route = createFileRoute("/private-travel")({
 function PrivateTravelPage() {
   const { content: c } = Route.useLoaderData();
   const submit = useServerFn(submitPrivateTravelRequest);
+  const { currencyCode, currencySymbol } = useSiteSettings();
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
   const [form, setForm] = useState({

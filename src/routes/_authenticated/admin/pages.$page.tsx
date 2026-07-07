@@ -106,7 +106,6 @@ const SCHEMAS: Record<PageKey, { title: string; description: string; preview: st
       { name: "title_line2", label: "Title — Line 2", type: "text" },
       { name: "title_line3", label: "Title — Line 3", type: "text" },
       { name: "body", label: "Body Paragraph", type: "textarea" },
-      { name: "cta_label", label: "CTA Label", type: "text" },
       { name: "image_left_url", label: "Image — Left", type: "image" },
       { name: "image_right_url", label: "Image — Right", type: "image" },
     ],

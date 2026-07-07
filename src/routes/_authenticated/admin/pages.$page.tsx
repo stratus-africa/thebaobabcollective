@@ -190,9 +190,10 @@ const SCHEMAS: Record<PageKey, { title: string; description: string; preview: st
   },
   home_destinations: {
     title: "Home — Destinations Strip",
-    description: "The Destinations strip on the homepage.",
+    description: "The Destinations strip on the homepage. Toggle Hide to remove it from the homepage entirely.",
     preview: "/",
     fields: [
+      { name: "hidden", label: "Hide this section on the homepage", type: "boolean" },
       { name: "eyebrow", label: "Eyebrow", type: "text" },
       { name: "title", label: "Title", type: "text" },
       { name: "body", label: "Body", type: "textarea" },

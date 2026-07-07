@@ -16,7 +16,6 @@ const groups: NavGroup[] = [
     items: [
       { to: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
       { to: "/admin/enquiries", label: "Enquiries", icon: MessageSquare },
-      { to: "/admin/planning-guide", label: "Planning Guide", icon: BookOpen },
       { to: "/admin/subscribers", label: "Subscribers", icon: Mail },
     ],
   },

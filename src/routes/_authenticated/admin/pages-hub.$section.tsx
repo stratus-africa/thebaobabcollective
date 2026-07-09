@@ -1,12 +1,13 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, notFound } from "@tanstack/react-router";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
-  LayoutDashboard, Compass, MapPin, Building, BookOpen, Globe, ExternalLink,
+  LayoutDashboard, Compass, MapPin, Building, BookOpen, Globe,
   Bell, Users as UsersIcon, Sparkles,
 } from "lucide-react";
+import { PageEditor } from "./pages.$page";
+import type { PageKey } from "@/lib/page-content.defaults";
 
-type Editor = { pageKey: string; title: string; description: string };
-type HubTab = { value: string; label: string; icon: any; editors: Editor[] };
+type HubTab = { value: string; label: string; icon: any; pageKeys: PageKey[] };
 type HubSection = { title: string; description: string; tabs: HubTab[] };
 
 const SECTIONS: Record<string, HubSection> = {
@@ -14,89 +15,22 @@ const SECTIONS: Record<string, HubSection> = {
     title: "Home Page",
     description: "Every section of the homepage, grouped into tabs.",
     tabs: [
-      {
-        value: "hero",
-        label: "Home Hero",
-        icon: LayoutDashboard,
-        editors: [
-          { pageKey: "home", title: "Home — Hero", description: "Hero copy, CTAs and background image." },
-          { pageKey: "top_bar", title: "Top Announcement Bar", description: "Dark bar at the top of every page." },
-        ],
-      },
-      {
-        value: "adventures",
-        label: "Adventures",
-        icon: Compass,
-        editors: [
-          { pageKey: "home_adventures", title: "Home — Adventures Strip", description: "The Adventures strip on the homepage." },
-          { pageKey: "adventures_index", title: "Adventures — Landing Page", description: "All editable copy on the /adventures listing page." },
-          { pageKey: "detail_journey", title: "Adventure Detail Template", description: "Shared copy for every adventure detail page." },
-        ],
-      },
-      {
-        value: "destinations",
-        label: "Destinations",
-        icon: MapPin,
-        editors: [
-          { pageKey: "home_destinations", title: "Home — Destinations Strip", description: "The Destinations strip and landing entry point on the homepage." },
-        ],
-      },
-      {
-        value: "lodges",
-        label: "Lodges",
-        icon: Building,
-        editors: [
-          { pageKey: "home_lodges", title: "Home — Lodges Strip", description: "The Lodges strip on the homepage." },
-          { pageKey: "lodges_index", title: "Lodges — Landing Page", description: "Intro band on the /lodges listing page." },
-          { pageKey: "detail_lodge", title: "Lodge Detail Template", description: "Shared copy for every lodge detail page." },
-        ],
-      },
-      {
-        value: "journal",
-        label: "Journal",
-        icon: BookOpen,
-        editors: [
-          { pageKey: "home_journal", title: "Home — Journal Strip", description: "The 'Stories. Guidance. Inspiration.' block." },
-        ],
-      },
-      {
-        value: "instagram",
-        label: "Instagram",
-        icon: Globe,
-        editors: [
-          { pageKey: "home_instagram", title: "Home — Instagram Strip", description: "Handle, heading and the 7 thumbnails." },
-        ],
-      },
+      { value: "hero",         label: "Home Hero",    icon: LayoutDashboard, pageKeys: ["home", "top_bar"] },
+      { value: "adventures",   label: "Adventures",   icon: Compass,         pageKeys: ["home_adventures", "adventures_index", "detail_journey"] },
+      { value: "destinations", label: "Destinations", icon: MapPin,          pageKeys: ["home_destinations"] },
+      { value: "lodges",       label: "Lodges",       icon: Building,        pageKeys: ["home_lodges", "lodges_index", "detail_lodge"] },
+      { value: "journal",      label: "Journal",      icon: BookOpen,        pageKeys: ["home_journal"] },
+      { value: "instagram",    label: "Instagram",    icon: Globe,           pageKeys: ["home_instagram"] },
     ],
   },
   about: {
     title: "About Page",
     description: "Sections of the /about page.",
     tabs: [
-      {
-        value: "hero",
-        label: "About Hero",
-        icon: Sparkles,
-        editors: [{ pageKey: "about", title: "About — Hero / Block", description: "Eyebrow, title, body and side images." }],
-      },
-      {
-        value: "mission",
-        label: "Mission",
-        icon: BookOpen,
-        editors: [{ pageKey: "about_mission", title: "About — Mission", description: "Mission section copy." }],
-      },
-      {
-        value: "values",
-        label: "Values",
-        icon: Bell,
-        editors: [{ pageKey: "about_values", title: "About — Values", description: "The four values shown on the About page." }],
-      },
-      {
-        value: "team",
-        label: "Team",
-        icon: UsersIcon,
-        editors: [{ pageKey: "about_team", title: "About — Team", description: "Team intro copy and member cards." }],
-      },
+      { value: "hero",    label: "About Hero", icon: Sparkles,   pageKeys: ["about"] },
+      { value: "mission", label: "Mission",    icon: BookOpen,   pageKeys: ["about_mission"] },
+      { value: "values",  label: "Values",     icon: Bell,       pageKeys: ["about_values"] },
+      { value: "team",    label: "Team",       icon: UsersIcon,  pageKeys: ["about_team"] },
     ],
   },
 };
@@ -138,30 +72,14 @@ function PagesHub() {
 
         <div className="flex-1 min-w-0">
           {cfg.tabs.map((t) => (
-            <TabsContent key={t.value} value={t.value} className="mt-0 space-y-5">
-              {t.editors.map((ed) => (
-                <EditorCard key={ed.pageKey} pageKey={ed.pageKey} title={ed.title} description={ed.description} />
+            <TabsContent key={t.value} value={t.value} className="mt-0 space-y-10">
+              {t.pageKeys.map((pk) => (
+                <PageEditor key={pk} pageKey={pk} />
               ))}
             </TabsContent>
           ))}
         </div>
       </Tabs>
-    </div>
-  );
-}
-
-function EditorCard({ pageKey, title, description }: Editor) {
-  return (
-    <div className="bg-background border border-border rounded-xl p-6 md:p-8">
-      <h2 className="font-serif text-2xl text-foreground">{title}</h2>
-      <p className="text-sm text-foreground/70 mt-1">{description}</p>
-      <Link
-        to="/admin/pages/$page"
-        params={{ page: pageKey }}
-        className="inline-flex items-center gap-2 mt-5 bg-forest text-forest-foreground uppercase tracking-[0.2em] text-[11px] px-5 py-3 hover:bg-forest/90 transition-colors"
-      >
-        Open editor <ExternalLink className="w-3.5 h-3.5" />
-      </Link>
     </div>
   );
 }

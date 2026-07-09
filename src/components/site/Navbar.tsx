@@ -297,14 +297,15 @@ function PrimaryWithSubmenu({
         {item.label} <ChevronDown className="w-3 h-3" aria-hidden="true" />
       </Link>
       {open && kids.length > 0 && (
-        <div className="absolute left-0 top-full pt-2">
+        <div className="absolute left-0 top-full pt-2" role="menu">
           <div className="bg-background border border-border shadow-lg py-2 min-w-[220px]">
             {kids.map((c) => (
               <Link
                 key={c.to}
                 to={c.to as any}
+                role="menuitem"
                 onClick={() => setOpen(false)}
-                className="block px-5 py-2 text-[14px] tracking-[0.2em] uppercase font-semibold text-foreground/80 hover:text-foreground hover:bg-cream"
+                className="block px-5 py-2 text-[14px] tracking-[0.2em] uppercase font-semibold text-foreground/80 hover:text-foreground hover:bg-cream focus:outline-none focus-visible:bg-cream focus-visible:text-foreground"
               >
                 {c.label}
               </Link>

@@ -52,20 +52,20 @@ export function Footer({ content }: { content?: FooterContent | null } = {}) {
   return (
     <footer id="contact" className="bg-cream pt-16 pb-6">
       <div className="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-10">
-        <div className="lg:col-span-1">
+        <div className="lg:col-span-1 flex flex-col">
           <Link
             to="/"
-            className="relative flex items-center h-24 w-24 mb-2"
+            className="inline-flex items-center h-28 w-auto -mt-2 mb-3 rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-cream"
             aria-label="The Baobab Collective home"
           >
             {logoUrl ? (
               <img
                 src={logoUrl}
                 alt="The Baobab Collective"
-                className="absolute left-0 top-1/2 -translate-y-1/2 h-40 sm:h-48 w-auto max-w-none object-contain z-10 pointer-events-none"
+                className="h-28 sm:h-32 w-auto max-w-[180px] object-contain object-left"
               />
             ) : (
-              <BaobabLogo className="w-24 h-24" />
+              <BaobabLogo className="w-20 h-20" />
             )}
           </Link>
 

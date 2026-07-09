@@ -82,7 +82,7 @@ export function Footer({ content }: { content?: FooterContent | null } = {}) {
                 <li key={`${l.to}-${i}`}>
                   <Link
                     to={l.to as any}
-                    className="text-[11px] tracking-wider uppercase text-foreground/75 hover:text-gold"
+                    className="text-[11px] tracking-wider uppercase text-foreground/75 hover:text-gold rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-cream"
                   >
                     {l.label}
                   </Link>

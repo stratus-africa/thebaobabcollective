@@ -129,8 +129,9 @@ export function Navbar() {
                         <Link
                           key={`${m.to}-${i}`}
                           to={m.to as any}
+                          role="menuitem"
                           onClick={() => setMoreOpen(false)}
-                          className="block px-5 py-2 text-[14px] tracking-[0.2em] uppercase font-semibold text-foreground/80 hover:text-foreground hover:bg-cream"
+                          className="block px-5 py-2 text-[14px] tracking-[0.2em] uppercase font-semibold text-foreground/80 hover:text-foreground hover:bg-cream focus:outline-none focus-visible:bg-cream focus-visible:text-foreground"
                         >
                           {m.label}
                         </Link>

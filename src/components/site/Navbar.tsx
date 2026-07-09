@@ -42,6 +42,16 @@ export function Navbar() {
       .then(({ data }) => setIsAdmin(!!data));
   }, [user]);
 
+  // Close mobile menu on Escape for keyboard users.
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open]);
+
   const signOut = async () => {
     await supabase.auth.signOut();
     navigate({ to: "/" });

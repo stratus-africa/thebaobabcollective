@@ -290,7 +290,7 @@ function PrimaryWithSubmenu({
                 key={c.to}
                 to={c.to as any}
                 onClick={() => setOpen(false)}
-                className="block px-5 py-2 text-[12px] tracking-[0.2em] uppercase font-semibold text-foreground/80 hover:text-foreground hover:bg-cream"
+                className="block px-5 py-2 text-[14px] tracking-[0.2em] uppercase font-semibold text-foreground/80 hover:text-foreground hover:bg-cream"
               >
                 {c.label}
               </Link>

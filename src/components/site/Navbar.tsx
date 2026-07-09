@@ -287,12 +287,14 @@ function PrimaryWithSubmenu({
     <div className="relative" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
       <Link
         to={item.to as any}
-        className={`text-[15px] tracking-[0.22em] uppercase font-semibold inline-flex items-center gap-1 ${
+        aria-haspopup="menu"
+        aria-expanded={open}
+        className={`text-[15px] tracking-[0.22em] uppercase font-semibold inline-flex items-center gap-1 rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 ${
           overlay ? "text-cream/85 hover:text-cream" : "text-foreground/80 hover:text-foreground"
         }`}
         activeProps={{ className: overlay ? "text-cream" : "text-foreground" }}
       >
-        {item.label} <ChevronDown className="w-3 h-3" />
+        {item.label} <ChevronDown className="w-3 h-3" aria-hidden="true" />
       </Link>
       {open && kids.length > 0 && (
         <div className="absolute left-0 top-full pt-2">

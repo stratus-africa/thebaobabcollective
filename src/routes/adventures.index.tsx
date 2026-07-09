@@ -414,16 +414,16 @@ function RhythmSection({ content }: { content: AdventuresIndexContent }) {
           </div>
           <ol className="lg:col-span-8 space-y-10">
             {rhythm.map((r, i) => (
-              <li key={r.when} className="grid grid-cols-[auto_1fr] gap-6 md:gap-10">
-                <div className="text-left">
-                  <div className="font-serif text-4xl text-terracotta">
+              <li key={r.when} className="grid grid-cols-[5.5rem_1fr] md:grid-cols-[6.5rem_1fr] gap-6 md:gap-10 items-start">
+                <div className="text-left pt-1">
+                  <div className="font-serif text-4xl text-terracotta leading-none">
                     {String(i + 1).padStart(2, "0")}
                   </div>
-                  <div className="text-[11px] tracking-[0.25em] uppercase text-foreground/55 mt-1">
+                  <div className="text-[11px] tracking-[0.25em] uppercase text-foreground/55 mt-2">
                     {r.when}
                   </div>
                 </div>
-                <div className="border-l border-border pl-6 md:pl-8 pb-2">
+                <div className="border-l border-border pl-6 md:pl-8">
                   <h3 className="font-serif text-2xl text-foreground mb-2">{r.title}</h3>
                   <p className="text-foreground/70 leading-relaxed">{r.body}</p>
                 </div>

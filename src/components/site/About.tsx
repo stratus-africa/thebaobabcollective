@@ -22,7 +22,7 @@ export function About({ content }: { content?: AboutContent | null } = {}) {
           <h2 className="font-serif text-4xl md:text-5xl leading-[1.1] text-foreground mb-8">
             {c.title_line1}<br />{c.title_line2}<br />{c.title_line3}
           </h2>
-          <p className="text-foreground/75 leading-relaxed max-w-xl">
+          <p className="text-foreground/75 leading-relaxed">
             {c.body}
           </p>
         </div>

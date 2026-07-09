@@ -55,15 +55,14 @@ export function Navbar() {
     : "text-foreground/80 hover:text-foreground";
 
   const topBar = menu.topBarEnabled && menu.topBarText ? (
-    <div className="bg-forest text-forest-foreground py-2 px-4 text-center text-[11px] tracking-luxury uppercase">
+    <div className="relative z-[60] bg-forest text-forest-foreground py-2 px-4 text-center text-[11px] tracking-luxury uppercase">
       {menu.topBarText}
     </div>
   ) : null;
 
   return (
     <>
-      {/* When overlay is enabled, keep the top bar as its own opaque section
-          in normal flow, above the transparent nav that floats over the hero. */}
+      {/* Top bar stays above the floating nav so the logo overlay tucks underneath it. */}
       {overlay && topBar}
       <header className={overlay ? "absolute inset-x-0 z-50" : "sticky top-0 z-50"}>
         {!overlay && topBar}

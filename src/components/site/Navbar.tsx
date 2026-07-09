@@ -147,10 +147,10 @@ export function Navbar() {
           <div className="hidden lg:flex items-center gap-4 shrink-0">
             {user && isAdmin && (
               <>
-                <Link to="/admin" className="text-[11px] tracking-[0.2em] uppercase text-gold hover:underline">
+                <Link to="/admin" className="text-[11px] tracking-[0.2em] uppercase text-gold hover:underline rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2">
                   Admin
                 </Link>
-                <button onClick={signOut} className="text-[11px] tracking-[0.2em] uppercase text-foreground/70 hover:text-foreground">
+                <button onClick={signOut} className="text-[11px] tracking-[0.2em] uppercase text-foreground/70 hover:text-foreground rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2">
                   Sign out
                 </button>
               </>
@@ -158,14 +158,14 @@ export function Navbar() {
             <button
               type="button"
               aria-label="Search"
-              className="p-2 text-foreground/70 hover:text-foreground transition-colors"
+              className="p-2 text-foreground/70 hover:text-foreground transition-colors rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2"
             >
-              <Search className="w-4 h-4" strokeWidth={1.75} />
+              <Search className="w-4 h-4" strokeWidth={1.75} aria-hidden="true" />
             </button>
             {menu.ctaTo ? (
               <Link
                 to={menu.ctaTo as any}
-                className="inline-flex items-center justify-center rounded-full bg-gold text-gold-foreground uppercase tracking-[0.2em] text-[13px] px-6 py-3 hover:bg-gold/90 transition-colors"
+                className="inline-flex items-center justify-center rounded-full bg-gold text-gold-foreground uppercase tracking-[0.2em] text-[13px] px-6 py-3 hover:bg-gold/90 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2"
               >
                 {menu.ctaLabel}
               </Link>
@@ -175,7 +175,8 @@ export function Navbar() {
                 trigger={
                   <button
                     type="button"
-                    className="inline-flex items-center justify-center rounded-full bg-gold text-gold-foreground uppercase tracking-[0.2em] text-[13px] px-6 py-3 hover:bg-gold/90 transition-colors"
+                    aria-label={`${menu.ctaLabel} — open enquiry form`}
+                    className="inline-flex items-center justify-center rounded-full bg-gold text-gold-foreground uppercase tracking-[0.2em] text-[13px] px-6 py-3 hover:bg-gold/90 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2"
                   >
                     {menu.ctaLabel}
                   </button>
@@ -185,14 +186,17 @@ export function Navbar() {
           </div>
 
           <button
-            className="lg:hidden p-2 ml-auto"
+            type="button"
+            className="lg:hidden p-2 ml-auto rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2"
             onClick={() => setOpen((o) => !o)}
             aria-label={open ? "Close menu" : "Open menu"}
             aria-expanded={open}
+            aria-controls="mobile-nav"
           >
-            {open ? <X /> : <Menu />}
+            {open ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}
           </button>
         </div>
+
 
 
         {open && (

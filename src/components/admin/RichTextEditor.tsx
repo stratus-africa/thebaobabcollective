@@ -209,53 +209,64 @@ export function RichTextEditor({
   }
 
   return (
-    <div className="border border-border bg-background">
-      <div className="flex flex-wrap items-center gap-1 px-2 py-1.5 border-b border-border bg-cream/40">
-        <ToolbarBtn onClick={() => exec("bold")} title="Bold"><Bold className="w-3.5 h-3.5" /></ToolbarBtn>
-        <ToolbarBtn onClick={() => exec("italic")} title="Italic"><Italic className="w-3.5 h-3.5" /></ToolbarBtn>
-        <ToolbarBtn onClick={() => exec("formatBlock", "<h2>")} title="Heading"><Heading2 className="w-3.5 h-3.5" /></ToolbarBtn>
-        <ToolbarBtn onClick={() => exec("insertUnorderedList")} title="Bullet list"><List className="w-3.5 h-3.5" /></ToolbarBtn>
-        <ToolbarBtn onClick={() => exec("insertOrderedList")} title="Numbered list"><ListOrdered className="w-3.5 h-3.5" /></ToolbarBtn>
-        <ToolbarBtn onClick={insertLink} title="Insert link"><LinkIcon className="w-3.5 h-3.5" /></ToolbarBtn>
+    <div className="border border-border bg-background" aria-busy={busy || undefined}>
+      <div
+        role="toolbar"
+        aria-label={mode === "advanced" ? "Rich text editor toolbar — advanced" : "Rich text editor toolbar"}
+        aria-controls={undefined}
+        className="flex flex-wrap items-center gap-1 px-2 py-1.5 border-b border-border bg-cream/40"
+      >
+        <ToolbarBtn onClick={() => exec("bold")} title="Bold" ariaLabel="Bold" disabled={busy}><Bold className="w-3.5 h-3.5" /></ToolbarBtn>
+        <ToolbarBtn onClick={() => exec("italic")} title="Italic" ariaLabel="Italic" disabled={busy}><Italic className="w-3.5 h-3.5" /></ToolbarBtn>
+        <ToolbarBtn onClick={() => exec("formatBlock", "<h2>")} title="Heading" ariaLabel="Heading level 2" disabled={busy}><Heading2 className="w-3.5 h-3.5" /></ToolbarBtn>
+        <ToolbarBtn onClick={() => exec("insertUnorderedList")} title="Bullet list" ariaLabel="Bullet list" disabled={busy}><List className="w-3.5 h-3.5" /></ToolbarBtn>
+        <ToolbarBtn onClick={() => exec("insertOrderedList")} title="Numbered list" ariaLabel="Numbered list" disabled={busy}><ListOrdered className="w-3.5 h-3.5" /></ToolbarBtn>
+        <ToolbarBtn onClick={insertLink} title="Insert link" ariaLabel="Insert link" disabled={busy}>
+          {insertingLink ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <LinkIcon className="w-3.5 h-3.5" />}
+        </ToolbarBtn>
 
         {mode === "advanced" && (
           <>
-            <span className="mx-1 h-4 w-px bg-border" />
-            <ToolbarBtn onClick={() => exec("underline")} title="Underline"><UnderlineIcon className="w-3.5 h-3.5" /></ToolbarBtn>
-            <ToolbarBtn onClick={() => exec("strikeThrough")} title="Strikethrough"><Strikethrough className="w-3.5 h-3.5" /></ToolbarBtn>
-            <ToolbarBtn onClick={() => exec("formatBlock", "<h3>")} title="Sub-heading"><Heading3 className="w-3.5 h-3.5" /></ToolbarBtn>
-            <ToolbarBtn onClick={() => exec("formatBlock", "<blockquote>")} title="Quote"><Quote className="w-3.5 h-3.5" /></ToolbarBtn>
-            <ToolbarBtn onClick={unlink} title="Remove link"><Link2Off className="w-3.5 h-3.5" /></ToolbarBtn>
+            <span className="mx-1 h-4 w-px bg-border" aria-hidden="true" />
+            <ToolbarBtn onClick={() => exec("underline")} title="Underline" ariaLabel="Underline" disabled={busy}><UnderlineIcon className="w-3.5 h-3.5" /></ToolbarBtn>
+            <ToolbarBtn onClick={() => exec("strikeThrough")} title="Strikethrough" ariaLabel="Strikethrough" disabled={busy}><Strikethrough className="w-3.5 h-3.5" /></ToolbarBtn>
+            <ToolbarBtn onClick={() => exec("formatBlock", "<h3>")} title="Sub-heading" ariaLabel="Heading level 3" disabled={busy}><Heading3 className="w-3.5 h-3.5" /></ToolbarBtn>
+            <ToolbarBtn onClick={() => exec("formatBlock", "<blockquote>")} title="Quote" ariaLabel="Blockquote" disabled={busy}><Quote className="w-3.5 h-3.5" /></ToolbarBtn>
+            <ToolbarBtn onClick={unlink} title="Remove link" ariaLabel="Remove link" disabled={busy}><Link2Off className="w-3.5 h-3.5" /></ToolbarBtn>
             <ToolbarBtn
               onClick={() => fileRef.current?.click()}
               title="Upload image"
-              disabled={uploading}
+              ariaLabel="Upload image"
+              disabled={busy}
             >
               {uploading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <ImageIcon className="w-3.5 h-3.5" />}
             </ToolbarBtn>
-            <ToolbarBtn onClick={insertImageByUrl} title="Insert image by URL">
+            <ToolbarBtn onClick={insertImageByUrl} title="Insert image by URL" ariaLabel="Insert image by URL" disabled={busy}>
               <span className="text-[10px] font-semibold tracking-wider">URL</span>
             </ToolbarBtn>
-            <ToolbarBtn onClick={() => exec("removeFormat")} title="Clear formatting">
+            <ToolbarBtn onClick={() => exec("removeFormat")} title="Clear formatting" ariaLabel="Clear formatting" disabled={busy}>
               <RemoveFormatting className="w-3.5 h-3.5" />
             </ToolbarBtn>
-            <ToolbarBtn onClick={() => exec("undo")} title="Undo"><Undo2 className="w-3.5 h-3.5" /></ToolbarBtn>
-            <ToolbarBtn onClick={() => exec("redo")} title="Redo"><Redo2 className="w-3.5 h-3.5" /></ToolbarBtn>
+            <ToolbarBtn onClick={() => exec("undo")} title="Undo" ariaLabel="Undo" disabled={busy}><Undo2 className="w-3.5 h-3.5" /></ToolbarBtn>
+            <ToolbarBtn onClick={() => exec("redo")} title="Redo" ariaLabel="Redo" disabled={busy}><Redo2 className="w-3.5 h-3.5" /></ToolbarBtn>
           </>
         )}
 
         <div className="ml-auto flex items-center gap-3 text-[10px] text-foreground/50">
           {showRestored && (
-            <button type="button" onClick={clearDraft} className="underline hover:text-foreground">
+            <button type="button" onClick={clearDraft} className="underline hover:text-foreground focus-visible:outline-2 focus-visible:outline-gold">
               Restored draft · clear
             </button>
           )}
-          {savedAt && !showRestored && <span>Autosaved</span>}
+          {savedAt && !showRestored && <span aria-live="polite">Autosaved</span>}
           <button
             type="button"
             onClick={() => setMode((m) => (m === "simple" ? "advanced" : "simple"))}
-            className="inline-flex items-center gap-1 rounded border border-border bg-background px-2 py-1 text-[10px] tracking-wider uppercase text-foreground/70 hover:text-foreground"
+            className="inline-flex items-center gap-1 rounded border border-border bg-background px-2 py-1 text-[10px] tracking-wider uppercase text-foreground/70 hover:text-foreground focus-visible:outline-2 focus-visible:outline-gold"
             title={mode === "simple" ? "Switch to advanced toolbar" : "Switch to simple toolbar"}
+            aria-label={mode === "simple" ? "Switch to advanced toolbar" : "Switch to simple toolbar"}
+            aria-pressed={mode === "advanced"}
+            disabled={busy}
           >
             {mode === "simple" ? <Sliders className="w-3 h-3" /> : <Sparkles className="w-3 h-3" />}
             {mode === "simple" ? "Advanced" : "Simple"}
@@ -263,17 +274,40 @@ export function RichTextEditor({
         </div>
       </div>
 
+      {/* Upload / insert progress bar */}
+      {busy && (
+        <div
+          role="progressbar"
+          aria-label={uploading ? "Uploading image" : "Inserting link"}
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={uploadProgress ?? undefined}
+          className="h-1 w-full bg-cream/60 overflow-hidden"
+        >
+          <div
+            className="h-full bg-gold transition-[width] duration-200 ease-out"
+            style={{ width: uploadProgress != null ? `${uploadProgress}%` : "35%" }}
+          />
+        </div>
+      )}
+
       <input
         ref={fileRef}
         type="file"
         accept="image/png,image/jpeg,image/webp,image/gif,image/avif"
         className="hidden"
+        aria-hidden="true"
+        tabIndex={-1}
         onChange={(e) => e.target.files?.[0] && onPickImage(e.target.files[0])}
       />
 
       <div
         ref={ref}
-        contentEditable
+        role="textbox"
+        aria-multiline="true"
+        aria-label={placeholder}
+        aria-disabled={busy || undefined}
+        contentEditable={!busy}
         onInput={emit}
         onBlur={emit}
         onPaste={(e) => {
@@ -288,6 +322,11 @@ export function RichTextEditor({
         data-placeholder={placeholder}
         style={{ minHeight }}
       />
+      {busy && (
+        <p className="px-3 pb-2 text-[11px] text-foreground/60" aria-live="polite">
+          {uploading ? "Uploading image…" : "Inserting link…"}
+        </p>
+      )}
       <style>{`[contenteditable][data-placeholder]:empty:before{content:attr(data-placeholder);color:hsl(var(--muted-foreground));opacity:.5}`}</style>
     </div>
   );

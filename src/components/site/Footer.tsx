@@ -55,17 +55,17 @@ export function Footer({ content }: { content?: FooterContent | null } = {}) {
         <div className="lg:col-span-1 flex flex-col">
           <Link
             to="/"
-            className="inline-flex items-center h-28 w-auto -mt-2 mb-3 rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-cream"
+            className="inline-flex items-center h-36 sm:h-44 lg:h-52 w-auto -mt-2 mb-3 rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-cream"
             aria-label="The Baobab Collective home"
           >
             {logoUrl ? (
               <img
                 src={logoUrl}
                 alt="The Baobab Collective"
-                className="h-28 sm:h-32 w-auto max-w-[180px] object-contain object-left"
+                className="h-36 sm:h-44 lg:h-52 w-auto max-w-[260px] object-contain object-left"
               />
             ) : (
-              <BaobabLogo className="w-20 h-20" />
+              <BaobabLogo className="w-28 h-28" />
             )}
           </Link>
 

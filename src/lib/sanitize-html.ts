@@ -1,7 +1,7 @@
 import DOMPurify from "dompurify";
 
 /** Tags/attributes allowed in stored rich-text content. */
-const CONFIG: DOMPurify.Config = {
+const CONFIG = {
   ALLOWED_TAGS: [
     "p", "br", "strong", "b", "em", "i", "u", "s", "sup", "sub",
     "h1", "h2", "h3", "h4",

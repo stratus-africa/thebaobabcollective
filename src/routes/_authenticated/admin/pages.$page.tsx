@@ -228,7 +228,7 @@ const SCHEMAS: Record<PageKey, { title: string; description: string; preview: st
   },
   home_instagram: {
     title: "Home — Instagram Strip",
-    description: "Handle, heading, and the 7 thumbnails. Use ↑/↓ to reorder photos.",
+    description: "Handle, heading, and a gallery of up to 7 photos chosen from the media library.",
     preview: "/",
     fields: [
       { name: "heading", label: "Heading", type: "text" },

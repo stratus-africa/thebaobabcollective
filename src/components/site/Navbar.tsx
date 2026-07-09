@@ -48,8 +48,11 @@ export function Navbar() {
   };
 
   const overlay = !!menu.transparentOverHero;
+  const focusRing =
+    "rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 " +
+    (overlay ? "focus-visible:ring-offset-transparent" : "focus-visible:ring-offset-background");
   const linkBase =
-    "text-[15px] tracking-[0.22em] uppercase font-semibold px-1 transition-colors";
+    `text-[15px] tracking-[0.22em] uppercase font-semibold px-1 transition-colors ${focusRing}`;
   const linkColor = overlay
     ? "text-cream/85 hover:text-cream"
     : "text-foreground/80 hover:text-foreground";
@@ -72,7 +75,7 @@ export function Navbar() {
 
           <Link
             to="/"
-            className="relative shrink-0 flex items-center h-16 sm:h-20 lg:h-24 w-16 sm:w-24 lg:w-32"
+            className="relative shrink-0 flex items-center h-16 sm:h-20 lg:h-24 w-16 sm:w-24 lg:w-32 rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2"
             aria-label="The Baobab Collective home"
           >
             {logoUrl ? (
@@ -109,21 +112,26 @@ export function Navbar() {
             {moreItems.length > 0 && (
               <div className="relative" onMouseLeave={() => setMoreOpen(false)}>
                 <button
+                  type="button"
                   onMouseEnter={() => setMoreOpen(true)}
                   onClick={() => setMoreOpen((o) => !o)}
+                  aria-haspopup="menu"
+                  aria-expanded={moreOpen}
+                  aria-label="More navigation"
                   className={`${linkBase} ${linkColor} inline-flex items-center gap-1`}
                 >
-                  More <ChevronDown className="w-3 h-3" />
+                  More <ChevronDown className="w-3 h-3" aria-hidden="true" />
                 </button>
                 {moreOpen && (
-                  <div className="absolute right-0 top-full pt-2">
+                  <div className="absolute right-0 top-full pt-2" role="menu">
                     <div className="bg-background border border-border shadow-lg py-2 min-w-[220px]">
                       {moreItems.map((m, i) => (
                         <Link
                           key={`${m.to}-${i}`}
                           to={m.to as any}
+                          role="menuitem"
                           onClick={() => setMoreOpen(false)}
-                          className="block px-5 py-2 text-[14px] tracking-[0.2em] uppercase font-semibold text-foreground/80 hover:text-foreground hover:bg-cream"
+                          className="block px-5 py-2 text-[14px] tracking-[0.2em] uppercase font-semibold text-foreground/80 hover:text-foreground hover:bg-cream focus:outline-none focus-visible:bg-cream focus-visible:text-foreground"
                         >
                           {m.label}
                         </Link>
@@ -139,10 +147,10 @@ export function Navbar() {
           <div className="hidden lg:flex items-center gap-4 shrink-0">
             {user && isAdmin && (
               <>
-                <Link to="/admin" className="text-[11px] tracking-[0.2em] uppercase text-gold hover:underline">
+                <Link to="/admin" className="text-[11px] tracking-[0.2em] uppercase text-gold hover:underline rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2">
                   Admin
                 </Link>
-                <button onClick={signOut} className="text-[11px] tracking-[0.2em] uppercase text-foreground/70 hover:text-foreground">
+                <button onClick={signOut} className="text-[11px] tracking-[0.2em] uppercase text-foreground/70 hover:text-foreground rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2">
                   Sign out
                 </button>
               </>
@@ -150,14 +158,14 @@ export function Navbar() {
             <button
               type="button"
               aria-label="Search"
-              className="p-2 text-foreground/70 hover:text-foreground transition-colors"
+              className="p-2 text-foreground/70 hover:text-foreground transition-colors rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2"
             >
-              <Search className="w-4 h-4" strokeWidth={1.75} />
+              <Search className="w-4 h-4" strokeWidth={1.75} aria-hidden="true" />
             </button>
             {menu.ctaTo ? (
               <Link
                 to={menu.ctaTo as any}
-                className="inline-flex items-center justify-center rounded-full bg-gold text-gold-foreground uppercase tracking-[0.2em] text-[13px] px-6 py-3 hover:bg-gold/90 transition-colors"
+                className="inline-flex items-center justify-center rounded-full bg-gold text-gold-foreground uppercase tracking-[0.2em] text-[13px] px-6 py-3 hover:bg-gold/90 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2"
               >
                 {menu.ctaLabel}
               </Link>
@@ -167,7 +175,8 @@ export function Navbar() {
                 trigger={
                   <button
                     type="button"
-                    className="inline-flex items-center justify-center rounded-full bg-gold text-gold-foreground uppercase tracking-[0.2em] text-[13px] px-6 py-3 hover:bg-gold/90 transition-colors"
+                    aria-label={`${menu.ctaLabel} — open enquiry form`}
+                    className="inline-flex items-center justify-center rounded-full bg-gold text-gold-foreground uppercase tracking-[0.2em] text-[13px] px-6 py-3 hover:bg-gold/90 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2"
                   >
                     {menu.ctaLabel}
                   </button>
@@ -177,18 +186,21 @@ export function Navbar() {
           </div>
 
           <button
-            className="lg:hidden p-2 ml-auto"
+            type="button"
+            className="lg:hidden p-2 ml-auto rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2"
             onClick={() => setOpen((o) => !o)}
             aria-label={open ? "Close menu" : "Open menu"}
             aria-expanded={open}
+            aria-controls="mobile-nav"
           >
-            {open ? <X /> : <Menu />}
+            {open ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}
           </button>
         </div>
 
 
+
         {open && (
-          <div className="lg:hidden border-t border-border/40 bg-background px-6 py-4 flex flex-col gap-3 max-h-[80vh] overflow-y-auto">
+          <div id="mobile-nav" role="navigation" aria-label="Mobile" className="lg:hidden border-t border-border/40 bg-background px-6 py-4 flex flex-col gap-3 max-h-[80vh] overflow-y-auto">
             {[...primaryItems, ...moreItems].map((item, i) => {
               const rawChildren = ("children" in item ? item.children : undefined) as
                 | { label: string; to: string; hidden?: boolean }[] | undefined;
@@ -198,7 +210,7 @@ export function Navbar() {
                   <Link
                     to={item.to as any}
                     onClick={() => setOpen(false)}
-                    className="text-[14px] tracking-[0.2em] uppercase text-foreground/80 hover:text-foreground py-1 block"
+                    className="text-[14px] tracking-[0.2em] uppercase text-foreground/80 hover:text-foreground py-1 block rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2"
                   >
                     {item.label}
                   </Link>
@@ -209,7 +221,7 @@ export function Navbar() {
                           key={c.to}
                           to={c.to as any}
                           onClick={() => setOpen(false)}
-                          className="text-[13px] tracking-[0.2em] uppercase text-foreground/60 hover:text-foreground py-1"
+                          className="text-[13px] tracking-[0.2em] uppercase text-foreground/60 hover:text-foreground py-1 rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2"
                         >
                           {c.label}
                         </Link>
@@ -275,22 +287,25 @@ function PrimaryWithSubmenu({
     <div className="relative" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
       <Link
         to={item.to as any}
-        className={`text-[15px] tracking-[0.22em] uppercase font-semibold inline-flex items-center gap-1 ${
+        aria-haspopup="menu"
+        aria-expanded={open}
+        className={`text-[15px] tracking-[0.22em] uppercase font-semibold inline-flex items-center gap-1 rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 ${
           overlay ? "text-cream/85 hover:text-cream" : "text-foreground/80 hover:text-foreground"
         }`}
         activeProps={{ className: overlay ? "text-cream" : "text-foreground" }}
       >
-        {item.label} <ChevronDown className="w-3 h-3" />
+        {item.label} <ChevronDown className="w-3 h-3" aria-hidden="true" />
       </Link>
       {open && kids.length > 0 && (
-        <div className="absolute left-0 top-full pt-2">
+        <div className="absolute left-0 top-full pt-2" role="menu">
           <div className="bg-background border border-border shadow-lg py-2 min-w-[220px]">
             {kids.map((c) => (
               <Link
                 key={c.to}
                 to={c.to as any}
+                role="menuitem"
                 onClick={() => setOpen(false)}
-                className="block px-5 py-2 text-[14px] tracking-[0.2em] uppercase font-semibold text-foreground/80 hover:text-foreground hover:bg-cream"
+                className="block px-5 py-2 text-[14px] tracking-[0.2em] uppercase font-semibold text-foreground/80 hover:text-foreground hover:bg-cream focus:outline-none focus-visible:bg-cream focus-visible:text-foreground"
               >
                 {c.label}
               </Link>

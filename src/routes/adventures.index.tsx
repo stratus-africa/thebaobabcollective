@@ -444,12 +444,18 @@ function CtaSection({ cta }: { cta: AdventuresPage["cta"] }) {
         <p className="text-[11px] tracking-[0.3em] uppercase text-gold mb-5">{cta.eyebrow}</p>
         <h2 className="font-serif text-4xl md:text-5xl mb-5">{cta.headline}</h2>
         <p className="text-forest-foreground/80 mb-8 leading-relaxed">{cta.body}</p>
-        <Link
-          to="/private-travel"
-          className="inline-flex items-center gap-2 bg-gold text-gold-foreground uppercase tracking-[0.25em] text-[12px] px-8 py-4 hover:bg-gold/90"
-        >
-          {cta.buttonLabel} <ArrowRight className="w-3 h-3" />
-        </Link>
+        <EnquireDialog
+          defaultSubject="Adventures — Start Planning"
+          trigger={
+            <button
+              type="button"
+              className="inline-flex items-center gap-2 bg-gold text-gold-foreground uppercase tracking-[0.25em] text-[12px] px-8 py-4 hover:bg-gold/90"
+            >
+              {cta.buttonLabel} <ArrowRight className="w-3 h-3" />
+            </button>
+          }
+        />
+
       </div>
     </section>
   );

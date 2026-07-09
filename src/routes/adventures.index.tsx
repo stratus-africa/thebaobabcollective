@@ -403,13 +403,14 @@ function RhythmSection({ content }: { content: AdventuresIndexContent }) {
       <div className="max-w-[1920px] mx-auto px-6 lg:px-10">
         <div className="grid lg:grid-cols-12 gap-12 items-start">
           <div className="lg:col-span-4 lg:sticky lg:top-32">
-            <p className="text-[11px] tracking-[0.3em] uppercase text-gold mb-4">A Day in the Field</p>
+            <p className="text-[11px] tracking-[0.3em] uppercase text-gold mb-4">{content.rhythm_eyebrow}</p>
             <h2 className="font-serif text-4xl md:text-5xl text-foreground mb-6">
-              The rhythm of an adventure day.
+              {content.rhythm_title}
             </h2>
             <p className="text-foreground/70 leading-relaxed">
-              No two days repeat — but the cadence is the same. Up before the bush, slow through the heat, alive again at dusk.
+              {content.rhythm_body}
             </p>
+
           </div>
           <ol className="lg:col-span-8 space-y-10">
             {rhythm.map((r, i) => (

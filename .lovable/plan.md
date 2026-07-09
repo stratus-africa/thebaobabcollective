@@ -1,57 +1,52 @@
+## 1. Admin Sidebar Restructure (`src/routes/_authenticated/admin/route.tsx`)
 
-## 1. User Invite Flow (Settings → Users tab)
+**Pages section** — collapse the current three "Pages · Home / About / Contact" groups plus "Pages · Landings" into **three sidebar entries** that open new hub pages:
 
-- New server fn `inviteUser` in `src/lib/users-admin.functions.ts`:
-  - Admin-only (`assertAdmin`).
-  - Input: `{ email, role: "admin" | "customer" }`.
-  - Calls `supabaseAdmin.auth.admin.inviteUserByEmail(email, { redirectTo: <site>/auth })`.
-  - On success, upserts the chosen role into `user_roles` for the new user id.
-- UI: add an "Invite user" card above the users table with email input + role select + Send invite button. Shows toast on success/failure and refreshes the list.
-- Invite emails use the existing Lovable Auth email pipeline (already configured); no extra email setup required.
+- `Pages → Home` → `/admin/pages-hub/home`
+- `Pages → About` → `/admin/pages-hub/about`
+- `Pages → Contact` → `/admin/pages/contact` (single editor, no hub needed)
 
-## 2. Convert Settings into Vertical Tabs
+Remove: Home—Hero, Adventures, Destinations, Lodges, Journal, Instagram, Top Bar, About—Hero, Mission, Values, Team, and the entire "Pages · Landings" group (Lodges Landing, Adventures Landing, Adventure Detail, Lodge Detail, Footer) as flat sidebar links — they become tabs inside the hubs / Settings.
 
-Refactor `src/routes/_authenticated/admin/settings.tsx`:
-- Replace the stacked cards with shadcn `Tabs` configured vertically (left rail of triggers, right pane of content), 3 tabs: **Branding**, **Contact**, **Users**.
-- Each existing card body moves into its tab pane unchanged.
-- Layout: `grid grid-cols-[200px_1fr]` on `md+`, stacked on mobile.
+**Management section** — rename:
+- Adventures → **Manage Adventures**
+- Lodges → **Manage Lodges**
+- Destinations → **Manage Destinations**
 
-## 3. Site Logo — Local Upload
+**System / Settings** — Footer moves out of the sidebar and becomes a tab inside Settings (see §3).
 
-- Create a new public storage bucket `site-media` (public read so the logo loads anonymously on every page).
-- New server fn `uploadSiteAsset` (admin-only) that mirrors `adminUploadImage` but writes to `site-media` and returns the public URL.
-- In the Branding tab, replace the "Logo URL" text input with an image picker (file chooser + preview + clear) that uploads via `uploadSiteAsset` and stores the resulting public URL in `site_settings.branding.logoUrl`. Keep an optional "Paste URL" fallback.
+## 2. New Page Hub Route (`src/routes/_authenticated/admin/pages-hub.$section.tsx`)
 
-## 4. Local Media Uploads Across CMS (Pages, Journeys, Destinations, Lodges, Adventures)
+One route file handling `home` and `about` sections. Renders horizontal tabs; each tab body mounts the existing per-page editor from `pages.$page.tsx` (extracted into a shared `<PageEditor pageKey=... />` component).
 
-- The CMS already uploads images to the `journal-images` bucket via `adminUploadImage` for fields typed `image` in `content.$table.tsx` and on the Pages editor. Adventures still uses a plain URL input.
-- Changes:
-  - Update `src/routes/_authenticated/admin/adventures.tsx` to use the same uploader component (file picker + preview) for the Adventure image instead of a URL input.
-  - Audit `content.$table.tsx` field configs for `pages`, `journey_categories`, `destinations`, `lodges`, `itineraries`, `journal_articles` and ensure every hero/image field is typed `image` so they all route through the uploader. Add any missing image fields (e.g. gallery arrays) as `image`-typed.
-  - Rename the storage bucket usage to `site-media` (public) for new uploads so URLs are stable, public, and don't rely on long-lived signed URLs. Existing signed URLs continue to work; no migration of old rows needed.
+**Home tabs** (in order):
+1. Home Hero → `home`
+2. Adventures → `home_adventures` + sub-tabs `adventures_index` (Landing) + `detail_journey` (Detail)
+3. Destinations → `home_destinations` + sub-tab `destinations_index` if it exists, else just `home_destinations` + "Destination Landing" placeholder
+4. Lodges → `home_lodges` + sub-tabs `lodges_index` (Landing) + `detail_lodge` (Detail)
+5. Journal → `home_journal`
+6. Instagram → `home_instagram`
 
-## 5. Detail-Page CTA Verification
+**About tabs**: About Hero (`about`), Mission (`about_mission`), Values (`about_values`), Team (`about_team`).
 
-- "Read more" on Journal cards, "View Lodge" on Lodges cards, and "Explore Journey" on Journeys cards are already wired to `/journal/$slug`, `/lodges/$slug`, and `/journeys/$slug`. If a card doesn't navigate, the cause is a row whose `slug` is empty/duplicate.
-- Add a small guard:
-  - In each listing (`journal.tsx`, `lodges.tsx`, `journeys.tsx`), skip/disable cards with missing slugs and log a console warning so authors can fix the row.
-  - In the corresponding `$slug` route's `notFoundComponent`, show a clear "This item no longer exists" message with a link back to the list (lodges already has this; replicate for journal and journeys).
-- No router/link changes required beyond that — the routes exist and the params are correct.
+The current `/admin/pages/$page` editor route stays intact so deep links keep working. The hub simply re-uses the same editor component.
 
-## Technical Notes
+## 3. Settings — Footer Tab (`src/routes/_authenticated/admin/settings.tsx`)
 
-- Storage: `supabase--storage_create_bucket` with `name: "site-media", public: true`. Add a `storage.objects` RLS policy allowing public SELECT on that bucket and authenticated INSERT/UPDATE/DELETE.
-- `inviteUserByEmail` requires the service role key (already available server-side). Redirect URL derived from `request` origin so it works on preview, custom domain, and published.
-- Role assignment after invite: insert into `user_roles` keyed on the new user's id returned from the admin API.
-- Vertical tabs use the existing shadcn `Tabs` primitive with `orientation="vertical"` and custom `TabsList` flex-col styling.
-- Logo display: `Navbar`, `Footer`, and `EnquireDialog` already consume `useSiteSettings()` — once Branding saves the new public URL, they update automatically.
-- No schema changes needed.
+Add a **Footer** tab that reuses the same `PageEditorLink` pattern already used for Sign-in / 404, pointing at `/admin/pages/footer`.
 
-## Files Touched
+## 4. Enquiry Form Fix (`src/components/site/EnquireForm.tsx`)
 
-- Create: bucket `site-media` + storage RLS migration.
-- Edit: `src/lib/users-admin.functions.ts` (inviteUser), `src/lib/admin.functions.ts` or new `site-media.functions.ts` (uploadSiteAsset).
-- Edit: `src/routes/_authenticated/admin/settings.tsx` (vertical tabs + invite UI + logo uploader).
-- Edit: `src/routes/_authenticated/admin/adventures.tsx` (image uploader).
-- Edit: `src/routes/_authenticated/admin/content.$table.tsx` (ensure all media fields are image-typed; switch new uploads to `site-media`).
-- Edit: `src/routes/journal.tsx`, `src/routes/lodges.tsx`, `src/routes/journeys.tsx` (slug guards) and add `notFoundComponent` to `journal.$slug.tsx` / `journeys.$slug.tsx` if missing.
+- Remove default `adults: "2"` and `children: "0"` from `EMPTY_DRAFT` (set both to `""`).
+- Drop the unused Draft fields that never render as inputs: `destination`, `travel_dates`, `adults`, `children`, `budget`, `trip_type`, `accommodation_style`, `experiences`. Keep only `name`, `email`, `phone`, `message`, `subscribe`.
+- Update the `submit()` payload to stop sending the removed fields (pass empty strings/undefined where the server function requires them).
+- Email + phone are already `required` and validated — confirm validation runs on submit and inline errors render (already wired via `validateField` / `blurValidate`). Keep the existing success state.
+- Fix the misleading "Phone (required)" label → just "Phone number".
+
+## 5. Verification
+
+- `bunx tsgo --noEmit` to confirm the new route + edited files typecheck.
+- Load `/admin` and click through Pages → Home / About to verify tabs mount the correct editors.
+- Submit `/contact` form with missing email/phone to confirm inline errors, then with valid data to confirm success state.
+
+No backend / schema changes. All work is admin UI + one shared frontend form.

@@ -275,7 +275,7 @@ function PrimaryWithSubmenu({
     <div className="relative" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
       <Link
         to={item.to as any}
-        className={`text-[13px] tracking-[0.24em] uppercase font-semibold inline-flex items-center gap-1 ${
+        className={`text-[15px] tracking-[0.22em] uppercase font-semibold inline-flex items-center gap-1 ${
           overlay ? "text-cream/85 hover:text-cream" : "text-foreground/80 hover:text-foreground"
         }`}
         activeProps={{ className: overlay ? "text-cream" : "text-foreground" }}

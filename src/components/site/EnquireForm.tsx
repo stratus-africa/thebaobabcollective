@@ -276,7 +276,7 @@ export function EnquireForm({
             type="button"
             onClick={() => {
               autosave.clear();
-              setValues({ ...EMPTY_DRAFT, destination: defaultDestination ?? "" });
+              setValues({ ...EMPTY_DRAFT });
             }}
             className="text-foreground/60 hover:text-foreground inline-flex items-center gap-1 text-[11px]"
             aria-label="Discard saved draft"
@@ -309,7 +309,7 @@ export function EnquireForm({
             error={errors.email}
           />
           <Field
-            label="Phone (required)"
+            label="Phone number"
             name="phone"
             type="tel"
             required

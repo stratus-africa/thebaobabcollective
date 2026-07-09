@@ -333,17 +333,18 @@ export function RichTextEditor({
 }
 
 function ToolbarBtn({
-  onClick, title, children, disabled,
+  onClick, title, ariaLabel, children, disabled,
 }: {
-  onClick: () => void; title: string; children: React.ReactNode; disabled?: boolean;
+  onClick: () => void; title: string; ariaLabel?: string; children: React.ReactNode; disabled?: boolean;
 }) {
   return (
     <button
       type="button"
       title={title}
+      aria-label={ariaLabel ?? title}
       disabled={disabled}
       onMouseDown={(e) => { e.preventDefault(); if (!disabled) onClick(); }}
-      className="p-1.5 rounded hover:bg-background text-foreground/70 hover:text-foreground disabled:opacity-40 disabled:cursor-not-allowed"
+      className="p-1.5 rounded hover:bg-background text-foreground/70 hover:text-foreground focus-visible:outline-2 focus-visible:outline-gold disabled:opacity-40 disabled:cursor-not-allowed"
     >
       {children}
     </button>

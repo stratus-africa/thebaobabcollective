@@ -120,7 +120,7 @@ function Index() {
     home,
     about,
     home_adventures,
-    home_destinations,
+    
     home_lodges,
     home_journal,
     home_instagram,

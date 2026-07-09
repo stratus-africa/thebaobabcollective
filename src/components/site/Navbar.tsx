@@ -157,7 +157,7 @@ export function Navbar() {
             {menu.ctaTo ? (
               <Link
                 to={menu.ctaTo as any}
-                className="inline-flex items-center justify-center rounded-full bg-gold text-gold-foreground uppercase tracking-[0.2em] text-[11px] px-6 py-3 hover:bg-gold/90 transition-colors"
+                className="inline-flex items-center justify-center rounded-full bg-gold text-gold-foreground uppercase tracking-[0.2em] text-[13px] px-6 py-3 hover:bg-gold/90 transition-colors"
               >
                 {menu.ctaLabel}
               </Link>
@@ -167,7 +167,7 @@ export function Navbar() {
                 trigger={
                   <button
                     type="button"
-                    className="inline-flex items-center justify-center rounded-full bg-gold text-gold-foreground uppercase tracking-[0.2em] text-[11px] px-6 py-3 hover:bg-gold/90 transition-colors"
+                    className="inline-flex items-center justify-center rounded-full bg-gold text-gold-foreground uppercase tracking-[0.2em] text-[13px] px-6 py-3 hover:bg-gold/90 transition-colors"
                   >
                     {menu.ctaLabel}
                   </button>

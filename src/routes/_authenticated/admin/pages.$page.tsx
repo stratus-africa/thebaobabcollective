@@ -497,6 +497,21 @@ export function PageEditor({ pageKey: page }: { pageKey: PageKey }) {
                     onChange={(v) => setDraft((d) => ({ ...d, [f.name]: v }))}
                   />
                 ))}
+              {page === "home_instagram" && (
+                <InstagramGallerySelector
+                  count={REORDER_GROUPS[page]!.count}
+                  draft={draft}
+                  onCommit={(next) => {
+                    setDraft(() => next);
+                    saveFn({ data: { key: page, value: next } })
+                      .then(() => {
+                        qc.invalidateQueries({ queryKey: ["page-content", page] });
+                        toast.success("Gallery updated");
+                      })
+                      .catch((e: any) => toast.error(e?.message ?? "Could not save gallery"));
+                  }}
+                />
+              )}
               <ReorderableGroups
                 page={page}
                 group={REORDER_GROUPS[page]!}

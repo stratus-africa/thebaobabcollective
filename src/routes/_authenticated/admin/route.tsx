@@ -20,48 +20,19 @@ const groups: NavGroup[] = [
     ],
   },
   {
-    label: "Management",
+    label: "Pages",
     items: [
-      { to: "/admin/adventures", label: "Adventures", icon: Compass },
-      { to: "/admin/content/lodges", label: "Lodges", icon: Building },
-      { to: "/admin/content/destinations", label: "Destinations", icon: MapPin },
-    ],
-  },
-  {
-    label: "Pages · Home",
-    items: [
-      { to: "/admin/pages/home", label: "Home — Hero", icon: LayoutDashboard },
-      { to: "/admin/pages/home_adventures", label: "Adventures", icon: Compass },
-      { to: "/admin/pages/home_destinations", label: "Destinations", icon: MapPin },
-      { to: "/admin/pages/home_lodges", label: "Lodges", icon: Building },
-      { to: "/admin/pages/home_journal", label: "Journal", icon: BookOpen },
-      { to: "/admin/pages/home_instagram", label: "Instagram", icon: Globe },
-      { to: "/admin/pages/top_bar", label: "Top Bar", icon: Bell },
-    ],
-  },
-  {
-    label: "Pages · About",
-    items: [
-      { to: "/admin/pages/about", label: "About — Hero", icon: BookOpen },
-      { to: "/admin/pages/about_mission", label: "Mission", icon: BookOpen },
-      { to: "/admin/pages/about_values", label: "Values", icon: BookOpen },
-      { to: "/admin/pages/about_team", label: "Team", icon: BookOpen },
-    ],
-  },
-  {
-    label: "Pages · Contact",
-    items: [
+      { to: "/admin/pages-hub/home", label: "Home", icon: LayoutDashboard },
+      { to: "/admin/pages-hub/about", label: "About", icon: BookOpen },
       { to: "/admin/pages/contact", label: "Contact", icon: Mail },
     ],
   },
   {
-    label: "Pages · Landings",
+    label: "Management",
     items: [
-      { to: "/admin/pages/lodges_index", label: "Lodges Landing", icon: Building },
-      { to: "/admin/pages/adventures_index", label: "Adventures Landing", icon: Plane },
-      { to: "/admin/pages/detail_journey", label: "Adventure Detail", icon: Compass },
-      { to: "/admin/pages/detail_lodge", label: "Lodge Detail", icon: Building },
-      { to: "/admin/pages/footer", label: "Footer", icon: LayoutDashboard },
+      { to: "/admin/adventures", label: "Manage Adventures", icon: Compass },
+      { to: "/admin/content/lodges", label: "Manage Lodges", icon: Building },
+      { to: "/admin/content/destinations", label: "Manage Destinations", icon: MapPin },
     ],
   },
   {

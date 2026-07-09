@@ -33,15 +33,7 @@ type Draft = {
   name: string;
   email: string;
   phone: string;
-  destination: string;
-  travel_dates: string;
-  adults: string;
-  children: string;
-  budget: string;
-  trip_type: string;
-  accommodation_style: string;
   message: string;
-  experiences: string[];
   subscribe: boolean;
 };
 
@@ -49,15 +41,7 @@ const EMPTY_DRAFT: Draft = {
   name: "",
   email: "",
   phone: "",
-  destination: "",
-  travel_dates: "",
-  adults: "2",
-  children: "0",
-  budget: "",
-  trip_type: "",
-    accommodation_style: "",
-    message: "",
-  experiences: [],
+  message: "",
   subscribe: true,
 };
 

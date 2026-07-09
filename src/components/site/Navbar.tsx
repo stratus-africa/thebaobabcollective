@@ -75,7 +75,7 @@ export function Navbar() {
 
           <Link
             to="/"
-            className="relative shrink-0 flex items-center h-16 sm:h-20 lg:h-24 w-16 sm:w-24 lg:w-32"
+            className="relative shrink-0 flex items-center h-16 sm:h-20 lg:h-24 w-16 sm:w-24 lg:w-32 rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2"
             aria-label="The Baobab Collective home"
           >
             {logoUrl ? (

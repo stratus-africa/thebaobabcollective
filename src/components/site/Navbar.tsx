@@ -68,16 +68,16 @@ export function Navbar() {
     : "text-foreground/80 hover:text-foreground";
 
   const topBar = menu.topBarEnabled && menu.topBarText ? (
-    <div className="relative z-[60] bg-forest text-forest-foreground py-2 px-4 text-center text-[11px] tracking-luxury uppercase">
+    <div className="relative z-[40] bg-forest text-forest-foreground py-2 px-4 text-center text-[11px] tracking-luxury uppercase">
       {menu.topBarText}
     </div>
   ) : null;
 
   return (
     <>
-      {/* Top bar stays above the floating nav so the logo overlay tucks underneath it. */}
+      {/* Floating nav sits above the top bar so the logo overlay can overlap it. */}
       {overlay && topBar}
-      <header className={overlay ? "absolute inset-x-0 z-50" : "sticky top-0 z-50"}>
+      <header className={overlay ? "absolute inset-x-0 z-[70]" : "sticky top-0 z-50"}>
         {!overlay && topBar}
 
         <div className={overlay ? "bg-transparent" : "bg-background border-b border-border/40"}>
@@ -92,7 +92,7 @@ export function Navbar() {
               <img
                 src={logoUrl}
                 alt="The Baobab Collective"
-                className="absolute left-0 top-1/2 -translate-y-1/2 h-28 sm:h-40 lg:h-52 w-auto max-w-none object-contain z-10 pointer-events-none"
+                className="absolute left-0 top-1/2 -translate-y-1/2 h-28 sm:h-40 lg:h-52 w-auto max-w-none object-contain z-30 pointer-events-none"
               />
             ) : (
               <span className={`font-serif text-lg sm:text-xl lg:text-2xl leading-tight ${overlay ? "text-cream" : "text-foreground"}`}>

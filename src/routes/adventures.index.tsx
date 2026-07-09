@@ -415,7 +415,7 @@ function RhythmSection({ content }: { content: AdventuresIndexContent }) {
           <ol className="lg:col-span-8 space-y-10">
             {rhythm.map((r, i) => (
               <li key={r.when} className="grid grid-cols-[auto_1fr] gap-6 md:gap-10">
-                <div className="text-right">
+                <div className="text-left">
                   <div className="font-serif text-4xl text-terracotta">
                     {String(i + 1).padStart(2, "0")}
                   </div>

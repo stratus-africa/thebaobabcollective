@@ -106,7 +106,7 @@ function PagesHub() {
             <TabsContent key={t.value} value={t.value} className="mt-0">
               {t.editors.length > 1 ? (
                 <Tabs defaultValue={t.editors[0].pageKey} className="flex flex-col gap-6">
-                  <TabsList className="h-auto w-full flex flex-col bg-transparent p-0 gap-2">
+                  <TabsList aria-label={`${t.label} — editors`} className="h-auto w-full flex flex-col bg-transparent p-0 gap-2">
                     {t.editors.map((ed) => {
                       const EdIcon = ed.icon;
                       return (

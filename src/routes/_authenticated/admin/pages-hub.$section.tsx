@@ -2,12 +2,13 @@ import { createFileRoute, notFound } from "@tanstack/react-router";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
   LayoutDashboard, Compass, MapPin, Building, BookOpen, Globe,
-  Bell, Users as UsersIcon, Sparkles,
+  Bell, Users as UsersIcon, Sparkles, Megaphone, Home as HomeIcon,
+  Map, Hotel, FileText,
 } from "lucide-react";
 import { PageEditor } from "./pages.$page";
 import type { PageKey } from "@/lib/page-content.defaults";
 
-type SubEditor = { pageKey: PageKey; label: string };
+type SubEditor = { pageKey: PageKey; label: string; icon?: any; description?: string };
 type HubTab = { value: string; label: string; icon: any; editors: SubEditor[] };
 type HubSection = { title: string; description: string; tabs: HubTab[] };
 
@@ -19,37 +20,37 @@ const SECTIONS: Record<string, HubSection> = {
       {
         value: "hero", label: "Home Hero", icon: LayoutDashboard,
         editors: [
-          { pageKey: "home", label: "Home — Hero" },
-          { pageKey: "top_bar", label: "Top Announcement Bar" },
+          { pageKey: "home",    label: "Home — Hero",           icon: HomeIcon,  description: "Main homepage hero content." },
+          { pageKey: "top_bar", label: "Top Announcement Bar",  icon: Megaphone, description: "Sitewide announcement strip above the navbar." },
         ],
       },
       {
         value: "adventures", label: "Adventures", icon: Compass,
         editors: [
-          { pageKey: "home_adventures",   label: "Home — Adventures Strip" },
-          { pageKey: "adventures_index",  label: "Adventures Landing" },
-          { pageKey: "detail_journey",    label: "Adventures Detail Template" },
+          { pageKey: "home_adventures",   label: "Home — Adventures Strip",     icon: HomeIcon, description: "Adventures preview strip on the homepage." },
+          { pageKey: "adventures_index",  label: "Adventures Landing",          icon: Compass,  description: "The /adventures listing page." },
+          { pageKey: "detail_journey",    label: "Adventures Detail Template",  icon: FileText, description: "Template used for each adventure detail page." },
         ],
       },
       {
         value: "destinations", label: "Destinations", icon: MapPin,
-        editors: [{ pageKey: "home_destinations", label: "Home — Destinations Strip" }],
+        editors: [{ pageKey: "home_destinations", label: "Home — Destinations Strip", icon: Map, description: "Destinations preview strip on the homepage." }],
       },
       {
         value: "lodges", label: "Lodges", icon: Building,
         editors: [
-          { pageKey: "home_lodges",  label: "Home — Lodges Strip" },
-          { pageKey: "lodges_index", label: "Lodges Landing" },
-          { pageKey: "detail_lodge", label: "Lodge Detail Template" },
+          { pageKey: "home_lodges",  label: "Home — Lodges Strip",   icon: HomeIcon,  description: "Lodges preview strip on the homepage." },
+          { pageKey: "lodges_index", label: "Lodges Landing",        icon: Hotel,     description: "The /lodges listing page." },
+          { pageKey: "detail_lodge", label: "Lodge Detail Template", icon: FileText,  description: "Template used for each lodge detail page." },
         ],
       },
       {
         value: "journal", label: "Journal", icon: BookOpen,
-        editors: [{ pageKey: "home_journal", label: "Home — Journal Strip" }],
+        editors: [{ pageKey: "home_journal", label: "Home — Journal Strip", icon: BookOpen, description: "Journal preview strip on the homepage." }],
       },
       {
         value: "instagram", label: "Instagram", icon: Globe,
-        editors: [{ pageKey: "home_instagram", label: "Home — Instagram Strip" }],
+        editors: [{ pageKey: "home_instagram", label: "Home — Instagram Strip", icon: Globe, description: "Instagram feed strip on the homepage." }],
       },
     ],
   },
@@ -57,10 +58,10 @@ const SECTIONS: Record<string, HubSection> = {
     title: "About Page",
     description: "Sections of the /about page.",
     tabs: [
-      { value: "hero",    label: "About Hero", icon: Sparkles,  editors: [{ pageKey: "about",         label: "About — Hero / Block" }] },
-      { value: "mission", label: "Mission",    icon: BookOpen,  editors: [{ pageKey: "about_mission", label: "About — Mission" }] },
-      { value: "values",  label: "Values",     icon: Bell,      editors: [{ pageKey: "about_values",  label: "About — Values" }] },
-      { value: "team",    label: "Team",       icon: UsersIcon, editors: [{ pageKey: "about_team",    label: "About — Team" }] },
+      { value: "hero",    label: "About Hero", icon: Sparkles,  editors: [{ pageKey: "about",         label: "About — Hero / Block", icon: Sparkles,  description: "Top hero block on the About page." }] },
+      { value: "mission", label: "Mission",    icon: BookOpen,  editors: [{ pageKey: "about_mission", label: "About — Mission",      icon: BookOpen,  description: "Mission section content." }] },
+      { value: "values",  label: "Values",     icon: Bell,      editors: [{ pageKey: "about_values",  label: "About — Values",       icon: Bell,      description: "Core values section." }] },
+      { value: "team",    label: "Team",       icon: UsersIcon, editors: [{ pageKey: "about_team",    label: "About — Team",         icon: UsersIcon, description: "Team members section." }] },
     ],
   },
 };

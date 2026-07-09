@@ -115,19 +115,29 @@ function AdventuresPage() {
   });
   const page: AdventuresPage = data ?? adventuresDefaults;
 
+  const pageContentFn = useServerFn(getPageContent);
+  const { data: pcData } = useQuery({
+    queryKey: ["page-content", "adventures_index"],
+    queryFn: () => pageContentFn({ data: { key: "adventures_index" } }),
+    staleTime: 60_000,
+  });
+  const baseContent = { ...PAGE_DEFAULTS.adventures_index, ...(pcData ?? {}) };
+  const content = usePreviewMerge("adventures_index", baseContent);
+
   return (
     <div className="bg-background min-h-screen">
       <Navbar />
       <main>
         <HeroSection hero={page.hero} />
-        <SignaturesSection signatures={page.signatures} />
-        <RhythmSection />
-        <CtaSection cta={page.cta} />
+        <SignaturesSection signatures={page.signatures} content={content} />
+        {content.show_rhythm && <RhythmSection content={content} />}
+        {content.show_enquiry_cta && <CtaSection cta={page.cta} />}
       </main>
       <Footer />
     </div>
   );
 }
+
 
 function HeroSection({ hero }: { hero: AdventuresPage["hero"] }) {
   const heroSrc = hero.image || heroBaobab;

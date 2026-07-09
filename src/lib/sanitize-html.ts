@@ -18,6 +18,7 @@ const CONFIG = {
   ALLOWED_URI_REGEXP: /^(?:(?:https?|mailto|tel):|\/|#)/i,
   FORBID_TAGS: ["script", "style", "iframe", "object", "embed"],
   FORBID_ATTR: ["onerror", "onclick", "onload", "onmouseover", "onfocus"],
+  ADD_ATTR: ["target", "rel"],
 };
 
 /** Sanitize untrusted HTML for both storage and render. Safe on SSR. */
@@ -28,11 +29,17 @@ export function sanitizeHtml(input: string): string {
     return String(input).replace(/<[^>]*>/g, "");
   }
   const clean = DOMPurify.sanitize(input, CONFIG) as unknown as string;
-  // Force external links to be safe.
+
+  // Force safe target/rel on external links.
   const wrap = document.createElement("div");
   wrap.innerHTML = clean;
-  wrap.querySelectorAll("a[target=_blank]").forEach((a) => {
-    a.setAttribute("rel", "noopener noreferrer");
+  wrap.querySelectorAll("a").forEach((a) => {
+    const href = a.getAttribute("href") ?? "";
+    const isExternal = /^https?:\/\//i.test(href);
+    if (isExternal || a.getAttribute("target") === "_blank") {
+      a.setAttribute("target", "_blank");
+      a.setAttribute("rel", "noopener noreferrer");
+    }
   });
   return wrap.innerHTML;
 }

@@ -12,8 +12,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { RichTextEditor } from "@/components/admin/RichTextEditor";
+import { MediaLibraryPicker } from "@/components/admin/MediaLibraryPicker";
 import { toast } from "sonner";
-import { Loader2, RefreshCw, ExternalLink, Save, Eye, EyeOff, ArrowUp, ArrowDown, GripVertical } from "lucide-react";
+import { Loader2, RefreshCw, ExternalLink, Save, Eye, EyeOff, ArrowUp, ArrowDown, GripVertical, Images } from "lucide-react";
 import {
   DndContext,
   closestCenter,

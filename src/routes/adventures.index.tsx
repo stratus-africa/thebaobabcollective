@@ -232,13 +232,14 @@ function SignaturesSection({ signatures, content }: { signatures: AdventuresPage
     <section id="signature" className="py-24 md:py-32 scroll-mt-20">
       <div className="max-w-[1920px] mx-auto px-6 lg:px-10">
         <div className="text-center max-w-2xl mx-auto mb-12">
-          <p className="text-[11px] tracking-[0.3em] uppercase text-terracotta mb-4">Signature Adventures</p>
+          <p className="text-[11px] tracking-[0.3em] uppercase text-terracotta mb-4">{content.signature_eyebrow}</p>
           <h2 className="font-serif text-4xl md:text-5xl text-foreground">
-            {signatures.length} journeys we'd take ourselves.
+            {content.signature_title}
           </h2>
           <p className="text-foreground/70 mt-5">
-            Each is a starting point — every detail is reshaped around you, your dates and your pace.
+            {content.signature_body}
           </p>
+
         </div>
 
         <div className="mb-12" />

@@ -1,10 +1,10 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Loader2, Save, Image as ImageIcon, Shield, ShieldOff, Trash2, UserCog, Search,
-  Upload, Mail, Palette, Users as UsersIcon, X, Send, Coins,
+  Upload, Mail, Palette, Users as UsersIcon, X, Send, Coins, LogIn, FileWarning, ExternalLink,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";

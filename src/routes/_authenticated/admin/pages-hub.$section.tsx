@@ -7,7 +7,8 @@ import {
 import { PageEditor } from "./pages.$page";
 import type { PageKey } from "@/lib/page-content.defaults";
 
-type HubTab = { value: string; label: string; icon: any; pageKeys: PageKey[] };
+type SubEditor = { pageKey: PageKey; label: string };
+type HubTab = { value: string; label: string; icon: any; editors: SubEditor[] };
 type HubSection = { title: string; description: string; tabs: HubTab[] };
 
 const SECTIONS: Record<string, HubSection> = {
@@ -15,22 +16,51 @@ const SECTIONS: Record<string, HubSection> = {
     title: "Home Page",
     description: "Every section of the homepage, grouped into tabs.",
     tabs: [
-      { value: "hero",         label: "Home Hero",    icon: LayoutDashboard, pageKeys: ["home", "top_bar"] },
-      { value: "adventures",   label: "Adventures",   icon: Compass,         pageKeys: ["home_adventures", "adventures_index", "detail_journey"] },
-      { value: "destinations", label: "Destinations", icon: MapPin,          pageKeys: ["home_destinations"] },
-      { value: "lodges",       label: "Lodges",       icon: Building,        pageKeys: ["home_lodges", "lodges_index", "detail_lodge"] },
-      { value: "journal",      label: "Journal",      icon: BookOpen,        pageKeys: ["home_journal"] },
-      { value: "instagram",    label: "Instagram",    icon: Globe,           pageKeys: ["home_instagram"] },
+      {
+        value: "hero", label: "Home Hero", icon: LayoutDashboard,
+        editors: [
+          { pageKey: "home", label: "Home — Hero" },
+          { pageKey: "top_bar", label: "Top Announcement Bar" },
+        ],
+      },
+      {
+        value: "adventures", label: "Adventures", icon: Compass,
+        editors: [
+          { pageKey: "home_adventures",   label: "Home — Adventures Strip" },
+          { pageKey: "adventures_index",  label: "Adventures Landing" },
+          { pageKey: "detail_journey",    label: "Adventures Detail Template" },
+        ],
+      },
+      {
+        value: "destinations", label: "Destinations", icon: MapPin,
+        editors: [{ pageKey: "home_destinations", label: "Home — Destinations Strip" }],
+      },
+      {
+        value: "lodges", label: "Lodges", icon: Building,
+        editors: [
+          { pageKey: "home_lodges",  label: "Home — Lodges Strip" },
+          { pageKey: "lodges_index", label: "Lodges Landing" },
+          { pageKey: "detail_lodge", label: "Lodge Detail Template" },
+        ],
+      },
+      {
+        value: "journal", label: "Journal", icon: BookOpen,
+        editors: [{ pageKey: "home_journal", label: "Home — Journal Strip" }],
+      },
+      {
+        value: "instagram", label: "Instagram", icon: Globe,
+        editors: [{ pageKey: "home_instagram", label: "Home — Instagram Strip" }],
+      },
     ],
   },
   about: {
     title: "About Page",
     description: "Sections of the /about page.",
     tabs: [
-      { value: "hero",    label: "About Hero", icon: Sparkles,   pageKeys: ["about"] },
-      { value: "mission", label: "Mission",    icon: BookOpen,   pageKeys: ["about_mission"] },
-      { value: "values",  label: "Values",     icon: Bell,       pageKeys: ["about_values"] },
-      { value: "team",    label: "Team",       icon: UsersIcon,  pageKeys: ["about_team"] },
+      { value: "hero",    label: "About Hero", icon: Sparkles,  editors: [{ pageKey: "about",         label: "About — Hero / Block" }] },
+      { value: "mission", label: "Mission",    icon: BookOpen,  editors: [{ pageKey: "about_mission", label: "About — Mission" }] },
+      { value: "values",  label: "Values",     icon: Bell,      editors: [{ pageKey: "about_values",  label: "About — Values" }] },
+      { value: "team",    label: "Team",       icon: UsersIcon, editors: [{ pageKey: "about_team",    label: "About — Team" }] },
     ],
   },
 };
@@ -72,10 +102,31 @@ function PagesHub() {
 
         <div className="flex-1 min-w-0">
           {cfg.tabs.map((t) => (
-            <TabsContent key={t.value} value={t.value} className="mt-0 space-y-10">
-              {t.pageKeys.map((pk) => (
-                <PageEditor key={pk} pageKey={pk} />
-              ))}
+            <TabsContent key={t.value} value={t.value} className="mt-0">
+              {t.editors.length > 1 ? (
+                <Tabs defaultValue={t.editors[0].pageKey} orientation="vertical" className="flex flex-col lg:flex-row gap-6">
+                  <TabsList className="h-auto lg:w-52 shrink-0 flex lg:flex-col bg-transparent p-0 gap-1 justify-start">
+                    {t.editors.map((ed) => (
+                      <TabsTrigger
+                        key={ed.pageKey}
+                        value={ed.pageKey}
+                        className="w-full justify-start gap-2 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-none border border-transparent data-[state=active]:border-border px-3 py-2 text-sm"
+                      >
+                        {ed.label}
+                      </TabsTrigger>
+                    ))}
+                  </TabsList>
+                  <div className="flex-1 min-w-0">
+                    {t.editors.map((ed) => (
+                      <TabsContent key={ed.pageKey} value={ed.pageKey} className="mt-0">
+                        <PageEditor pageKey={ed.pageKey} />
+                      </TabsContent>
+                    ))}
+                  </div>
+                </Tabs>
+              ) : (
+                <PageEditor pageKey={t.editors[0].pageKey} />
+              )}
             </TabsContent>
           ))}
         </div>

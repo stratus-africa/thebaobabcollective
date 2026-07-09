@@ -740,5 +740,94 @@ function SortableItem({
   );
 }
 
+function InstagramGallerySelector({
+  count,
+  draft,
+  onCommit,
+}: {
+  count: number;
+  draft: Record<string, any>;
+  onCommit: (next: Record<string, any>) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const currentUrls: string[] = Array.from({ length: count }, (_, i) =>
+    (draft[`image_${i + 1}_url`] as string) || "",
+  ).filter(Boolean);
+
+  function applySelection(urls: string[]) {
+    const captionByUrl = new Map<string, string>();
+    for (let i = 1; i <= count; i++) {
+      const u = (draft[`image_${i}_url`] as string) || "";
+      if (u) captionByUrl.set(u, (draft[`image_${i}_caption`] as string) || "");
+    }
+    const next: Record<string, any> = { ...draft };
+    const picked = urls.slice(0, count);
+    for (let i = 1; i <= count; i++) {
+      const url = picked[i - 1] ?? "";
+      next[`image_${i}_url`] = url;
+      next[`image_${i}_caption`] = url ? captionByUrl.get(url) ?? next[`image_${i}_caption`] ?? "" : "";
+    }
+    onCommit(next);
+  }
+
+  function clearAll() {
+    if (!confirm("Remove all photos from the Instagram gallery?")) return;
+    const next: Record<string, any> = { ...draft };
+    for (let i = 1; i <= count; i++) {
+      next[`image_${i}_url`] = "";
+      next[`image_${i}_caption`] = "";
+    }
+    onCommit(next);
+  }
+
+  return (
+    <div className="border border-border rounded-md bg-cream/30 p-4 space-y-3">
+      <div className="flex items-center justify-between gap-2 flex-wrap">
+        <div>
+          <p className="text-[11px] tracking-[0.2em] uppercase text-foreground/60">Instagram Gallery</p>
+          <p className="text-sm text-foreground/80">
+            Pick up to {count} photos from your media library. Selection order becomes gallery order — captions stay with each photo.
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          {currentUrls.length > 0 && (
+            <Button type="button" variant="outline" size="sm" onClick={clearAll}>
+              Clear all
+            </Button>
+          )}
+          <Button type="button" onClick={() => setOpen(true)} className="bg-gold text-gold-foreground hover:bg-gold/90">
+            <Images className="w-4 h-4 mr-1" />
+            {currentUrls.length ? "Change gallery" : "Choose photos"}
+          </Button>
+        </div>
+      </div>
+
+      {currentUrls.length > 0 ? (
+        <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-7 gap-2">
+          {currentUrls.map((url, i) => (
+            <div key={`${url}-${i}`} className="relative aspect-square overflow-hidden rounded border border-border bg-background">
+              <img src={url} alt={`Gallery photo ${i + 1}`} loading="lazy" className="w-full h-full object-cover" />
+              <span className="absolute top-1 left-1 text-[10px] px-1.5 py-0.5 rounded bg-black/60 text-white">
+                {i + 1}
+              </span>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p className="text-xs text-foreground/60 italic">No photos selected yet.</p>
+      )}
+
+      <MediaLibraryPicker
+        open={open}
+        onOpenChange={setOpen}
+        onSelect={applySelection}
+        multi
+        title="Instagram gallery"
+      />
+    </div>
+  );
+}
+
+
 
 

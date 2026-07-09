@@ -375,7 +375,7 @@ function FilterSelect({
   );
 }
 
-function RhythmSection() {
+function RhythmSection({ content }: { content: AdventuresIndexContent }) {
   const rhythm = [
     {
       when: "Dawn",

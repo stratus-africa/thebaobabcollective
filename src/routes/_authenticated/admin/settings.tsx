@@ -1,10 +1,10 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Loader2, Save, Image as ImageIcon, Shield, ShieldOff, Trash2, UserCog, Search,
-  Upload, Mail, Palette, Users as UsersIcon, X, Send, Coins,
+  Upload, Mail, Palette, Users as UsersIcon, X, Send, Coins, LogIn, FileWarning, ExternalLink,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
@@ -70,6 +70,18 @@ function SettingsPage() {
           >
             <UsersIcon className="w-4 h-4" /> Users
           </TabsTrigger>
+          <TabsTrigger
+            value="signin"
+            className="w-full justify-start gap-2 data-[state=active]:bg-cream data-[state=active]:text-foreground data-[state=active]:shadow-none border border-transparent data-[state=active]:border-border px-4 py-2.5"
+          >
+            <LogIn className="w-4 h-4" /> Sign-in Page
+          </TabsTrigger>
+          <TabsTrigger
+            value="notfound"
+            className="w-full justify-start gap-2 data-[state=active]:bg-cream data-[state=active]:text-foreground data-[state=active]:shadow-none border border-transparent data-[state=active]:border-border px-4 py-2.5"
+          >
+            <FileWarning className="w-4 h-4" /> 404 Page
+          </TabsTrigger>
         </TabsList>
 
         <div className="flex-1 min-w-0">
@@ -86,8 +98,62 @@ function SettingsPage() {
             <InvitePanel />
             <UsersManagement />
           </TabsContent>
+          <TabsContent value="signin" className="mt-0">
+            <PageEditorLink
+              icon={LogIn}
+              title="Admin Sign-in Page"
+              description="Edit the copy shown on the admin sign-in screen — title, subtitle, field labels and submit button."
+              to="/admin/pages/$page"
+              params={{ page: "auth_page" }}
+            />
+          </TabsContent>
+          <TabsContent value="notfound" className="mt-0">
+            <PageEditorLink
+              icon={FileWarning}
+              title="404 — Page Not Found"
+              description="Edit the message and call-to-action shown when a visitor lands on a missing page."
+              to="/admin/pages/$page"
+              params={{ page: "not_found" }}
+            />
+          </TabsContent>
         </div>
       </Tabs>
+    </div>
+  );
+}
+
+function PageEditorLink({
+  icon: Icon,
+  title,
+  description,
+  to,
+  params,
+}: {
+  icon: any;
+  title: string;
+  description: string;
+  to: string;
+  params: Record<string, string>;
+}) {
+  return (
+    <div className="bg-background border border-border rounded-xl p-6 md:p-8">
+      <div className="flex items-start gap-4">
+        <span className="h-12 w-12 rounded-lg bg-forest/10 text-forest flex items-center justify-center shrink-0">
+          <Icon className="w-6 h-6" strokeWidth={1.6} />
+        </span>
+        <div className="min-w-0 flex-1">
+          <h2 className="font-serif text-2xl text-foreground">{title}</h2>
+          <p className="text-sm text-foreground/70 mt-1">{description}</p>
+          <Link
+            to={to as any}
+            params={params as any}
+            className="inline-flex items-center gap-2 mt-5 bg-forest text-forest-foreground uppercase tracking-[0.2em] text-[11px] px-5 py-3 hover:bg-forest/90 transition-colors"
+          >
+            Open editor
+            <ExternalLink className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }

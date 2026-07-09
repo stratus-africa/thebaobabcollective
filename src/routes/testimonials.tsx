@@ -7,17 +7,27 @@ import { getTestimonials } from "@/lib/cms.functions";
 import { getPageContent } from "@/lib/page-content.functions";
 import { PAGE_DEFAULTS } from "@/lib/page-content.defaults";
 import { usePreviewMerge } from "@/lib/preview-overrides";
-import { Star, Quote } from "lucide-react";
+import { Star, Quote, Instagram as IgIcon } from "lucide-react";
+import g1 from "@/assets/gallery-1.jpg";
+import g2 from "@/assets/gallery-2.jpg";
+import g3 from "@/assets/gallery-3.jpg";
+import g4 from "@/assets/gallery-4.jpg";
+import g5 from "@/assets/gallery-5.jpg";
+import g6 from "@/assets/gallery-6.jpg";
+import g7 from "@/assets/gallery-7.jpg";
+
+const defaultIgImgs = [g1, g2, g3, g4, g5, g6, g7];
 
 const q = queryOptions({ queryKey: ["testimonials"], queryFn: () => getTestimonials() });
 
 export const Route = createFileRoute("/testimonials")({
   loader: async ({ context }) => {
-    const [items, page] = await Promise.all([
+    const [items, page, ig] = await Promise.all([
       context.queryClient.ensureQueryData(q),
       getPageContent({ data: { key: "testimonials_page" } }).catch(() => null),
+      getPageContent({ data: { key: "home_instagram" } }).catch(() => null),
     ]);
-    return { items, page };
+    return { items, page, ig };
   },
   head: () => ({
     meta: [
@@ -32,9 +42,15 @@ export const Route = createFileRoute("/testimonials")({
 
 function TestimonialsPage() {
   const { data: items } = useSuspenseQuery(q);
-  const { page } = Route.useLoaderData();
+  const { page, ig } = Route.useLoaderData();
   const base = { ...PAGE_DEFAULTS.testimonials_page, ...(page ?? {}) };
   const c: any = usePreviewMerge("testimonials_page", base);
+  const igBase = { ...PAGE_DEFAULTS.home_instagram, ...(ig ?? {}) };
+  const igC: any = usePreviewMerge("home_instagram", igBase);
+  const igPhotos = defaultIgImgs.map((d, i) => ({
+    src: (igC[`image_${i + 1}_url`] as string) || d,
+    caption: (igC[`image_${i + 1}_caption`] as string) || "",
+  }));
 
   return (
     <div className="bg-background min-h-screen">
@@ -46,43 +62,71 @@ function TestimonialsPage() {
           <p className="max-w-2xl mx-auto text-foreground/75">{c.subtitle}</p>
         </section>
 
-        {c.show_metrics && (
-          <section className="py-12 border-y border-border/40 bg-background">
-            <div className="max-w-5xl mx-auto px-6 grid grid-cols-3 gap-6 text-center">
-              <div>
-                <p className="font-serif text-4xl text-gold">{c.metric_1_value}</p>
-                <p className="text-[11px] tracking-[0.2em] uppercase text-foreground/60 mt-1">{c.metric_1_label}</p>
-              </div>
-              <div>
-                <p className="font-serif text-4xl text-gold">{c.metric_2_value}</p>
-                <p className="text-[11px] tracking-[0.2em] uppercase text-foreground/60 mt-1">{c.metric_2_label}</p>
-              </div>
-              <div>
-                <p className="font-serif text-4xl text-gold">{c.metric_3_value}</p>
-                <p className="text-[11px] tracking-[0.2em] uppercase text-foreground/60 mt-1">{c.metric_3_label}</p>
-              </div>
-            </div>
-          </section>
-        )}
-
         <section className="py-20">
-          <div className="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-8">
-            {items.map((t) => (
-              <article key={t.id} className="bg-cream p-8 relative">
-                <Quote className="w-8 h-8 text-gold/40 mb-4" />
-                <div className="flex gap-1 mb-4">
-                  {Array.from({ length: t.rating }).map((_, i) => (
-                    <Star key={i} className="w-4 h-4 fill-gold text-gold" />
+          <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-[minmax(0,1fr)_320px] gap-10">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {items.map((t) => (
+                <article key={t.id} className="bg-cream p-6 relative flex flex-col">
+                  <Quote className="w-7 h-7 text-gold/40 mb-3" />
+                  <div className="flex gap-1 mb-3">
+                    {Array.from({ length: t.rating }).map((_, i) => (
+                      <Star key={i} className="w-4 h-4 fill-gold text-gold" />
+                    ))}
+                  </div>
+                  <p className="font-serif text-lg leading-relaxed text-foreground mb-5 flex-1">"{t.quote}"</p>
+                  <div>
+                    <p className="text-sm font-medium text-foreground">{t.name}</p>
+                    {t.location && <p className="text-[11px] tracking-[0.15em] uppercase text-foreground/60">{t.location}</p>}
+                    {t.trip_taken && <p className="text-[11px] tracking-[0.15em] uppercase text-gold mt-2">{t.trip_taken}</p>}
+                  </div>
+                </article>
+              ))}
+            </div>
+
+            <aside className="lg:sticky lg:top-24 self-start">
+              <div className="bg-forest text-forest-foreground p-5">
+                <a
+                  href={igC.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center gap-3 mb-4 hover:text-gold transition-colors"
+                >
+                  <IgIcon className="w-6 h-6" strokeWidth={1.4} />
+                  <div>
+                    <p className="text-[10px] tracking-[0.25em] uppercase">{igC.heading}</p>
+                    <p className="text-sm text-forest-foreground/80">{igC.handle}</p>
+                  </div>
+                </a>
+                <div className="grid grid-cols-3 gap-1.5">
+                  {igPhotos.map((p, i) => (
+                    <a
+                      key={i}
+                      href={igC.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      title={p.caption || undefined}
+                      aria-label={p.caption || `Instagram photo ${i + 1}`}
+                      className="block aspect-square overflow-hidden"
+                    >
+                      <img
+                        src={p.src}
+                        alt={p.caption || ""}
+                        loading="lazy"
+                        className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
+                      />
+                    </a>
                   ))}
                 </div>
-                <p className="font-serif text-xl leading-relaxed text-foreground mb-6">"{t.quote}"</p>
-                <div>
-                  <p className="text-sm font-medium text-foreground">{t.name}</p>
-                  {t.location && <p className="text-[11px] tracking-[0.15em] uppercase text-foreground/60">{t.location}</p>}
-                  {t.trip_taken && <p className="text-[11px] tracking-[0.15em] uppercase text-gold mt-2">{t.trip_taken}</p>}
-                </div>
-              </article>
-            ))}
+                <a
+                  href={igC.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-4 block text-center text-[11px] tracking-[0.25em] uppercase text-gold hover:underline"
+                >
+                  Follow on Instagram
+                </a>
+              </div>
+            </aside>
           </div>
         </section>
 

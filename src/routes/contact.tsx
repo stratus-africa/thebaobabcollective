@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Mail, Phone, Instagram, Facebook } from "lucide-react";
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
-import { EnquireDialog } from "@/components/site/EnquireDialog";
+import { EnquireForm } from "@/components/site/EnquireForm";
 import { getPageContent } from "@/lib/page-content.functions";
 import { PAGE_DEFAULTS } from "@/lib/page-content.defaults";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
@@ -82,15 +82,10 @@ function ContactPage() {
               <p className="text-[11px] tracking-[0.3em] uppercase text-terracotta mb-4">Start an enquiry</p>
               <h2 className="font-serif text-3xl md:text-4xl text-foreground mb-4">{c.form_title}</h2>
               <p className="text-foreground/70 mb-8 leading-relaxed">{c.form_intro}</p>
-              <EnquireDialog
-                trigger={
-                  <button
-                    type="button"
-                    className="w-full inline-flex items-center justify-center gap-2 bg-terracotta text-gold-foreground uppercase tracking-[0.25em] text-[12px] py-4 hover:bg-terracotta/90 transition-colors"
-                  >
-                    {c.form_cta}
-                  </button>
-                }
+              <EnquireForm
+                sourceUrl="/contact"
+                autosaveKey="enquire:contact"
+                className="!border-0 !bg-transparent !p-0"
               />
             </div>
           </div>

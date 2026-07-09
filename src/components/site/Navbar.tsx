@@ -42,6 +42,16 @@ export function Navbar() {
       .then(({ data }) => setIsAdmin(!!data));
   }, [user]);
 
+  // Close mobile menu on Escape for keyboard users.
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open]);
+
   const signOut = async () => {
     await supabase.auth.signOut();
     navigate({ to: "/" });
@@ -110,10 +120,23 @@ export function Navbar() {
             ))}
 
             {moreItems.length > 0 && (
-              <div className="relative" onMouseLeave={() => setMoreOpen(false)}>
+              <div
+                className="relative"
+                onMouseLeave={() => setMoreOpen(false)}
+                onBlur={(e) => {
+                  if (!e.currentTarget.contains(e.relatedTarget as Node)) setMoreOpen(false);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Escape" && moreOpen) {
+                    setMoreOpen(false);
+                    (e.currentTarget.querySelector("button") as HTMLButtonElement | null)?.focus();
+                  }
+                }}
+              >
                 <button
                   type="button"
                   onMouseEnter={() => setMoreOpen(true)}
+                  onFocus={() => setMoreOpen(true)}
                   onClick={() => setMoreOpen((o) => !o)}
                   aria-haspopup="menu"
                   aria-expanded={moreOpen}
@@ -284,7 +307,21 @@ function PrimaryWithSubmenu({
   const [open, setOpen] = useState(false);
   const kids = (item.children ?? []).filter((c) => !c.hidden);
   return (
-    <div className="relative" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
+    <div
+      className="relative"
+      onMouseEnter={() => setOpen(true)}
+      onMouseLeave={() => setOpen(false)}
+      onFocus={() => setOpen(true)}
+      onBlur={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget as Node)) setOpen(false);
+      }}
+      onKeyDown={(e) => {
+        if (e.key === "Escape" && open) {
+          setOpen(false);
+          (e.currentTarget.querySelector("a") as HTMLAnchorElement | null)?.focus();
+        }
+      }}
+    >
       <Link
         to={item.to as any}
         aria-haspopup="menu"

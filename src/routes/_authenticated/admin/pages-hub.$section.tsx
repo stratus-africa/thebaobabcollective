@@ -105,19 +105,34 @@ function PagesHub() {
           {cfg.tabs.map((t) => (
             <TabsContent key={t.value} value={t.value} className="mt-0">
               {t.editors.length > 1 ? (
-                <Tabs defaultValue={t.editors[0].pageKey} orientation="vertical" className="flex flex-col lg:flex-row gap-6">
-                  <TabsList className="h-auto lg:w-52 shrink-0 flex lg:flex-col bg-transparent p-0 gap-1 justify-start">
-                    {t.editors.map((ed) => (
-                      <TabsTrigger
-                        key={ed.pageKey}
-                        value={ed.pageKey}
-                        className="w-full justify-start gap-2 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-none border border-transparent data-[state=active]:border-border px-3 py-2 text-sm"
-                      >
-                        {ed.label}
-                      </TabsTrigger>
-                    ))}
+                <Tabs defaultValue={t.editors[0].pageKey} className="flex flex-col gap-6">
+                  <TabsList className="h-auto w-full flex flex-col bg-transparent p-0 gap-2">
+                    {t.editors.map((ed) => {
+                      const EdIcon = ed.icon;
+                      return (
+                        <TabsTrigger
+                          key={ed.pageKey}
+                          value={ed.pageKey}
+                          className="w-full justify-start gap-4 rounded-md border border-border bg-background px-4 py-3 text-left data-[state=active]:bg-cream data-[state=active]:text-foreground data-[state=active]:shadow-none data-[state=active]:border-foreground/40"
+                        >
+                          {EdIcon ? (
+                            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-border bg-cream/60 text-foreground/80">
+                              <EdIcon className="w-4 h-4" />
+                            </span>
+                          ) : null}
+                          <span className="flex flex-col items-start gap-0.5 min-w-0">
+                            <span className="text-sm font-medium leading-tight">{ed.label}</span>
+                            {ed.description ? (
+                              <span className="text-xs text-foreground/60 leading-tight whitespace-normal">
+                                {ed.description}
+                              </span>
+                            ) : null}
+                          </span>
+                        </TabsTrigger>
+                      );
+                    })}
                   </TabsList>
-                  <div className="flex-1 min-w-0">
+                  <div className="min-w-0">
                     {t.editors.map((ed) => (
                       <TabsContent key={ed.pageKey} value={ed.pageKey} className="mt-0">
                         <PageEditor pageKey={ed.pageKey} />

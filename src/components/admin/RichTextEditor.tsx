@@ -101,32 +101,36 @@ export function RichTextEditor({
   }
 
   function insertLink() {
-    const sel = window.getSelection();
-    const current = sel?.toString() ?? "";
-    const url = window.prompt("Link URL (https://…, mailto:, tel:)", "https://");
-    if (!url) return;
-    if (!/^(https?:|mailto:|tel:|\/|#)/i.test(url)) {
-      toast.error("Unsupported URL — use https://, mailto:, tel:, or a site path.");
-      return;
-    }
-    if (current.length === 0) {
-      const label = window.prompt("Link text", url) ?? url;
-      ref.current?.focus();
-      document.execCommand(
-        "insertHTML",
-        false,
-        `<a href="${escapeAttr(url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(label)}</a>`,
-      );
-    } else {
-      document.execCommand("createLink", false, url);
-      // Add target/rel via the selection's anchor.
-      const anchor = sel?.anchorNode?.parentElement?.closest("a");
-      if (anchor) {
-        anchor.setAttribute("target", "_blank");
-        anchor.setAttribute("rel", "noopener noreferrer");
+    setInsertingLink(true);
+    try {
+      const sel = window.getSelection();
+      const current = sel?.toString() ?? "";
+      const url = window.prompt("Link URL (https://…, mailto:, tel:)", "https://");
+      if (!url) return;
+      if (!/^(https?:|mailto:|tel:|\/|#)/i.test(url)) {
+        toast.error("Unsupported URL — use https://, mailto:, tel:, or a site path.");
+        return;
       }
+      if (current.length === 0) {
+        const label = window.prompt("Link text", url) ?? url;
+        ref.current?.focus();
+        document.execCommand(
+          "insertHTML",
+          false,
+          `<a href="${escapeAttr(url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(label)}</a>`,
+        );
+      } else {
+        document.execCommand("createLink", false, url);
+        const anchor = sel?.anchorNode?.parentElement?.closest("a");
+        if (anchor) {
+          anchor.setAttribute("target", "_blank");
+          anchor.setAttribute("rel", "noopener noreferrer");
+        }
+      }
+      emit();
+    } finally {
+      setInsertingLink(false);
     }
-    emit();
   }
 
   function unlink() {
@@ -143,6 +147,12 @@ export function RichTextEditor({
       return;
     }
     setUploading(true);
+    // Simulated progress — server function doesn't stream, so drive an
+    // indeterminate bar that gets close-but-not-100% until the call resolves.
+    setUploadProgress(5);
+    const tick = window.setInterval(() => {
+      setUploadProgress((p) => (p === null ? 5 : Math.min(90, p + Math.max(1, (95 - p) * 0.15))));
+    }, 180);
     try {
       const buf = new Uint8Array(await file.arrayBuffer());
       let binary = "";
@@ -154,6 +164,7 @@ export function RichTextEditor({
           base64: btoa(binary),
         },
       });
+      setUploadProgress(100);
       const alt = window.prompt("Describe this image for accessibility", "") ?? "";
       ref.current?.focus();
       document.execCommand(
@@ -166,7 +177,9 @@ export function RichTextEditor({
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Upload failed");
     } finally {
+      window.clearInterval(tick);
       setUploading(false);
+      setUploadProgress(null);
       if (fileRef.current) fileRef.current.value = "";
     }
   }

@@ -1,19 +1,13 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { z } from "zod";
 import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import {
   ArrowRight,
   Check,
-  Calendar,
-  Gauge,
   MapPin,
-  Search,
-  X,
-  Loader2,
-  Download,
   Compass,
   Mountain,
   Waves,
@@ -27,18 +21,17 @@ import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
 import { EnquireDialog } from "@/components/site/EnquireDialog";
 
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
-import { toast } from "sonner";
 import heroBaobab from "@/assets/hero-baobab.jpg";
 import {
   adventuresDefaults,
   getAdventuresPage,
   type AdventuresPage,
 } from "@/lib/adventures.functions";
-import { requestPlanningGuide } from "@/lib/planning-guide.functions";
+import { getPageContent } from "@/lib/page-content.functions";
+import { PAGE_DEFAULTS } from "@/lib/page-content.defaults";
+import { usePreviewMerge } from "@/lib/preview-overrides";
+
 
 const searchSchema = z.object({
   q: fallback(z.string(), "").default(""),

@@ -112,14 +112,18 @@ export function Navbar() {
             {moreItems.length > 0 && (
               <div className="relative" onMouseLeave={() => setMoreOpen(false)}>
                 <button
+                  type="button"
                   onMouseEnter={() => setMoreOpen(true)}
                   onClick={() => setMoreOpen((o) => !o)}
+                  aria-haspopup="menu"
+                  aria-expanded={moreOpen}
+                  aria-label="More navigation"
                   className={`${linkBase} ${linkColor} inline-flex items-center gap-1`}
                 >
-                  More <ChevronDown className="w-3 h-3" />
+                  More <ChevronDown className="w-3 h-3" aria-hidden="true" />
                 </button>
                 {moreOpen && (
-                  <div className="absolute right-0 top-full pt-2">
+                  <div className="absolute right-0 top-full pt-2" role="menu">
                     <div className="bg-background border border-border shadow-lg py-2 min-w-[220px]">
                       {moreItems.map((m, i) => (
                         <Link

@@ -135,7 +135,7 @@ function Index() {
       <Navbar />
       <Hero content={home} />
       <About content={about} />
-      <HomeStrips adventures={home_adventures} destinations={home_destinations} lodges={home_lodges} />
+      <HomeStrips adventures={home_adventures} lodges={home_lodges} />
       <Journal content={home_journal} articles={journalCards.length ? journalCards : undefined} />
       <InstagramStrip content={home_instagram} />
       <Footer content={footer} />

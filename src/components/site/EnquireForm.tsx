@@ -33,15 +33,7 @@ type Draft = {
   name: string;
   email: string;
   phone: string;
-  destination: string;
-  travel_dates: string;
-  adults: string;
-  children: string;
-  budget: string;
-  trip_type: string;
-  accommodation_style: string;
   message: string;
-  experiences: string[];
   subscribe: boolean;
 };
 
@@ -49,15 +41,7 @@ const EMPTY_DRAFT: Draft = {
   name: "",
   email: "",
   phone: "",
-  destination: "",
-  travel_dates: "",
-  adults: "2",
-  children: "0",
-  budget: "",
-  trip_type: "",
-    accommodation_style: "",
-    message: "",
-  experiences: [],
+  message: "",
   subscribe: true,
 };
 
@@ -111,8 +95,6 @@ export function EnquireForm({
   // Single source of truth: a state-backed draft initialised from autosave on mount
   const [values, setValues] = useState<Draft>({
     ...EMPTY_DRAFT,
-    destination: defaultDestination ?? context?.title ?? "",
-    travel_dates: context?.dates ?? "",
     message: context?.title
       ? `I'd love to learn more about ${context.kind ? `the ${context.kind.toLowerCase()} ` : ""}${context.title}. Please share availability and how we could shape a trip around it.`
       : "",
@@ -180,15 +162,9 @@ export function EnquireForm({
           name: values.name.trim(),
           email: values.email.trim(),
           phone: values.phone.trim(),
-          destination: values.destination || defaultDestination || "",
+          destination: defaultDestination || context?.title || "",
           subject: defaultSubject ?? "",
-          travel_dates: values.travel_dates,
-          adults: values.adults ? Number(values.adults) : undefined,
-          children: values.children ? Number(values.children) : undefined,
-          budget: values.budget,
-          trip_type: values.trip_type,
-          accommodation_style: values.accommodation_style,
-          experiences: values.experiences,
+          travel_dates: context?.dates ?? "",
           subscribe_newsletter: values.subscribe,
           source_url: sourceUrl ?? (typeof window !== "undefined" ? window.location.href : ""),
           message: values.message,
@@ -207,7 +183,7 @@ export function EnquireForm({
   }
 
   function startAnother() {
-    setValues({ ...EMPTY_DRAFT, destination: defaultDestination ?? "" });
+    setValues({ ...EMPTY_DRAFT });
     setErrors({});
     setSubmitted(false);
   }
@@ -300,7 +276,7 @@ export function EnquireForm({
             type="button"
             onClick={() => {
               autosave.clear();
-              setValues({ ...EMPTY_DRAFT, destination: defaultDestination ?? "" });
+              setValues({ ...EMPTY_DRAFT });
             }}
             className="text-foreground/60 hover:text-foreground inline-flex items-center gap-1 text-[11px]"
             aria-label="Discard saved draft"
@@ -333,7 +309,7 @@ export function EnquireForm({
             error={errors.email}
           />
           <Field
-            label="Phone (required)"
+            label="Phone number"
             name="phone"
             type="tel"
             required

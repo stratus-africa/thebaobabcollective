@@ -50,6 +50,7 @@ import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/em
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as ApiPublicMediaSplatRouteImport } from './routes/api/public/media/$'
 import { Route as AuthenticatedAdminPagesPageRouteImport } from './routes/_authenticated/admin/pages.$page'
+import { Route as AuthenticatedAdminPagesHubSectionRouteImport } from './routes/_authenticated/admin/pages-hub.$section'
 import { Route as AuthenticatedAdminContentTableRouteImport } from './routes/_authenticated/admin/content.$table'
 
 const TestimonialsRoute = TestimonialsRouteImport.update({
@@ -267,6 +268,12 @@ const AuthenticatedAdminPagesPageRoute =
     path: '/pages/$page',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
+const AuthenticatedAdminPagesHubSectionRoute =
+  AuthenticatedAdminPagesHubSectionRouteImport.update({
+    id: '/pages-hub/$section',
+    path: '/pages-hub/$section',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const AuthenticatedAdminContentTableRoute =
   AuthenticatedAdminContentTableRouteImport.update({
     id: '/content/$table',
@@ -308,6 +315,7 @@ export interface FileRoutesByFullPath {
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/content/$table': typeof AuthenticatedAdminContentTableRoute
+  '/admin/pages-hub/$section': typeof AuthenticatedAdminPagesHubSectionRoute
   '/admin/pages/$page': typeof AuthenticatedAdminPagesPageRoute
   '/api/public/media/$': typeof ApiPublicMediaSplatRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -349,6 +357,7 @@ export interface FileRoutesByTo {
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/content/$table': typeof AuthenticatedAdminContentTableRoute
+  '/admin/pages-hub/$section': typeof AuthenticatedAdminPagesHubSectionRoute
   '/admin/pages/$page': typeof AuthenticatedAdminPagesPageRoute
   '/api/public/media/$': typeof ApiPublicMediaSplatRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -394,6 +403,7 @@ export interface FileRoutesById {
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/content/$table': typeof AuthenticatedAdminContentTableRoute
+  '/_authenticated/admin/pages-hub/$section': typeof AuthenticatedAdminPagesHubSectionRoute
   '/_authenticated/admin/pages/$page': typeof AuthenticatedAdminPagesPageRoute
   '/api/public/media/$': typeof ApiPublicMediaSplatRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -439,6 +449,7 @@ export interface FileRouteTypes {
     | '/lovable/email/suppression'
     | '/admin/'
     | '/admin/content/$table'
+    | '/admin/pages-hub/$section'
     | '/admin/pages/$page'
     | '/api/public/media/$'
     | '/api/public/payments/webhook'
@@ -480,6 +491,7 @@ export interface FileRouteTypes {
     | '/lovable/email/suppression'
     | '/admin'
     | '/admin/content/$table'
+    | '/admin/pages-hub/$section'
     | '/admin/pages/$page'
     | '/api/public/media/$'
     | '/api/public/payments/webhook'
@@ -524,6 +536,7 @@ export interface FileRouteTypes {
     | '/lovable/email/suppression'
     | '/_authenticated/admin/'
     | '/_authenticated/admin/content/$table'
+    | '/_authenticated/admin/pages-hub/$section'
     | '/_authenticated/admin/pages/$page'
     | '/api/public/media/$'
     | '/api/public/payments/webhook'
@@ -854,6 +867,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminPagesPageRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/pages-hub/$section': {
+      id: '/_authenticated/admin/pages-hub/$section'
+      path: '/pages-hub/$section'
+      fullPath: '/admin/pages-hub/$section'
+      preLoaderRoute: typeof AuthenticatedAdminPagesHubSectionRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/admin/content/$table': {
       id: '/_authenticated/admin/content/$table'
       path: '/content/$table'
@@ -874,6 +894,7 @@ interface AuthenticatedAdminRouteRouteChildren {
   AuthenticatedAdminSubscribersRoute: typeof AuthenticatedAdminSubscribersRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
   AuthenticatedAdminContentTableRoute: typeof AuthenticatedAdminContentTableRoute
+  AuthenticatedAdminPagesHubSectionRoute: typeof AuthenticatedAdminPagesHubSectionRoute
   AuthenticatedAdminPagesPageRoute: typeof AuthenticatedAdminPagesPageRoute
 }
 
@@ -888,6 +909,8 @@ const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren
     AuthenticatedAdminSubscribersRoute: AuthenticatedAdminSubscribersRoute,
     AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
     AuthenticatedAdminContentTableRoute: AuthenticatedAdminContentTableRoute,
+    AuthenticatedAdminPagesHubSectionRoute:
+      AuthenticatedAdminPagesHubSectionRoute,
     AuthenticatedAdminPagesPageRoute: AuthenticatedAdminPagesPageRoute,
   }
 

@@ -5,6 +5,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Loader2, Save, Image as ImageIcon, Shield, ShieldOff, Trash2, UserCog, Search,
   Upload, Mail, Palette, Users as UsersIcon, X, Send, Coins, LogIn, FileWarning, ExternalLink,
+  LayoutDashboard,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
@@ -82,6 +83,12 @@ function SettingsPage() {
           >
             <FileWarning className="w-4 h-4" /> 404 Page
           </TabsTrigger>
+          <TabsTrigger
+            value="footer"
+            className="w-full justify-start gap-2 data-[state=active]:bg-cream data-[state=active]:text-foreground data-[state=active]:shadow-none border border-transparent data-[state=active]:border-border px-4 py-2.5"
+          >
+            <LayoutDashboard className="w-4 h-4" /> Footer
+          </TabsTrigger>
         </TabsList>
 
         <div className="flex-1 min-w-0">
@@ -114,6 +121,15 @@ function SettingsPage() {
               description="Edit the message and call-to-action shown when a visitor lands on a missing page."
               to="/admin/pages/$page"
               params={{ page: "not_found" }}
+            />
+          </TabsContent>
+          <TabsContent value="footer" className="mt-0">
+            <PageEditorLink
+              icon={LayoutDashboard}
+              title="Footer"
+              description="Newsletter copy, contact heading, social icons and copyright line for the site footer."
+              to="/admin/pages/$page"
+              params={{ page: "footer" }}
             />
           </TabsContent>
         </div>

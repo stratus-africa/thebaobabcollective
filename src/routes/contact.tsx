@@ -78,14 +78,13 @@ function ContactPage() {
               </ul>
             </div>
 
-            <div className="bg-background border border-border p-6 sm:p-8 md:p-10">
+            <div>
               <p className="text-[11px] tracking-[0.3em] uppercase text-terracotta mb-4">Start an enquiry</p>
               <h2 className="font-serif text-3xl md:text-4xl text-foreground mb-4">{c.form_title}</h2>
-              <p className="text-foreground/70 mb-8 leading-relaxed">{c.form_intro}</p>
+              <p className="text-foreground/70 mb-6 leading-relaxed">{c.form_intro}</p>
               <EnquireForm
                 sourceUrl="/contact"
                 autosaveKey="enquire:contact"
-                className="!border-0 !bg-transparent !p-0"
               />
             </div>
           </div>

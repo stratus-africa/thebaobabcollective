@@ -110,10 +110,23 @@ export function Navbar() {
             ))}
 
             {moreItems.length > 0 && (
-              <div className="relative" onMouseLeave={() => setMoreOpen(false)}>
+              <div
+                className="relative"
+                onMouseLeave={() => setMoreOpen(false)}
+                onBlur={(e) => {
+                  if (!e.currentTarget.contains(e.relatedTarget as Node)) setMoreOpen(false);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Escape" && moreOpen) {
+                    setMoreOpen(false);
+                    (e.currentTarget.querySelector("button") as HTMLButtonElement | null)?.focus();
+                  }
+                }}
+              >
                 <button
                   type="button"
                   onMouseEnter={() => setMoreOpen(true)}
+                  onFocus={() => setMoreOpen(true)}
                   onClick={() => setMoreOpen((o) => !o)}
                   aria-haspopup="menu"
                   aria-expanded={moreOpen}

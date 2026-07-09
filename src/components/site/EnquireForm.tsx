@@ -95,8 +95,6 @@ export function EnquireForm({
   // Single source of truth: a state-backed draft initialised from autosave on mount
   const [values, setValues] = useState<Draft>({
     ...EMPTY_DRAFT,
-    destination: defaultDestination ?? context?.title ?? "",
-    travel_dates: context?.dates ?? "",
     message: context?.title
       ? `I'd love to learn more about ${context.kind ? `the ${context.kind.toLowerCase()} ` : ""}${context.title}. Please share availability and how we could shape a trip around it.`
       : "",
@@ -164,15 +162,9 @@ export function EnquireForm({
           name: values.name.trim(),
           email: values.email.trim(),
           phone: values.phone.trim(),
-          destination: values.destination || defaultDestination || "",
+          destination: defaultDestination || context?.title || "",
           subject: defaultSubject ?? "",
-          travel_dates: values.travel_dates,
-          adults: values.adults ? Number(values.adults) : undefined,
-          children: values.children ? Number(values.children) : undefined,
-          budget: values.budget,
-          trip_type: values.trip_type,
-          accommodation_style: values.accommodation_style,
-          experiences: values.experiences,
+          travel_dates: context?.dates ?? "",
           subscribe_newsletter: values.subscribe,
           source_url: sourceUrl ?? (typeof window !== "undefined" ? window.location.href : ""),
           message: values.message,
@@ -191,7 +183,7 @@ export function EnquireForm({
   }
 
   function startAnother() {
-    setValues({ ...EMPTY_DRAFT, destination: defaultDestination ?? "" });
+    setValues({ ...EMPTY_DRAFT });
     setErrors({});
     setSubmitted(false);
   }

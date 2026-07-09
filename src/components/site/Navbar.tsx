@@ -297,7 +297,21 @@ function PrimaryWithSubmenu({
   const [open, setOpen] = useState(false);
   const kids = (item.children ?? []).filter((c) => !c.hidden);
   return (
-    <div className="relative" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
+    <div
+      className="relative"
+      onMouseEnter={() => setOpen(true)}
+      onMouseLeave={() => setOpen(false)}
+      onFocus={() => setOpen(true)}
+      onBlur={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget as Node)) setOpen(false);
+      }}
+      onKeyDown={(e) => {
+        if (e.key === "Escape" && open) {
+          setOpen(false);
+          (e.currentTarget.querySelector("a") as HTMLAnchorElement | null)?.focus();
+        }
+      }}
+    >
       <Link
         to={item.to as any}
         aria-haspopup="menu"

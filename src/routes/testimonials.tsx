@@ -3,11 +3,12 @@ import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
 import { EnquireDialog } from "@/components/site/EnquireDialog";
+import { InstagramTimeline } from "@/components/site/InstagramTimeline";
 import { getTestimonials } from "@/lib/cms.functions";
 import { getPageContent } from "@/lib/page-content.functions";
 import { PAGE_DEFAULTS } from "@/lib/page-content.defaults";
 import { usePreviewMerge } from "@/lib/preview-overrides";
-import { Star, Quote, Instagram as IgIcon } from "lucide-react";
+import { Star, Quote } from "lucide-react";
 import g1 from "@/assets/gallery-1.jpg";
 import g2 from "@/assets/gallery-2.jpg";
 import g3 from "@/assets/gallery-3.jpg";
@@ -45,12 +46,7 @@ function TestimonialsPage() {
   const { page, ig } = Route.useLoaderData();
   const base = { ...PAGE_DEFAULTS.testimonials_page, ...(page ?? {}) };
   const c: any = usePreviewMerge("testimonials_page", base);
-  const igBase = { ...PAGE_DEFAULTS.home_instagram, ...(ig ?? {}) };
-  const igC: any = usePreviewMerge("home_instagram", igBase);
-  const igPhotos = defaultIgImgs.map((d, i) => ({
-    src: (igC[`image_${i + 1}_url`] as string) || d,
-    caption: (igC[`image_${i + 1}_caption`] as string) || "",
-  }));
+  const fallbackPhotos = defaultIgImgs.map((src) => ({ src, caption: "" }));
 
   return (
     <div className="bg-background min-h-screen">
@@ -84,63 +80,7 @@ function TestimonialsPage() {
             </div>
 
             <aside className="lg:sticky lg:top-24 self-start">
-              <div className="bg-background border border-border">
-                <a
-                  href={igC.url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex items-center gap-3 p-5 border-b border-border hover:bg-cream/60 transition-colors"
-                >
-                  <span className="h-11 w-11 rounded-full bg-gradient-to-tr from-terracotta via-gold to-forest flex items-center justify-center text-background">
-                    <IgIcon className="w-5 h-5" strokeWidth={1.6} />
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium text-foreground truncate">{igC.handle}</p>
-                    <p className="text-[10px] tracking-[0.25em] uppercase text-foreground/60 truncate">{igC.heading}</p>
-                  </div>
-                  <span className="text-[10px] tracking-[0.2em] uppercase text-gold shrink-0">Follow</span>
-                </a>
-
-                <ul className="divide-y divide-border">
-                  {igPhotos.map((p, i) => (
-                    <li key={i}>
-                      <a
-                        href={igC.url}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="group flex gap-4 p-4 hover:bg-cream/60 transition-colors"
-                        aria-label={p.caption || `Instagram post ${i + 1}`}
-                      >
-                        <div className="w-20 h-20 shrink-0 overflow-hidden bg-cream">
-                          <img
-                            src={p.src}
-                            alt={p.caption || ""}
-                            loading="lazy"
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                          />
-                        </div>
-                        <div className="min-w-0 flex-1 flex flex-col">
-                          <p className="text-sm text-foreground leading-snug line-clamp-3 flex-1">
-                            {p.caption || "View on Instagram"}
-                          </p>
-                          <p className="text-[10px] tracking-[0.2em] uppercase text-foreground/50 mt-2">
-                            @{(igC.handle || "").replace(/^@/, "")}
-                          </p>
-                        </div>
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-
-                <a
-                  href={igC.url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="block text-center p-4 border-t border-border text-[11px] tracking-[0.25em] uppercase text-gold hover:bg-cream/60 transition-colors"
-                >
-                  View all posts on Instagram
-                </a>
-              </div>
+              <InstagramTimeline fallbackPhotos={fallbackPhotos} initialData={ig ?? undefined} />
             </aside>
           </div>
         </section>

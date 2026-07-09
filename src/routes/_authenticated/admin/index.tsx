@@ -59,7 +59,7 @@ function Dashboard() {
     { to: "/admin/content/lodges", label: "Lodges", icon: Building, blurb: "Curate partner camps & lodges" },
     { to: "/admin/content/destinations", label: "Destinations", icon: MapPin, blurb: "Manage destination guides" },
     { to: "/admin/private-travel", label: "Private Travel", icon: Briefcase, blurb: "Bespoke travel requests" },
-    { to: "/admin/planning-guide", label: "Planning Guide", icon: BookOpen, blurb: "Downloadable PDFs & requests" },
+    { to: "/admin/content/testimonials", label: "Testimonials", icon: BookOpen, blurb: "Manage guest testimonials" },
   ];
 
   return (

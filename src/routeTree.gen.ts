@@ -38,7 +38,6 @@ import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/em
 import { Route as AuthenticatedAdminSubscribersRouteImport } from './routes/_authenticated/admin/subscribers'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin/settings'
 import { Route as AuthenticatedAdminPrivateTravelRouteImport } from './routes/_authenticated/admin/private-travel'
-import { Route as AuthenticatedAdminPlanningGuideRouteImport } from './routes/_authenticated/admin/planning-guide'
 import { Route as AuthenticatedAdminMenuRouteImport } from './routes/_authenticated/admin/menu'
 import { Route as AuthenticatedAdminJournalRouteImport } from './routes/_authenticated/admin/journal'
 import { Route as AuthenticatedAdminEnquiriesRouteImport } from './routes/_authenticated/admin/enquiries'
@@ -200,12 +199,6 @@ const AuthenticatedAdminPrivateTravelRoute =
     path: '/private-travel',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
-const AuthenticatedAdminPlanningGuideRoute =
-  AuthenticatedAdminPlanningGuideRouteImport.update({
-    id: '/planning-guide',
-    path: '/planning-guide',
-    getParentRoute: () => AuthenticatedAdminRouteRoute,
-  } as any)
 const AuthenticatedAdminMenuRoute = AuthenticatedAdminMenuRouteImport.update({
   id: '/menu',
   path: '/menu',
@@ -309,7 +302,6 @@ export interface FileRoutesByFullPath {
   '/admin/enquiries': typeof AuthenticatedAdminEnquiriesRoute
   '/admin/journal': typeof AuthenticatedAdminJournalRoute
   '/admin/menu': typeof AuthenticatedAdminMenuRoute
-  '/admin/planning-guide': typeof AuthenticatedAdminPlanningGuideRoute
   '/admin/private-travel': typeof AuthenticatedAdminPrivateTravelRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/subscribers': typeof AuthenticatedAdminSubscribersRoute
@@ -351,7 +343,6 @@ export interface FileRoutesByTo {
   '/admin/enquiries': typeof AuthenticatedAdminEnquiriesRoute
   '/admin/journal': typeof AuthenticatedAdminJournalRoute
   '/admin/menu': typeof AuthenticatedAdminMenuRoute
-  '/admin/planning-guide': typeof AuthenticatedAdminPlanningGuideRoute
   '/admin/private-travel': typeof AuthenticatedAdminPrivateTravelRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/subscribers': typeof AuthenticatedAdminSubscribersRoute
@@ -397,7 +388,6 @@ export interface FileRoutesById {
   '/_authenticated/admin/enquiries': typeof AuthenticatedAdminEnquiriesRoute
   '/_authenticated/admin/journal': typeof AuthenticatedAdminJournalRoute
   '/_authenticated/admin/menu': typeof AuthenticatedAdminMenuRoute
-  '/_authenticated/admin/planning-guide': typeof AuthenticatedAdminPlanningGuideRoute
   '/_authenticated/admin/private-travel': typeof AuthenticatedAdminPrivateTravelRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/_authenticated/admin/subscribers': typeof AuthenticatedAdminSubscribersRoute
@@ -443,7 +433,6 @@ export interface FileRouteTypes {
     | '/admin/enquiries'
     | '/admin/journal'
     | '/admin/menu'
-    | '/admin/planning-guide'
     | '/admin/private-travel'
     | '/admin/settings'
     | '/admin/subscribers'
@@ -485,7 +474,6 @@ export interface FileRouteTypes {
     | '/admin/enquiries'
     | '/admin/journal'
     | '/admin/menu'
-    | '/admin/planning-guide'
     | '/admin/private-travel'
     | '/admin/settings'
     | '/admin/subscribers'
@@ -530,7 +518,6 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/enquiries'
     | '/_authenticated/admin/journal'
     | '/_authenticated/admin/menu'
-    | '/_authenticated/admin/planning-guide'
     | '/_authenticated/admin/private-travel'
     | '/_authenticated/admin/settings'
     | '/_authenticated/admin/subscribers'
@@ -783,13 +770,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminPrivateTravelRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
-    '/_authenticated/admin/planning-guide': {
-      id: '/_authenticated/admin/planning-guide'
-      path: '/planning-guide'
-      fullPath: '/admin/planning-guide'
-      preLoaderRoute: typeof AuthenticatedAdminPlanningGuideRouteImport
-      parentRoute: typeof AuthenticatedAdminRouteRoute
-    }
     '/_authenticated/admin/menu': {
       id: '/_authenticated/admin/menu'
       path: '/menu'
@@ -889,7 +869,6 @@ interface AuthenticatedAdminRouteRouteChildren {
   AuthenticatedAdminEnquiriesRoute: typeof AuthenticatedAdminEnquiriesRoute
   AuthenticatedAdminJournalRoute: typeof AuthenticatedAdminJournalRoute
   AuthenticatedAdminMenuRoute: typeof AuthenticatedAdminMenuRoute
-  AuthenticatedAdminPlanningGuideRoute: typeof AuthenticatedAdminPlanningGuideRoute
   AuthenticatedAdminPrivateTravelRoute: typeof AuthenticatedAdminPrivateTravelRoute
   AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
   AuthenticatedAdminSubscribersRoute: typeof AuthenticatedAdminSubscribersRoute
@@ -904,7 +883,6 @@ const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren
     AuthenticatedAdminEnquiriesRoute: AuthenticatedAdminEnquiriesRoute,
     AuthenticatedAdminJournalRoute: AuthenticatedAdminJournalRoute,
     AuthenticatedAdminMenuRoute: AuthenticatedAdminMenuRoute,
-    AuthenticatedAdminPlanningGuideRoute: AuthenticatedAdminPlanningGuideRoute,
     AuthenticatedAdminPrivateTravelRoute: AuthenticatedAdminPrivateTravelRoute,
     AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
     AuthenticatedAdminSubscribersRoute: AuthenticatedAdminSubscribersRoute,

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Instagram as IgIcon, Loader2, RefreshCw, ImageOff, ChevronDown } from "lucide-react";
 import { getPageContent } from "@/lib/page-content.functions";
@@ -8,6 +8,7 @@ type Photo = { src: string; caption: string };
 
 const PAGE_SIZE = 4;
 const MAX_SLOTS = 7;
+const STORAGE_KEY = "ig-timeline-visible";
 
 export function InstagramTimeline({
   fallbackPhotos,
@@ -16,7 +17,19 @@ export function InstagramTimeline({
   fallbackPhotos: Photo[];
   initialData?: unknown;
 }) {
-  const [visible, setVisible] = useState(PAGE_SIZE);
+  // Restore last "View more" page from sessionStorage on mount.
+  const [visible, setVisible] = useState<number>(() => {
+    if (typeof window === "undefined") return PAGE_SIZE;
+    const raw = window.sessionStorage?.getItem(STORAGE_KEY);
+    const n = raw ? Number.parseInt(raw, 10) : NaN;
+    return Number.isFinite(n) && n >= PAGE_SIZE ? Math.min(n, MAX_SLOTS) : PAGE_SIZE;
+  });
+
+  useEffect(() => {
+    try {
+      window.sessionStorage?.setItem(STORAGE_KEY, String(visible));
+    } catch {}
+  }, [visible]);
 
   const { data, isLoading, isFetching, isError, refetch } = useQuery({
     queryKey: ["ig-timeline"],

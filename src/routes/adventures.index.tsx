@@ -1,19 +1,13 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { z } from "zod";
 import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import {
   ArrowRight,
   Check,
-  Calendar,
-  Gauge,
   MapPin,
-  Search,
-  X,
-  Loader2,
-  Download,
   Compass,
   Mountain,
   Waves,
@@ -27,18 +21,17 @@ import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
 import { EnquireDialog } from "@/components/site/EnquireDialog";
 
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
-import { toast } from "sonner";
 import heroBaobab from "@/assets/hero-baobab.jpg";
 import {
   adventuresDefaults,
   getAdventuresPage,
   type AdventuresPage,
 } from "@/lib/adventures.functions";
-import { requestPlanningGuide } from "@/lib/planning-guide.functions";
+import { getPageContent } from "@/lib/page-content.functions";
+import { PAGE_DEFAULTS } from "@/lib/page-content.defaults";
+import { usePreviewMerge } from "@/lib/preview-overrides";
+
 
 const searchSchema = z.object({
   q: fallback(z.string(), "").default(""),
@@ -122,19 +115,29 @@ function AdventuresPage() {
   });
   const page: AdventuresPage = data ?? adventuresDefaults;
 
+  const pageContentFn = useServerFn(getPageContent);
+  const { data: pcData } = useQuery({
+    queryKey: ["page-content", "adventures_index"],
+    queryFn: () => pageContentFn({ data: { key: "adventures_index" } }),
+    staleTime: 60_000,
+  });
+  const baseContent = { ...PAGE_DEFAULTS.adventures_index, ...(pcData ?? {}) };
+  const content = usePreviewMerge("adventures_index", baseContent);
+
   return (
     <div className="bg-background min-h-screen">
       <Navbar />
       <main>
         <HeroSection hero={page.hero} />
-        <SignaturesSection signatures={page.signatures} />
-        <RhythmSection />
-        <CtaSection cta={page.cta} />
+        <SignaturesSection signatures={page.signatures} content={content} />
+        {content.show_rhythm && <RhythmSection content={content} />}
+        {content.show_enquiry_cta && <CtaSection cta={page.cta} />}
       </main>
       <Footer />
     </div>
   );
 }
+
 
 function HeroSection({ hero }: { hero: AdventuresPage["hero"] }) {
   const heroSrc = hero.image || heroBaobab;
@@ -181,7 +184,9 @@ function HeroSection({ hero }: { hero: AdventuresPage["hero"] }) {
 }
 
 
-function SignaturesSection({ signatures }: { signatures: AdventuresPage["signatures"] }) {
+type AdventuresIndexContent = typeof PAGE_DEFAULTS.adventures_index;
+
+function SignaturesSection({ signatures, content }: { signatures: AdventuresPage["signatures"]; content: AdventuresIndexContent }) {
   const search = Route.useSearch();
   const navigate = useNavigate({ from: Route.fullPath });
 
@@ -227,13 +232,14 @@ function SignaturesSection({ signatures }: { signatures: AdventuresPage["signatu
     <section id="signature" className="py-24 md:py-32 scroll-mt-20">
       <div className="max-w-[1920px] mx-auto px-6 lg:px-10">
         <div className="text-center max-w-2xl mx-auto mb-12">
-          <p className="text-[11px] tracking-[0.3em] uppercase text-terracotta mb-4">Signature Adventures</p>
+          <p className="text-[11px] tracking-[0.3em] uppercase text-terracotta mb-4">{content.signature_eyebrow}</p>
           <h2 className="font-serif text-4xl md:text-5xl text-foreground">
-            {signatures.length} journeys we'd take ourselves.
+            {content.signature_title}
           </h2>
           <p className="text-foreground/70 mt-5">
-            Each is a starting point — every detail is reshaped around you, your dates and your pace.
+            {content.signature_body}
           </p>
+
         </div>
 
         <div className="mb-12" />
@@ -369,7 +375,7 @@ function FilterSelect({
   );
 }
 
-function RhythmSection() {
+function RhythmSection({ content }: { content: AdventuresIndexContent }) {
   const rhythm = [
     {
       when: "Dawn",
@@ -397,13 +403,14 @@ function RhythmSection() {
       <div className="max-w-[1920px] mx-auto px-6 lg:px-10">
         <div className="grid lg:grid-cols-12 gap-12 items-start">
           <div className="lg:col-span-4 lg:sticky lg:top-32">
-            <p className="text-[11px] tracking-[0.3em] uppercase text-gold mb-4">A Day in the Field</p>
+            <p className="text-[11px] tracking-[0.3em] uppercase text-gold mb-4">{content.rhythm_eyebrow}</p>
             <h2 className="font-serif text-4xl md:text-5xl text-foreground mb-6">
-              The rhythm of an adventure day.
+              {content.rhythm_title}
             </h2>
             <p className="text-foreground/70 leading-relaxed">
-              No two days repeat — but the cadence is the same. Up before the bush, slow through the heat, alive again at dusk.
+              {content.rhythm_body}
             </p>
+
           </div>
           <ol className="lg:col-span-8 space-y-10">
             {rhythm.map((r, i) => (
@@ -429,185 +436,6 @@ function RhythmSection() {
   );
 }
 
-const INTEREST_OPTIONS = [
-  "Walking safaris",
-  "Big game",
-  "Gorilla & primate trekking",
-  "Desert landscapes",
-  "Water-based safaris",
-  "Cultural connection",
-  "Conservation projects",
-  "Photography",
-  "Family-friendly",
-  "Honeymoon",
-];
-
-function PlanningGuideSection() {
-  const submit = useServerFn(requestPlanningGuide);
-  const [loading, setLoading] = useState(false);
-  const [interests, setInterests] = useState<string[]>([]);
-  const [success, setSuccess] = useState<{ pdfUrl: string | null } | null>(null);
-
-  const toggle = (v: string) =>
-    setInterests((prev) => (prev.includes(v) ? prev.filter((x) => x !== v) : [...prev, v]));
-
-  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setLoading(true);
-    const fd = new FormData(e.currentTarget);
-    try {
-      const result = await submit({
-        data: {
-          name: String(fd.get("name") ?? ""),
-          email: String(fd.get("email") ?? ""),
-          travellingParty: String(fd.get("travellingParty") ?? ""),
-          earliestDate: String(fd.get("earliestDate") ?? ""),
-          interests,
-          message: String(fd.get("message") ?? ""),
-        },
-      });
-      setSuccess({ pdfUrl: result.pdfUrl ?? null });
-      toast.success("Your Planning Guide is ready — check your inbox.");
-      (e.target as HTMLFormElement).reset();
-      setInterests([]);
-    } catch (err: any) {
-      toast.error(err?.message ?? "Could not request guide. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  return (
-    <section id="planning-guide" className="py-24 md:py-32 bg-background scroll-mt-20">
-      <div className="max-w-6xl mx-auto px-6 lg:px-10 grid lg:grid-cols-12 gap-12 items-start">
-        <div className="lg:col-span-5">
-          <p className="text-[11px] tracking-[0.3em] uppercase text-gold mb-4">Free Resource</p>
-          <h2 className="font-serif text-4xl md:text-5xl text-foreground mb-6">
-            The Africa Planning Guide.
-          </h2>
-          <p className="text-foreground/75 leading-relaxed mb-8">
-            A short, beautifully produced PDF covering how we design journeys, when to travel, sample budgets, what to pack, and the conservation work behind every booking. Personalised to you on send.
-          </p>
-          <ul className="space-y-3 text-foreground/75 text-sm">
-            {[
-              "Season-by-season guide to wildlife regions",
-              "Three budget tiers with what's included",
-              "Field-tested packing list",
-              "Direct line to a Journey Designer",
-            ].map((b) => (
-              <li key={b} className="flex gap-3">
-                <Check className="w-4 h-4 text-gold mt-1 shrink-0" /> {b}
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div className="lg:col-span-7">
-          {success ? (
-            <div className="bg-cream border border-gold/40 p-8 md:p-10 text-center">
-              <Download className="w-8 h-8 text-gold mx-auto mb-4" strokeWidth={1.4} />
-              <h3 className="font-serif text-3xl text-foreground mb-3">Your guide is on its way.</h3>
-              <p className="text-foreground/70 mb-6">
-                We've emailed it to you and queued a personal note from a Journey Designer.
-              </p>
-              {success.pdfUrl ? (
-                <a
-                  href={success.pdfUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 bg-gold text-gold-foreground uppercase tracking-[0.25em] text-[11px] px-7 py-4 hover:bg-gold/90"
-                >
-                  Download your PDF <ArrowRight className="w-3 h-3" />
-                </a>
-              ) : (
-                <p className="text-sm text-foreground/60">Your PDF link will arrive by email shortly.</p>
-              )}
-            </div>
-          ) : (
-            <form onSubmit={onSubmit} className="bg-cream p-8 md:p-10 space-y-5 border border-border/40">
-              <div className="grid md:grid-cols-2 gap-5">
-                <div>
-                  <Label htmlFor="name">Full Name</Label>
-                  <Input id="name" name="name" required className="mt-2 bg-background" />
-                </div>
-                <div>
-                  <Label htmlFor="email">Email</Label>
-                  <Input id="email" name="email" type="email" required className="mt-2 bg-background" />
-                </div>
-              </div>
-              <div className="grid md:grid-cols-2 gap-5">
-                <div>
-                  <Label htmlFor="travellingParty">Travelling party</Label>
-                  <Input
-                    id="travellingParty"
-                    name="travellingParty"
-                    placeholder="e.g. 2 adults"
-                    className="mt-2 bg-background"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="earliestDate">Earliest travel window</Label>
-                  <Input
-                    id="earliestDate"
-                    name="earliestDate"
-                    placeholder="e.g. July 2026 or flexible"
-                    className="mt-2 bg-background"
-                  />
-                </div>
-              </div>
-              <div>
-                <Label className="mb-2 block">What calls to you?</Label>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2">
-                  {INTEREST_OPTIONS.map((opt) => {
-                    const active = interests.includes(opt);
-                    return (
-                      <button
-                        type="button"
-                        key={opt}
-                        onClick={() => toggle(opt)}
-                        className={`text-[11px] tracking-[0.15em] uppercase px-3 py-2.5 border transition-colors text-left ${
-                          active
-                            ? "border-gold bg-gold text-gold-foreground"
-                            : "border-border/60 bg-background text-foreground/70 hover:border-gold/60"
-                        }`}
-                      >
-                        {opt}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-              <div>
-                <Label htmlFor="message">Anything else? (optional)</Label>
-                <Textarea
-                  id="message"
-                  name="message"
-                  rows={4}
-                  className="mt-2 bg-background"
-                  placeholder="Dreams, deal-breakers, mobility considerations, special occasions…"
-                />
-              </div>
-              <button
-                type="submit"
-                disabled={loading}
-                className="inline-flex items-center gap-2 bg-gold text-gold-foreground uppercase tracking-[0.25em] text-[11px] px-8 py-4 hover:bg-gold/90 disabled:opacity-60"
-              >
-                {loading ? (
-                  <><Loader2 className="w-3 h-3 animate-spin" /> Preparing your guide</>
-                ) : (
-                  <>Email me the Planning Guide <ArrowRight className="w-3 h-3" /></>
-                )}
-              </button>
-              <p className="text-[11px] text-foreground/55">
-                We only use your details to send the guide and one personal follow-up. Unsubscribe any time.
-              </p>
-            </form>
-          )}
-        </div>
-      </div>
-    </section>
-  );
-}
 
 function CtaSection({ cta }: { cta: AdventuresPage["cta"] }) {
   return (
@@ -628,4 +456,3 @@ function CtaSection({ cta }: { cta: AdventuresPage["cta"] }) {
 }
 
 // Silence unused imports (kept for downstream extensions/icons in CMS)
-void Checkbox; void Calendar; void Gauge;

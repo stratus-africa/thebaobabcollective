@@ -210,7 +210,7 @@ export function Navbar() {
                   <Link
                     to={item.to as any}
                     onClick={() => setOpen(false)}
-                    className="text-[14px] tracking-[0.2em] uppercase text-foreground/80 hover:text-foreground py-1 block"
+                    className="text-[14px] tracking-[0.2em] uppercase text-foreground/80 hover:text-foreground py-1 block rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2"
                   >
                     {item.label}
                   </Link>
@@ -221,7 +221,7 @@ export function Navbar() {
                           key={c.to}
                           to={c.to as any}
                           onClick={() => setOpen(false)}
-                          className="text-[13px] tracking-[0.2em] uppercase text-foreground/60 hover:text-foreground py-1"
+                          className="text-[13px] tracking-[0.2em] uppercase text-foreground/60 hover:text-foreground py-1 rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2"
                         >
                           {c.label}
                         </Link>

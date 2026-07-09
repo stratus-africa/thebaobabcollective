@@ -228,7 +228,7 @@ const SCHEMAS: Record<PageKey, { title: string; description: string; preview: st
   },
   home_instagram: {
     title: "Home — Instagram Strip",
-    description: "Handle, heading, and the 7 thumbnails. Use ↑/↓ to reorder photos.",
+    description: "Handle, heading, and a gallery of up to 7 photos chosen from the media library.",
     preview: "/",
     fields: [
       { name: "heading", label: "Heading", type: "text" },
@@ -512,22 +512,24 @@ export function PageEditor({ pageKey: page }: { pageKey: PageKey }) {
                   }}
                 />
               )}
-              <ReorderableGroups
-                page={page}
-                group={REORDER_GROUPS[page]!}
-                schema={schema}
-                draft={draft}
-                setDraft={setDraft}
-                onReorderCommit={(next) => {
-                  // Persist immediately so the public page updates without a manual Save.
-                  saveFn({ data: { key: page, value: next } })
-                    .then(() => {
-                      qc.invalidateQueries({ queryKey: ["page-content", page] });
-                      toast.success("Order saved");
-                    })
-                    .catch((e: any) => toast.error(e?.message ?? "Could not save order"));
-                }}
-              />
+              {page !== "home_instagram" && (
+                <ReorderableGroups
+                  page={page}
+                  group={REORDER_GROUPS[page]!}
+                  schema={schema}
+                  draft={draft}
+                  setDraft={setDraft}
+                  onReorderCommit={(next) => {
+                    // Persist immediately so the public page updates without a manual Save.
+                    saveFn({ data: { key: page, value: next } })
+                      .then(() => {
+                        qc.invalidateQueries({ queryKey: ["page-content", page] });
+                        toast.success("Order saved");
+                      })
+                      .catch((e: any) => toast.error(e?.message ?? "Could not save order"));
+                  }}
+                />
+              )}
             </div>
           ) : (
             <div className="bg-background border border-border p-6 space-y-5">

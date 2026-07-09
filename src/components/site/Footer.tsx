@@ -108,10 +108,10 @@ export function Footer({ content }: { content?: FooterContent | null } = {}) {
                   href={url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label={label}
-                  className="hover:text-gold"
+                  aria-label={`${label} (opens in new tab)`}
+                  className="inline-flex items-center justify-center h-9 w-9 rounded-full hover:text-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-cream"
                 >
-                  <Icon className="w-4 h-4" />
+                  <Icon className="w-4 h-4" aria-hidden="true" />
                 </a>
               ))}
             </div>

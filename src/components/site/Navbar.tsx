@@ -48,8 +48,11 @@ export function Navbar() {
   };
 
   const overlay = !!menu.transparentOverHero;
+  const focusRing =
+    "rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 " +
+    (overlay ? "focus-visible:ring-offset-transparent" : "focus-visible:ring-offset-background");
   const linkBase =
-    "text-[15px] tracking-[0.22em] uppercase font-semibold px-1 transition-colors";
+    `text-[15px] tracking-[0.22em] uppercase font-semibold px-1 transition-colors ${focusRing}`;
   const linkColor = overlay
     ? "text-cream/85 hover:text-cream"
     : "text-foreground/80 hover:text-foreground";

@@ -41,9 +41,12 @@ export function RichTextEditor({
   const [showRestored, setShowRestored] = useState(false);
   const [mode, setMode] = useState<Mode>(defaultMode);
   const [uploading, setUploading] = useState(false);
+  const [insertingLink, setInsertingLink] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<number | null>(null);
   const initial = useRef(value);
   const fileRef = useRef<HTMLInputElement>(null);
   const upload = useServerFn(adminUploadImage);
+  const busy = uploading || insertingLink;
 
   // Initialise once on mount.
   useEffect(() => {

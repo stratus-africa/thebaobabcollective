@@ -2,12 +2,13 @@ import { createFileRoute, notFound } from "@tanstack/react-router";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
   LayoutDashboard, Compass, MapPin, Building, BookOpen, Globe,
-  Bell, Users as UsersIcon, Sparkles,
+  Bell, Users as UsersIcon, Sparkles, Megaphone, Home as HomeIcon,
+  Map, Hotel, FileText,
 } from "lucide-react";
 import { PageEditor } from "./pages.$page";
 import type { PageKey } from "@/lib/page-content.defaults";
 
-type SubEditor = { pageKey: PageKey; label: string };
+type SubEditor = { pageKey: PageKey; label: string; icon?: any; description?: string };
 type HubTab = { value: string; label: string; icon: any; editors: SubEditor[] };
 type HubSection = { title: string; description: string; tabs: HubTab[] };
 
@@ -19,37 +20,37 @@ const SECTIONS: Record<string, HubSection> = {
       {
         value: "hero", label: "Home Hero", icon: LayoutDashboard,
         editors: [
-          { pageKey: "home", label: "Home — Hero" },
-          { pageKey: "top_bar", label: "Top Announcement Bar" },
+          { pageKey: "home",    label: "Home — Hero",           icon: HomeIcon,  description: "Main homepage hero content." },
+          { pageKey: "top_bar", label: "Top Announcement Bar",  icon: Megaphone, description: "Sitewide announcement strip above the navbar." },
         ],
       },
       {
         value: "adventures", label: "Adventures", icon: Compass,
         editors: [
-          { pageKey: "home_adventures",   label: "Home — Adventures Strip" },
-          { pageKey: "adventures_index",  label: "Adventures Landing" },
-          { pageKey: "detail_journey",    label: "Adventures Detail Template" },
+          { pageKey: "home_adventures",   label: "Home — Adventures Strip",     icon: HomeIcon, description: "Adventures preview strip on the homepage." },
+          { pageKey: "adventures_index",  label: "Adventures Landing",          icon: Compass,  description: "The /adventures listing page." },
+          { pageKey: "detail_journey",    label: "Adventures Detail Template",  icon: FileText, description: "Template used for each adventure detail page." },
         ],
       },
       {
         value: "destinations", label: "Destinations", icon: MapPin,
-        editors: [{ pageKey: "home_destinations", label: "Home — Destinations Strip" }],
+        editors: [{ pageKey: "home_destinations", label: "Home — Destinations Strip", icon: Map, description: "Destinations preview strip on the homepage." }],
       },
       {
         value: "lodges", label: "Lodges", icon: Building,
         editors: [
-          { pageKey: "home_lodges",  label: "Home — Lodges Strip" },
-          { pageKey: "lodges_index", label: "Lodges Landing" },
-          { pageKey: "detail_lodge", label: "Lodge Detail Template" },
+          { pageKey: "home_lodges",  label: "Home — Lodges Strip",   icon: HomeIcon,  description: "Lodges preview strip on the homepage." },
+          { pageKey: "lodges_index", label: "Lodges Landing",        icon: Hotel,     description: "The /lodges listing page." },
+          { pageKey: "detail_lodge", label: "Lodge Detail Template", icon: FileText,  description: "Template used for each lodge detail page." },
         ],
       },
       {
         value: "journal", label: "Journal", icon: BookOpen,
-        editors: [{ pageKey: "home_journal", label: "Home — Journal Strip" }],
+        editors: [{ pageKey: "home_journal", label: "Home — Journal Strip", icon: BookOpen, description: "Journal preview strip on the homepage." }],
       },
       {
         value: "instagram", label: "Instagram", icon: Globe,
-        editors: [{ pageKey: "home_instagram", label: "Home — Instagram Strip" }],
+        editors: [{ pageKey: "home_instagram", label: "Home — Instagram Strip", icon: Globe, description: "Instagram feed strip on the homepage." }],
       },
     ],
   },
@@ -57,10 +58,10 @@ const SECTIONS: Record<string, HubSection> = {
     title: "About Page",
     description: "Sections of the /about page.",
     tabs: [
-      { value: "hero",    label: "About Hero", icon: Sparkles,  editors: [{ pageKey: "about",         label: "About — Hero / Block" }] },
-      { value: "mission", label: "Mission",    icon: BookOpen,  editors: [{ pageKey: "about_mission", label: "About — Mission" }] },
-      { value: "values",  label: "Values",     icon: Bell,      editors: [{ pageKey: "about_values",  label: "About — Values" }] },
-      { value: "team",    label: "Team",       icon: UsersIcon, editors: [{ pageKey: "about_team",    label: "About — Team" }] },
+      { value: "hero",    label: "About Hero", icon: Sparkles,  editors: [{ pageKey: "about",         label: "About — Hero / Block", icon: Sparkles,  description: "Top hero block on the About page." }] },
+      { value: "mission", label: "Mission",    icon: BookOpen,  editors: [{ pageKey: "about_mission", label: "About — Mission",      icon: BookOpen,  description: "Mission section content." }] },
+      { value: "values",  label: "Values",     icon: Bell,      editors: [{ pageKey: "about_values",  label: "About — Values",       icon: Bell,      description: "Core values section." }] },
+      { value: "team",    label: "Team",       icon: UsersIcon, editors: [{ pageKey: "about_team",    label: "About — Team",         icon: UsersIcon, description: "Team members section." }] },
     ],
   },
 };
@@ -104,19 +105,34 @@ function PagesHub() {
           {cfg.tabs.map((t) => (
             <TabsContent key={t.value} value={t.value} className="mt-0">
               {t.editors.length > 1 ? (
-                <Tabs defaultValue={t.editors[0].pageKey} orientation="vertical" className="flex flex-col lg:flex-row gap-6">
-                  <TabsList className="h-auto lg:w-52 shrink-0 flex lg:flex-col bg-transparent p-0 gap-1 justify-start">
-                    {t.editors.map((ed) => (
-                      <TabsTrigger
-                        key={ed.pageKey}
-                        value={ed.pageKey}
-                        className="w-full justify-start gap-2 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-none border border-transparent data-[state=active]:border-border px-3 py-2 text-sm"
-                      >
-                        {ed.label}
-                      </TabsTrigger>
-                    ))}
+                <Tabs defaultValue={t.editors[0].pageKey} className="flex flex-col gap-6">
+                  <TabsList className="h-auto w-full flex flex-col bg-transparent p-0 gap-2">
+                    {t.editors.map((ed) => {
+                      const EdIcon = ed.icon;
+                      return (
+                        <TabsTrigger
+                          key={ed.pageKey}
+                          value={ed.pageKey}
+                          className="w-full justify-start gap-4 rounded-md border border-border bg-background px-4 py-3 text-left data-[state=active]:bg-cream data-[state=active]:text-foreground data-[state=active]:shadow-none data-[state=active]:border-foreground/40"
+                        >
+                          {EdIcon ? (
+                            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-border bg-cream/60 text-foreground/80">
+                              <EdIcon className="w-4 h-4" />
+                            </span>
+                          ) : null}
+                          <span className="flex flex-col items-start gap-0.5 min-w-0">
+                            <span className="text-sm font-medium leading-tight">{ed.label}</span>
+                            {ed.description ? (
+                              <span className="text-xs text-foreground/60 leading-tight whitespace-normal">
+                                {ed.description}
+                              </span>
+                            ) : null}
+                          </span>
+                        </TabsTrigger>
+                      );
+                    })}
                   </TabsList>
-                  <div className="flex-1 min-w-0">
+                  <div className="min-w-0">
                     {t.editors.map((ed) => (
                       <TabsContent key={ed.pageKey} value={ed.pageKey} className="mt-0">
                         <PageEditor pageKey={ed.pageKey} />

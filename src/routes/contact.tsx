@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Mail, Phone, Instagram, Facebook } from "lucide-react";
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
-import { EnquireDialog } from "@/components/site/EnquireDialog";
+import { EnquireForm } from "@/components/site/EnquireForm";
 import { getPageContent } from "@/lib/page-content.functions";
 import { PAGE_DEFAULTS } from "@/lib/page-content.defaults";
 import { useSiteSettings } from "@/hooks/useSiteSettings";

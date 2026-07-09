@@ -55,17 +55,17 @@ export function Footer({ content }: { content?: FooterContent | null } = {}) {
         <div className="lg:col-span-1">
           <Link
             to="/"
-            className="relative flex items-center h-14 w-14 mb-4"
+            className="relative flex items-center h-24 w-24 mb-2"
             aria-label="The Baobab Collective home"
           >
             {logoUrl ? (
               <img
                 src={logoUrl}
                 alt="The Baobab Collective"
-                className="absolute left-0 top-1/2 -translate-y-1/2 h-28 sm:h-32 w-auto max-w-none object-contain z-10 pointer-events-none"
+                className="absolute left-0 top-1/2 -translate-y-1/2 h-40 sm:h-48 w-auto max-w-none object-contain z-10 pointer-events-none"
               />
             ) : (
-              <BaobabLogo className="w-14 h-14" />
+              <BaobabLogo className="w-24 h-24" />
             )}
           </Link>
 

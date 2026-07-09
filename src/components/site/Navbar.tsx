@@ -49,21 +49,20 @@ export function Navbar() {
 
   const overlay = !!menu.transparentOverHero;
   const linkBase =
-    "text-[13px] tracking-[0.24em] uppercase font-semibold px-1 transition-colors";
+    "text-[15px] tracking-[0.22em] uppercase font-semibold px-1 transition-colors";
   const linkColor = overlay
     ? "text-cream/85 hover:text-cream"
     : "text-foreground/80 hover:text-foreground";
 
   const topBar = menu.topBarEnabled && menu.topBarText ? (
-    <div className="bg-forest text-forest-foreground py-2 px-4 text-center text-[11px] tracking-luxury uppercase">
+    <div className="relative z-[60] bg-forest text-forest-foreground py-2 px-4 text-center text-[11px] tracking-luxury uppercase">
       {menu.topBarText}
     </div>
   ) : null;
 
   return (
     <>
-      {/* When overlay is enabled, keep the top bar as its own opaque section
-          in normal flow, above the transparent nav that floats over the hero. */}
+      {/* Top bar stays above the floating nav so the logo overlay tucks underneath it. */}
       {overlay && topBar}
       <header className={overlay ? "absolute inset-x-0 z-50" : "sticky top-0 z-50"}>
         {!overlay && topBar}
@@ -124,7 +123,7 @@ export function Navbar() {
                           key={`${m.to}-${i}`}
                           to={m.to as any}
                           onClick={() => setMoreOpen(false)}
-                          className="block px-5 py-2 text-[12px] tracking-[0.2em] uppercase font-semibold text-foreground/80 hover:text-foreground hover:bg-cream"
+                          className="block px-5 py-2 text-[14px] tracking-[0.2em] uppercase font-semibold text-foreground/80 hover:text-foreground hover:bg-cream"
                         >
                           {m.label}
                         </Link>
@@ -158,7 +157,7 @@ export function Navbar() {
             {menu.ctaTo ? (
               <Link
                 to={menu.ctaTo as any}
-                className="inline-flex items-center justify-center rounded-full bg-gold text-gold-foreground uppercase tracking-[0.2em] text-[11px] px-6 py-3 hover:bg-gold/90 transition-colors"
+                className="inline-flex items-center justify-center rounded-full bg-gold text-gold-foreground uppercase tracking-[0.2em] text-[13px] px-6 py-3 hover:bg-gold/90 transition-colors"
               >
                 {menu.ctaLabel}
               </Link>
@@ -168,7 +167,7 @@ export function Navbar() {
                 trigger={
                   <button
                     type="button"
-                    className="inline-flex items-center justify-center rounded-full bg-gold text-gold-foreground uppercase tracking-[0.2em] text-[11px] px-6 py-3 hover:bg-gold/90 transition-colors"
+                    className="inline-flex items-center justify-center rounded-full bg-gold text-gold-foreground uppercase tracking-[0.2em] text-[13px] px-6 py-3 hover:bg-gold/90 transition-colors"
                   >
                     {menu.ctaLabel}
                   </button>
@@ -199,7 +198,7 @@ export function Navbar() {
                   <Link
                     to={item.to as any}
                     onClick={() => setOpen(false)}
-                    className="text-[12px] tracking-[0.2em] uppercase text-foreground/80 hover:text-foreground py-1 block"
+                    className="text-[14px] tracking-[0.2em] uppercase text-foreground/80 hover:text-foreground py-1 block"
                   >
                     {item.label}
                   </Link>
@@ -210,7 +209,7 @@ export function Navbar() {
                           key={c.to}
                           to={c.to as any}
                           onClick={() => setOpen(false)}
-                          className="text-[11px] tracking-[0.2em] uppercase text-foreground/60 hover:text-foreground py-1"
+                          className="text-[13px] tracking-[0.2em] uppercase text-foreground/60 hover:text-foreground py-1"
                         >
                           {c.label}
                         </Link>
@@ -223,10 +222,10 @@ export function Navbar() {
             <div className="pt-3 mt-2 border-t border-border/40 flex flex-col gap-3">
               {user && isAdmin && (
                 <>
-                  <Link to="/admin" onClick={() => setOpen(false)} className="text-[11px] tracking-[0.2em] uppercase text-gold">
+                  <Link to="/admin" onClick={() => setOpen(false)} className="text-[13px] tracking-[0.2em] uppercase text-gold">
                     Admin
                   </Link>
-                  <button onClick={() => { setOpen(false); signOut(); }} className="text-left text-[11px] tracking-[0.2em] uppercase text-foreground/80">
+                  <button onClick={() => { setOpen(false); signOut(); }} className="text-left text-[13px] tracking-[0.2em] uppercase text-foreground/80">
                     Sign out
                   </button>
                 </>
@@ -235,7 +234,7 @@ export function Navbar() {
                 <Link
                   to={menu.ctaTo as any}
                   onClick={() => setOpen(false)}
-                  className="inline-flex items-center justify-center border border-gold text-gold uppercase tracking-[0.2em] text-[11px] px-6 py-3 mt-2"
+                  className="inline-flex items-center justify-center border border-gold text-gold uppercase tracking-[0.2em] text-[13px] px-6 py-3 mt-2"
                 >
                   {menu.ctaLabel}
                 </Link>
@@ -246,7 +245,7 @@ export function Navbar() {
                     <button
                       type="button"
                       onClick={() => setOpen(false)}
-                      className="inline-flex items-center justify-center border border-gold text-gold uppercase tracking-[0.2em] text-[11px] px-6 py-3 mt-2"
+                      className="inline-flex items-center justify-center border border-gold text-gold uppercase tracking-[0.2em] text-[13px] px-6 py-3 mt-2"
                     >
                       {menu.ctaLabel}
                     </button>
@@ -276,7 +275,7 @@ function PrimaryWithSubmenu({
     <div className="relative" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
       <Link
         to={item.to as any}
-        className={`text-[13px] tracking-[0.24em] uppercase font-semibold inline-flex items-center gap-1 ${
+        className={`text-[15px] tracking-[0.22em] uppercase font-semibold inline-flex items-center gap-1 ${
           overlay ? "text-cream/85 hover:text-cream" : "text-foreground/80 hover:text-foreground"
         }`}
         activeProps={{ className: overlay ? "text-cream" : "text-foreground" }}
@@ -291,7 +290,7 @@ function PrimaryWithSubmenu({
                 key={c.to}
                 to={c.to as any}
                 onClick={() => setOpen(false)}
-                className="block px-5 py-2 text-[12px] tracking-[0.2em] uppercase font-semibold text-foreground/80 hover:text-foreground hover:bg-cream"
+                className="block px-5 py-2 text-[14px] tracking-[0.2em] uppercase font-semibold text-foreground/80 hover:text-foreground hover:bg-cream"
               >
                 {c.label}
               </Link>

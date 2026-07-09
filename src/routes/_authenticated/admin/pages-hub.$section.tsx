@@ -86,7 +86,7 @@ function PagesHub() {
       </header>
 
       <Tabs defaultValue={cfg.tabs[0]?.value} orientation="vertical" className="flex flex-col md:flex-row gap-8">
-        <TabsList className="h-auto md:w-56 shrink-0 flex md:flex-col bg-transparent p-0 gap-1 justify-start">
+        <TabsList aria-label={`${cfg.title} sections`} className="h-auto md:w-56 shrink-0 flex md:flex-col bg-transparent p-0 gap-1 justify-start">
           {cfg.tabs.map((t) => {
             const Icon = t.icon;
             return (
@@ -106,7 +106,7 @@ function PagesHub() {
             <TabsContent key={t.value} value={t.value} className="mt-0">
               {t.editors.length > 1 ? (
                 <Tabs defaultValue={t.editors[0].pageKey} className="flex flex-col gap-6">
-                  <TabsList className="h-auto w-full flex flex-col bg-transparent p-0 gap-2">
+                  <TabsList aria-label={`${t.label} — editors`} className="h-auto w-full flex flex-col bg-transparent p-0 gap-2">
                     {t.editors.map((ed) => {
                       const EdIcon = ed.icon;
                       return (

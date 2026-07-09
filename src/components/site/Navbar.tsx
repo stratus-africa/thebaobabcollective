@@ -49,7 +49,7 @@ export function Navbar() {
 
   const overlay = !!menu.transparentOverHero;
   const linkBase =
-    "text-[13px] tracking-[0.24em] uppercase font-semibold px-1 transition-colors";
+    "text-[15px] tracking-[0.22em] uppercase font-semibold px-1 transition-colors";
   const linkColor = overlay
     ? "text-cream/85 hover:text-cream"
     : "text-foreground/80 hover:text-foreground";

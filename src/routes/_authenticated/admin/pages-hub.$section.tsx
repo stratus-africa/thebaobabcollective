@@ -86,7 +86,7 @@ function PagesHub() {
       </header>
 
       <Tabs defaultValue={cfg.tabs[0]?.value} orientation="vertical" className="flex flex-col md:flex-row gap-8">
-        <TabsList className="h-auto md:w-56 shrink-0 flex md:flex-col bg-transparent p-0 gap-1 justify-start">
+        <TabsList aria-label={`${cfg.title} sections`} className="h-auto md:w-56 shrink-0 flex md:flex-col bg-transparent p-0 gap-1 justify-start">
           {cfg.tabs.map((t) => {
             const Icon = t.icon;
             return (

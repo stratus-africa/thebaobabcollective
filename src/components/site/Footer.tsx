@@ -53,13 +53,22 @@ export function Footer({ content }: { content?: FooterContent | null } = {}) {
     <footer id="contact" className="bg-cream pt-16 pb-6">
       <div className="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-10">
         <div className="lg:col-span-1">
-          <Link to="/" className="flex items-start gap-3 mb-4" aria-label="The Baobab Collective home">
+          <Link
+            to="/"
+            className="relative flex items-center h-14 w-14 mb-4"
+            aria-label="The Baobab Collective home"
+          >
             {logoUrl ? (
-              <img src={logoUrl} alt="The Baobab Collective" className="w-14 h-14 object-contain" />
+              <img
+                src={logoUrl}
+                alt="The Baobab Collective"
+                className="absolute left-0 top-1/2 -translate-y-1/2 h-28 sm:h-32 w-auto max-w-none object-contain z-10 pointer-events-none"
+              />
             ) : (
               <BaobabLogo className="w-14 h-14" />
             )}
           </Link>
+
           <p className="text-[10px] tracking-[0.3em] uppercase text-foreground/60">
             {menu.footerTagline || "Journeys That Connect"}
           </p>

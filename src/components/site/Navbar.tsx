@@ -71,15 +71,24 @@ export function Navbar() {
         <div className={overlay ? "bg-transparent" : "bg-background border-b border-border/40"}>
           <div className="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-10 py-1 flex items-center gap-4 lg:gap-6">
 
-          <Link to="/" className="flex items-center gap-3 shrink-0 -my-2" aria-label="The Baobab Collective home">
+          <Link
+            to="/"
+            className="relative shrink-0 flex items-center h-16 sm:h-20 lg:h-24 w-16 sm:w-24 lg:w-32"
+            aria-label="The Baobab Collective home"
+          >
             {logoUrl ? (
-              <img src={logoUrl} alt="The Baobab Collective" className="w-auto h-16 sm:h-20 lg:h-28 object-contain" />
+              <img
+                src={logoUrl}
+                alt="The Baobab Collective"
+                className="absolute left-0 top-1/2 -translate-y-1/2 h-28 sm:h-40 lg:h-52 w-auto max-w-none object-contain z-10 pointer-events-none"
+              />
             ) : (
               <span className={`font-serif text-lg sm:text-xl lg:text-2xl leading-tight ${overlay ? "text-cream" : "text-foreground"}`}>
                 The Baobab<br />Collective
               </span>
             )}
           </Link>
+
 
           <nav aria-label="Primary" className="hidden lg:flex flex-1 items-center justify-center gap-8 xl:gap-12">
             {primaryItems.map((item, i) => (

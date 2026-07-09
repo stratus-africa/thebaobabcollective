@@ -135,10 +135,10 @@ export function Footer({ content }: { content?: FooterContent | null } = {}) {
             <button
               type="submit"
               disabled={loading}
-              className="bg-forest text-forest-foreground px-4 disabled:opacity-60"
-              aria-label="Subscribe to newsletter"
+              className="bg-forest text-forest-foreground px-4 disabled:opacity-60 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-inset"
+              aria-label={loading ? "Subscribing to newsletter" : "Subscribe to newsletter"}
             >
-              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <ArrowRight className="w-4 h-4" />}
+              {loading ? <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" /> : <ArrowRight className="w-4 h-4" aria-hidden="true" />}
             </button>
           </form>
         </div>

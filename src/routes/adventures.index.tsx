@@ -184,7 +184,9 @@ function HeroSection({ hero }: { hero: AdventuresPage["hero"] }) {
 }
 
 
-function SignaturesSection({ signatures }: { signatures: AdventuresPage["signatures"] }) {
+type AdventuresIndexContent = typeof PAGE_DEFAULTS.adventures_index;
+
+function SignaturesSection({ signatures, content }: { signatures: AdventuresPage["signatures"]; content: AdventuresIndexContent }) {
   const search = Route.useSearch();
   const navigate = useNavigate({ from: Route.fullPath });
 

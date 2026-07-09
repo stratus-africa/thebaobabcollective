@@ -100,29 +100,23 @@ function StripCard({
 
 function HomeStrips({
   adventures,
-  destinations,
   lodges,
 }: {
   adventures: any;
-  destinations: any;
   lodges: any;
 }) {
-  const destinationsMerged: any = { ...PAGE_DEFAULTS.home_destinations, ...(destinations ?? {}) };
-  const destinationsHidden = !!destinationsMerged.hidden;
   return (
     <section className="bg-cream py-16 md:py-20">
       <div className="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-10">
-        <div className={`grid grid-cols-1 gap-6 ${destinationsHidden ? "md:grid-cols-2" : "md:grid-cols-3"}`}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <StripCard content={adventures} keyName="home_adventures" linkTo="/adventures" />
-          {!destinationsHidden && (
-            <StripCard content={destinations} keyName="home_destinations" linkTo="/destinations" />
-          )}
           <StripCard content={lodges} keyName="home_lodges" linkTo="/lodges" />
         </div>
       </div>
     </section>
   );
 }
+
 
 function Index() {
   const {

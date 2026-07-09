@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { RichTextEditor } from "@/components/admin/RichTextEditor";
 import { toast } from "sonner";
 import { Loader2, RefreshCw, ExternalLink, Save, Eye, EyeOff, ArrowUp, ArrowDown, GripVertical } from "lucide-react";
 import {
@@ -403,11 +404,15 @@ export const Route = createFileRoute("/_authenticated/admin/pages/$page")({
   beforeLoad: ({ params }) => {
     if (!VALID_KEYS.includes(params.page as PageKey)) throw notFound();
   },
-  component: PageEditor,
+  component: PageEditorRoute,
 });
 
-function PageEditor() {
+function PageEditorRoute() {
   const { page } = Route.useParams() as { page: PageKey };
+  return <PageEditor pageKey={page} />;
+}
+
+export function PageEditor({ pageKey: page }: { pageKey: PageKey }) {
   const fetchFn = useServerFn(getPageContent);
   const saveFn = useServerFn(savePageContent);
   const qc = useQueryClient();
@@ -556,11 +561,10 @@ function FieldRow({
     <div>
       <Label className="mb-1.5 block">{field.label}</Label>
       {field.type === "textarea" ? (
-        <Textarea
-          rows={4}
-          value={value ?? ""}
+        <RichTextEditor
+          value={typeof value === "string" ? value : ""}
+          onChange={onChange}
           placeholder={field.placeholder}
-          onChange={(e) => onChange(e.target.value)}
         />
       ) : (
         <Input value={value ?? ""} placeholder={field.placeholder} onChange={(e) => onChange(e.target.value)} />

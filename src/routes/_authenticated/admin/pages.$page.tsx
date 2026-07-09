@@ -639,9 +639,6 @@ function ReorderableGroups({
 
   return (
     <div className="space-y-4 pt-4 border-t border-border">
-      <p className="text-[11px] tracking-[0.2em] uppercase text-foreground/60">
-        Items — drag the handle to reorder (or use ↑/↓). Changes save automatically.
-      </p>
       <DndContext
         sensors={sensors}
         collisionDetection={closestCenter}

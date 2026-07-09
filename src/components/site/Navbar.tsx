@@ -123,7 +123,7 @@ export function Navbar() {
                           key={`${m.to}-${i}`}
                           to={m.to as any}
                           onClick={() => setMoreOpen(false)}
-                          className="block px-5 py-2 text-[12px] tracking-[0.2em] uppercase font-semibold text-foreground/80 hover:text-foreground hover:bg-cream"
+                          className="block px-5 py-2 text-[14px] tracking-[0.2em] uppercase font-semibold text-foreground/80 hover:text-foreground hover:bg-cream"
                         >
                           {m.label}
                         </Link>

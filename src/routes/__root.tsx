@@ -134,10 +134,15 @@ function RootComponent() {
 
     // Record one visit per browser session for the public-site visitor counter.
     if (typeof sessionStorage !== "undefined" && !sessionStorage.getItem("visitor_recorded")) {
-      record();
+      record()
+        .then((res) => {
+          if (!res.ok) console.warn("Visit recording failed:", res.error);
+        })
+        .catch((err) => console.warn("Visit recording error:", err));
       sessionStorage.setItem("visitor_recorded", "1");
     }
   }, []);
+
 
   return (
     <QueryClientProvider client={queryClient}>

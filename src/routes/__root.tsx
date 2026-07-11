@@ -127,9 +127,16 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const record = useServerFn(recordVisit);
 
   useEffect(() => {
     installPreviewListener();
+
+    // Record one visit per browser session for the public-site visitor counter.
+    if (typeof sessionStorage !== "undefined" && !sessionStorage.getItem("visitor_recorded")) {
+      record();
+      sessionStorage.setItem("visitor_recorded", "1");
+    }
   }, []);
 
   return (
@@ -140,3 +147,4 @@ function RootComponent() {
     </QueryClientProvider>
   );
 }
+

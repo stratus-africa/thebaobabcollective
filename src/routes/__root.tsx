@@ -8,6 +8,7 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
+import { useServerFn } from "@tanstack/react-start";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
@@ -15,6 +16,8 @@ import { Toaster } from "@/components/ui/sonner";
 import { installPreviewListener } from "@/lib/preview-overrides";
 import { PAGE_DEFAULTS, mergePageContent } from "@/lib/page-content.defaults";
 import { usePreviewMerge } from "@/lib/preview-overrides";
+import { recordVisit } from "@/lib/analytics.functions";
+
 
 function NotFoundComponent() {
   const c = usePreviewMerge("not_found", mergePageContent("not_found", null));

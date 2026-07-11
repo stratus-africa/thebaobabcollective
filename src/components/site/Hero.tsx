@@ -111,11 +111,6 @@ export function Hero({ content }: { content?: HeroContent | null } = {}) {
             <p className="text-[11px] tracking-[0.3em] uppercase text-cream/85 mb-4">
               The Baobab Collective
             </p>
-            <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl leading-[1.05] text-cream">
-              {c.hero_title_line1}
-              <br />
-              <span className="italic">{c.hero_title_line2}</span>
-            </h1>
 
             <p className="mt-5 md:mt-6 text-cream/90 text-sm sm:text-base md:text-lg max-w-md">
               {c.hero_subtitle}

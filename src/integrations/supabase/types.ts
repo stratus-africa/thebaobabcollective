@@ -839,6 +839,24 @@ export type Database = {
         }
         Relationships: []
       }
+      visitor_counter: {
+        Row: {
+          id: string
+          total_count: number
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          total_count?: number
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          total_count?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -860,6 +878,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      increment_visitor_counter: { Args: never; Returns: undefined }
       move_to_dlq: {
         Args: {
           dlq_name: string

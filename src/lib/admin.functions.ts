@@ -339,21 +339,21 @@ export const adminDashboard = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     await assertAdmin(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const [b, e, p, n, pending, revenue, recentB, recentE, recentP] = await Promise.all([
+    const [b, e, p, n, pending, visitors, lodges, destinations, recentB, recentE, recentP] = await Promise.all([
       supabaseAdmin.from("bookings").select("*", { count: "exact", head: true }),
       supabaseAdmin.from("enquiries").select("*", { count: "exact", head: true }),
       supabaseAdmin.from("private_travel_requests").select("*", { count: "exact", head: true }),
       supabaseAdmin.from("newsletter_subscribers").select("*", { count: "exact", head: true }),
       supabaseAdmin.from("bookings").select("*", { count: "exact", head: true }).eq("status", "pending"),
-      supabaseAdmin.from("bookings").select("total_estimate_usd").in("status", ["confirmed", "completed"]),
+      supabaseAdmin.from("visitor_counter" as any).select("total_count").limit(1).maybeSingle(),
+      supabaseAdmin.from("lodges").select("*", { count: "exact", head: true }).eq("published", true),
+      supabaseAdmin.from("destinations").select("*", { count: "exact", head: true }).eq("published", true),
       supabaseAdmin.from("bookings").select("id, itinerary_name, guest_name, status, created_at").order("created_at", { ascending: false }).limit(4),
       supabaseAdmin.from("enquiries").select("id, name, subject, created_at").order("created_at", { ascending: false }).limit(4),
       supabaseAdmin.from("private_travel_requests").select("id, name, created_at").order("created_at", { ascending: false }).limit(2),
     ]);
-    const total_revenue = (revenue.data ?? []).reduce(
-      (sum: number, r: { total_estimate_usd: number | null }) => sum + (r.total_estimate_usd ?? 0),
-      0,
-    );
+    const visitor_count = (visitors.data as any)?.total_count ?? 0;
+
     type Activity = { kind: "booking" | "enquiry" | "private"; title: string; subtitle: string; at: string };
     const activity: Activity[] = [
       ...(recentB.data ?? []).map((r: any) => ({
@@ -383,7 +383,10 @@ export const adminDashboard = createServerFn({ method: "GET" })
       private_travel: p.count ?? 0,
       subscribers: n.count ?? 0,
       pending_bookings: pending.count ?? 0,
-      total_revenue,
+      visitor_count,
+      active_lodges: lodges.count ?? 0,
+      active_destinations: destinations.count ?? 0,
       activity,
     };
+
   });

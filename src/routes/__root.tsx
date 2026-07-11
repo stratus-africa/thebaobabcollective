@@ -8,6 +8,7 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
+import { useServerFn } from "@tanstack/react-start";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
@@ -15,6 +16,8 @@ import { Toaster } from "@/components/ui/sonner";
 import { installPreviewListener } from "@/lib/preview-overrides";
 import { PAGE_DEFAULTS, mergePageContent } from "@/lib/page-content.defaults";
 import { usePreviewMerge } from "@/lib/preview-overrides";
+import { recordVisit } from "@/lib/analytics.functions";
+
 
 function NotFoundComponent() {
   const c = usePreviewMerge("not_found", mergePageContent("not_found", null));
@@ -124,12 +127,24 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const record = useServerFn(recordVisit);
 
   useEffect(() => {
     installPreviewListener();
+
+    // Record one visit per browser session for the public-site visitor counter.
+    if (typeof sessionStorage !== "undefined" && !sessionStorage.getItem("visitor_recorded")) {
+      record()
+        .then((res) => {
+          if (!res.ok) console.warn("Visit recording failed:", res.error);
+        })
+        .catch((err) => console.warn("Visit recording error:", err));
+      sessionStorage.setItem("visitor_recorded", "1");
+    }
   }, []);
 
   return (
+
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
@@ -137,3 +152,4 @@ function RootComponent() {
     </QueryClientProvider>
   );
 }
+

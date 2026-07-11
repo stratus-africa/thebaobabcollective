@@ -4,10 +4,11 @@ import { useQuery } from "@tanstack/react-query";
 import { adminDashboard } from "@/lib/admin.functions";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import {
-  Calendar, MessageSquare, Plane, Mail, DollarSign, Clock,
+  Calendar, MessageSquare, Plane, Mail, Users, Clock,
   PlusCircle, CheckCircle2, Compass, FileText, ArrowRight,
   Briefcase, MapPin, Building, BookOpen,
 } from "lucide-react";
+
 
 export const Route = createFileRoute("/_authenticated/admin/")({
   component: Dashboard,

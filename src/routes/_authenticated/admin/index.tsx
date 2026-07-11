@@ -42,12 +42,25 @@ function Dashboard() {
       tone: "bg-forest/15 text-forest",
     },
     {
-      label: "Total Revenue",
-      value: data?.total_revenue != null ? formatPrice(data.total_revenue) : undefined,
-      icon: DollarSign,
+      label: "Visitor Counter",
+      value: data?.visitor_count,
+      icon: Users,
       tone: "bg-terracotta/15 text-terracotta",
     },
+    {
+      label: "Active Partner Lodges",
+      value: data?.active_lodges,
+      icon: Building,
+      tone: "bg-gold/15 text-gold",
+    },
+    {
+      label: "Active Destinations",
+      value: data?.active_destinations,
+      icon: MapPin,
+      tone: "bg-sand/15 text-foreground",
+    },
   ];
+
 
   const quickTasks = [
     { to: "/admin/content/itineraries", label: "Add an Itinerary", icon: PlusCircle },

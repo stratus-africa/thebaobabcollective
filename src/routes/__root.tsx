@@ -134,18 +134,15 @@ function RootComponent() {
 
     // Record one visit per browser session for the public-site visitor counter.
     if (typeof sessionStorage !== "undefined" && !sessionStorage.getItem("visitor_recorded")) {
-      console.log("Recording visit...");
       record()
         .then((res) => {
-          console.log("recordVisit result:", res);
           if (!res.ok) console.warn("Visit recording failed:", res.error);
         })
         .catch((err) => console.warn("Visit recording error:", err));
       sessionStorage.setItem("visitor_recorded", "1");
-    } else {
-      console.log("Visit already recorded this session or no sessionStorage");
     }
   }, []);
+
 
 
 

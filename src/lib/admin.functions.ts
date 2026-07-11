@@ -383,7 +383,10 @@ export const adminDashboard = createServerFn({ method: "GET" })
       private_travel: p.count ?? 0,
       subscribers: n.count ?? 0,
       pending_bookings: pending.count ?? 0,
-      total_revenue,
+      visitor_count,
+      active_lodges: lodges.count ?? 0,
+      active_destinations: destinations.count ?? 0,
       activity,
     };
+
   });

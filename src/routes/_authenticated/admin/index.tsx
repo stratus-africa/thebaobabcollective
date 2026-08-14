@@ -65,11 +65,12 @@ function Dashboard() {
   const quickTasks = [
     { to: "/admin/content/itineraries", label: "Add an Itinerary", icon: PlusCircle },
     { to: "/admin/enquiries", label: "Review Enquiries", icon: CheckCircle2 },
-    { to: "/admin/adventures", label: "Update Adventures Page", icon: Compass },
+    { to: "/admin/content/adventures", label: "Manage Adventures", icon: Compass },
     { to: "/admin/content/journal_articles", label: "Publish an Article", icon: FileText },
   ];
 
   const tools = [
+    { to: "/admin/content/adventures", label: "Adventures", icon: Compass, blurb: "Manage adventure itineraries" },
     { to: "/admin/content/lodges", label: "Lodges", icon: Building, blurb: "Curate partner camps & lodges" },
     { to: "/admin/content/destinations", label: "Destinations", icon: MapPin, blurb: "Manage destination guides" },
     { to: "/admin/private-travel", label: "Private Travel", icon: Briefcase, blurb: "Bespoke travel requests" },

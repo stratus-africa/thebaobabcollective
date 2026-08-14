@@ -35,6 +35,7 @@ const TABLE_LABELS: Record<string, string> = {
   destinations: "Destinations",
   testimonials: "Testimonials",
   faqs: "FAQs",
+  adventures: "Adventures",
 };
 
 const TABLE_SINGULAR: Record<string, string> = {
@@ -45,6 +46,7 @@ const TABLE_SINGULAR: Record<string, string> = {
   destinations: "Destination",
   testimonials: "Testimonial",
   faqs: "FAQ",
+  adventures: "Adventure",
 };
 
 const VIEW_PATH: Record<string, (row: any) => string | null> = {
@@ -55,6 +57,7 @@ const VIEW_PATH: Record<string, (row: any) => string | null> = {
   journey_categories: (r) => (r.slug ? `/journeys?cat=${r.slug}` : null),
   testimonials: () => null,
   faqs: () => null,
+  adventures: (r) => (r.slug ? `/adventures/${r.slug}` : null),
 };
 
 const GROUP_FIELD: Record<string, { field: string; label: string }> = {
@@ -65,6 +68,7 @@ const GROUP_FIELD: Record<string, { field: string; label: string }> = {
   testimonials: { field: "location", label: "locations" },
   faqs: { field: "category", label: "categories" },
   journey_categories: { field: "slug", label: "categories" },
+  adventures: { field: "region", label: "regions" },
 };
 
 const IMAGE_FIELD: Record<string, string> = {
@@ -73,6 +77,7 @@ const IMAGE_FIELD: Record<string, string> = {
   itineraries: "image",
   journal_articles: "image",
   journey_categories: "hero_image",
+  adventures: "image",
 };
 
 const SUBTITLE: Record<string, (r: any) => string> = {
@@ -83,6 +88,7 @@ const SUBTITLE: Record<string, (r: any) => string> = {
   testimonials: (r) => r.location ?? "",
   faqs: (r) => r.category ?? "",
   journey_categories: (r) => r.tagline ?? "",
+  adventures: (r) => [r.region, r.terrain].filter(Boolean).join(" · "),
 };
 
 type FieldType = "text" | "textarea" | "rich" | "number" | "bool" | "array" | "image" | "images";
@@ -206,6 +212,35 @@ const FORM_LAYOUT: Record<string, { rows: FieldDef[][] }> = {
       ],
     ],
   },
+  adventures: {
+    rows: [
+      [{ name: "name", label: "Name", type: "text", placeholder: "e.g. Okavango on Foot", icon: "pin" }],
+      [
+        { name: "region", label: "Region", type: "text", placeholder: "e.g. Botswana" },
+        { name: "terrain", label: "Terrain", type: "text", placeholder: "e.g. Delta & Waterways" },
+      ],
+      [
+        { name: "nights", label: "Nights", type: "text", placeholder: "e.g. 8 nights" },
+        { name: "slug", label: "Slug", type: "text", placeholder: "auto-from-name" },
+      ],
+      [
+        { name: "difficulty", label: "Difficulty", type: "text", placeholder: "e.g. Moderate" },
+        { name: "tagline", label: "Tagline", type: "text", placeholder: "Short tagline" },
+      ],
+      [{ name: "description", label: "Description", type: "rich", placeholder: "Describe this adventure…" }],
+      [{ name: "highlights", label: "Highlights (one per line)", type: "array" }],
+      [{ name: "image", label: "Hero Image", type: "image" }],
+      [{ name: "gallery", label: "Gallery", type: "images" }],
+      [
+        { name: "price_from_usd", label: "Price from (USD)", type: "number" },
+        { name: "deposit_usd", label: "Deposit (USD)", type: "number" },
+      ],
+      [
+        { name: "sort_order", label: "Sort Order", type: "number", icon: "hash" },
+        { name: "published", label: "Active", type: "bool" },
+      ],
+    ],
+  },
 };
 
 const SORT_OPTIONS: Record<string, { value: string; label: string }[]> = {
@@ -245,6 +280,12 @@ const SORT_OPTIONS: Record<string, { value: string; label: string }[]> = {
   faqs: [
     { value: "sort_order", label: "Sort Order" },
     { value: "category", label: "Category" },
+  ],
+  adventures: [
+    { value: "sort_order", label: "Sort Order" },
+    { value: "name", label: "Name" },
+    { value: "price_from_usd", label: "Price" },
+    { value: "created_at", label: "Newest" },
   ],
 };
 

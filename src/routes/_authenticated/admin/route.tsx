@@ -30,7 +30,7 @@ const groups: NavGroup[] = [
   {
     label: "Management",
     items: [
-      { to: "/admin/adventures", label: "Manage Adventures", icon: Compass },
+      { to: "/admin/content/adventures", label: "Manage Adventures", icon: Compass },
       { to: "/admin/content/lodges", label: "Manage Lodges", icon: Building },
       { to: "/admin/content/destinations", label: "Manage Destinations", icon: MapPin },
     ],

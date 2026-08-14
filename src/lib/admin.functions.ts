@@ -20,6 +20,7 @@ const TABLES = [
   "destinations",
   "testimonials",
   "faqs",
+  "adventures",
 ] as const;
 type TableName = (typeof TABLES)[number];
 
@@ -45,6 +46,7 @@ const SORTABLE: Record<TableName, string[]> = {
   destinations: ["sort_order", "name", "country", "region", "created_at", "updated_at"],
   testimonials: ["sort_order", "name", "rating", "created_at", "updated_at"],
   faqs: ["sort_order", "category", "created_at", "updated_at"],
+  adventures: ["sort_order", "name", "price_from_usd", "created_at", "updated_at"],
 };
 
 export const adminList = createServerFn({ method: "POST" })
